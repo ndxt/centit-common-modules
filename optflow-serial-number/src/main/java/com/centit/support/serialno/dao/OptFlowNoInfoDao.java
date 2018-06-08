@@ -1,7 +1,7 @@
-package com.centit.framework.system.dao;
+package com.centit.support.serialno.dao;
 
-import com.centit.framework.system.po.OptFlowNoInfo;
-import com.centit.framework.system.po.OptFlowNoInfoId;
+import com.centit.support.serialno.po.OptFlowNoInfo;
+import com.centit.support.serialno.po.OptFlowNoInfoId;
 
 public interface OptFlowNoInfoDao {
 

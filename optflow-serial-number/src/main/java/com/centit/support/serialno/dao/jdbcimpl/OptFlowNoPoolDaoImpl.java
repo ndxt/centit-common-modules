@@ -1,10 +1,10 @@
-package com.centit.framework.system.dao.jdbcimpl;
+package com.centit.support.serialno.dao.jdbcimpl;
 
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
-import com.centit.framework.system.dao.OptFlowNoPoolDao;
-import com.centit.framework.system.po.OptFlowNoPool;
-import com.centit.framework.system.po.OptFlowNoPoolId;
+import com.centit.support.serialno.dao.OptFlowNoPoolDao;
+import com.centit.support.serialno.po.OptFlowNoPool;
+import com.centit.support.serialno.po.OptFlowNoPoolId;
 import com.centit.support.algorithm.NumberBaseOpt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

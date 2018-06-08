@@ -1,4 +1,4 @@
-package com.centit.framework.system.po;
+package com.centit.support.serialno.po;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;

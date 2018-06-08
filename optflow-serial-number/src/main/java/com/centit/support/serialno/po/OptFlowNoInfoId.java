@@ -1,4 +1,4 @@
-package com.centit.framework.system.po;
+package com.centit.support.serialno.po;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -14,7 +14,7 @@ import java.sql.Date;
  * @author codefan@hotmail.com
  */
 @Embeddable
-public class OptFlowNoPoolId implements java.io.Serializable {
+public class OptFlowNoInfoId implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "OWNER_CODE")
@@ -31,25 +31,19 @@ public class OptFlowNoPoolId implements java.io.Serializable {
     @Length(max = 16, message = "字段长度不能大于{max}")
     private String codeCode;
 
-    @Column(name = "CUR_NO")
-    @NotBlank(message = "字段不能为空")
-    @Length(max = 6, message = "字段长度不能大于{max}")
-    private Long curNo;
-
     // Constructors
 
     /**
      * default constructor
      */
-    public OptFlowNoPoolId() {
+    public OptFlowNoInfoId() {
     }
 
-    public OptFlowNoPoolId(String ownerCode, Date codeDate, String codeCode, Long curNo) {
+    public OptFlowNoInfoId(String ownerCode, Date codeDate, String codeCode) {
 
         this.ownerCode = ownerCode;
         this.codeDate = codeDate;
         this.codeCode = codeCode;
-        this.curNo = curNo;
     }
 
 
@@ -77,23 +71,16 @@ public class OptFlowNoPoolId implements java.io.Serializable {
         this.codeCode = codeCode;
     }
 
-    public Long getCurNo() {
-        return curNo;
-    }
-
-    public void setCurNo(Long curNo) {
-        this.curNo = curNo;
-    }
 
     public boolean equals(Object other) {
         if ((this == other))
             return true;
         if ((other == null))
             return false;
-        if (!(other instanceof OptFlowNoPoolId))
+        if (!(other instanceof OptFlowNoInfoId))
             return false;
 
-        OptFlowNoPoolId castOther = (OptFlowNoPoolId) other;
+        OptFlowNoInfoId castOther = (OptFlowNoInfoId) other;
         boolean ret = true;
 
         ret = this.getOwnerCode() == castOther.getOwnerCode() ||
@@ -107,10 +94,6 @@ public class OptFlowNoPoolId implements java.io.Serializable {
         ret = ret && (this.getCodeCode() == castOther.getCodeCode() ||
                 (this.getCodeCode() != null && castOther.getCodeCode() != null
                         && this.getCodeCode().equals(castOther.getCodeCode())));
-
-        ret = ret && (this.getCurNo() == castOther.getCurNo() ||
-                (this.getCurNo() != null && castOther.getCurNo() != null
-                        && this.getCurNo().equals(castOther.getCurNo())));
 
         return ret;
     }
@@ -127,10 +110,6 @@ public class OptFlowNoPoolId implements java.io.Serializable {
         result = 37 * result +
                 (this.getCodeCode() == null ? 0 : this.getCodeCode().hashCode());
 
-        result = 37 * result +
-                (this.getCurNo() == null ? 0 : this.getCurNo().hashCode());
-
         return result;
     }
-
 }

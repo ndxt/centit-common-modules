@@ -1,7 +1,7 @@
-package com.centit.framework.system.dao;
+package com.centit.support.serialno.dao;
 
-import com.centit.framework.system.po.OptFlowNoPool;
-import com.centit.framework.system.po.OptFlowNoPoolId;
+import com.centit.support.serialno.po.OptFlowNoPool;
+import com.centit.support.serialno.po.OptFlowNoPoolId;
 
 import java.util.Date;
 import java.util.List;

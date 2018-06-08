@@ -1,10 +1,10 @@
-package com.centit.framework.system.dao.jdbcimpl;
+package com.centit.support.serialno.dao.jdbcimpl;
 
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
-import com.centit.framework.system.dao.OptFlowNoInfoDao;
-import com.centit.framework.system.po.OptFlowNoInfo;
-import com.centit.framework.system.po.OptFlowNoInfoId;
+import com.centit.support.serialno.dao.OptFlowNoInfoDao;
+import com.centit.support.serialno.po.OptFlowNoInfo;
+import com.centit.support.serialno.po.OptFlowNoInfoId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;

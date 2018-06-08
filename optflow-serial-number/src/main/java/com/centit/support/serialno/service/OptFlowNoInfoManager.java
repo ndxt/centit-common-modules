@@ -1,6 +1,6 @@
-package com.centit.framework.system.service;
+package com.centit.support.serialno.service;
 
-import com.centit.framework.system.po.OptFlowNoPool;
+import com.centit.support.serialno.po.OptFlowNoPool;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.database.utils.PageDesc;
 

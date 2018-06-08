@@ -1,13 +1,13 @@
-package com.centit.framework.system.service.impl;
+package com.centit.support.serialno.service.impl;
 
 import com.centit.framework.core.dao.QueryParameterPrepare;
-import com.centit.framework.system.dao.OptFlowNoInfoDao;
-import com.centit.framework.system.dao.OptFlowNoPoolDao;
-import com.centit.framework.system.po.OptFlowNoInfo;
-import com.centit.framework.system.po.OptFlowNoInfoId;
-import com.centit.framework.system.po.OptFlowNoPool;
-import com.centit.framework.system.po.OptFlowNoPoolId;
-import com.centit.framework.system.service.OptFlowNoInfoManager;
+import com.centit.support.serialno.dao.OptFlowNoInfoDao;
+import com.centit.support.serialno.dao.OptFlowNoPoolDao;
+import com.centit.support.serialno.po.OptFlowNoInfo;
+import com.centit.support.serialno.po.OptFlowNoInfoId;
+import com.centit.support.serialno.po.OptFlowNoPool;
+import com.centit.support.serialno.po.OptFlowNoPoolId;
+import com.centit.support.serialno.service.OptFlowNoInfoManager;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.database.utils.PageDesc;
 import org.slf4j.Logger;
