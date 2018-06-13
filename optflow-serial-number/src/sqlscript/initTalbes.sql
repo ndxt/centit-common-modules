@@ -8,14 +8,14 @@ drop table if exists F_OptFlowNoPool;
 /*==============================================================*/
 create table F_OptFlowNoInfo
 (
-   OwnerCode            varchar(8) not null,
-   CodeCode             varchar(16) not null,
-   CodeDate             date not null,
-   CurNo                numeric(6,0) not null default 1,
-   LastCodeDate         date,
-   CreateDate           date,
-   LastModifyDate       date,
-   primary key (OwnerCode, CodeDate, CodeCode)
+   Owner_Code            varchar(8) not null,
+   Code_Code             varchar(16) not null,
+   Code_Date             date not null,
+   Cur_No                numeric(6,0) not null default 1,
+   Last_Code_Date         date,
+   Create_Date           date,
+   Last_Modify_Date       date,
+   primary key (Owner_Code, Code_Date, Code_Code)
 );
 
 /*==============================================================*/
@@ -23,12 +23,12 @@ create table F_OptFlowNoInfo
 /*==============================================================*/
 create table F_OptFlowNoPool
 (
-   OwnerCode            varchar(8) not null,
-   CodeCode             varchar(16) not null,
-   CodeDate             date not null,
-   CurNo                numeric(6,0) not null default 1,
-   CreateDate           date,
-   primary key (OwnerCode, CodeDate, CodeCode, CurNo)
+   Owner_Code            varchar(8) not null,
+   Code_Code             varchar(16) not null,
+   Code_Date             date not null,
+   Cur_No                numeric(6,0) not null default 1,
+   Create_Date           date,
+   primary key (Owner_Code, Code_Date, Code_Code, Cur_No)
 );
 
 
@@ -42,31 +42,31 @@ drop table F_OptFlowNoPool cascade constraints;
 /* Table: F_OptFlowNoInfo                                       */
 /*==============================================================*/
 create table F_OptFlowNoInfo  (
-   OwnerCode            VARCHAR2(8)                     not null,
-   CodeCode             VARCHAR2(16)                    not null,
-   CodeDate             DATE                           default sysdate not null,
-   CurNo                NUMBER(6,0)                    default 1 not null,
-   LastCodeDate         DATE,
-   CreateDate           DATE,
-   LastModifyDate       DATE
+   Owner_Code            VARCHAR2(8)                     not null,
+   Code_Code             VARCHAR2(16)                    not null,
+   Code_Date             DATE                           default sysdate not null,
+   Cur_No                NUMBER(6,0)                    default 1 not null,
+   Last_Code_Date         DATE,
+   Create_Date           DATE,
+   Last_Modify_Date       DATE
 );
 
 alter table F_OptFlowNoInfo
-   add constraint PK_F_OPTFLOWNOINFO primary key (OwnerCode, CodeDate, CodeCode);
+   add constraint PK_F_OPTFLOWNOINFO primary key (Owner_Code, Code_Date, Code_Code);
 
 /*==============================================================*/
 /* Table: F_OptFlowNoPool                                       */
 /*==============================================================*/
 create table F_OptFlowNoPool  (
-   OwnerCode            VARCHAR2(8)                     not null,
-   CodeCode             VARCHAR2(16)                    not null,
-   CodeDate             DATE                           default sysdate not null,
-   CurNo                NUMBER(6,0)                    default 1 not null,
-   CreateDate           DATE
+   Owner_Code            VARCHAR2(8)                     not null,
+   Code_Code             VARCHAR2(16)                    not null,
+   Code_Date             DATE                           default sysdate not null,
+   Cur_No                NUMBER(6,0)                    default 1 not null,
+   Create_Date           DATE
 );
 
 alter table F_OptFlowNoPool
-   add constraint PK_F_OPTFLOWNOPOOL primary key (OwnerCode, CodeDate, CodeCode, CurNo);
+   add constraint PK_F_OPTFLOWNOPOOL primary key (Owner_Code, Code_Date, Code_Code, Cur_No);
 
 /*  db2  */
 drop table F_OptFlowNoInfo;
@@ -77,31 +77,31 @@ drop table F_OptFlowNoPool;
 /* Table: F_OptFlowNoInfo                                       */
 /*==============================================================*/
 create table F_OptFlowNoInfo  (
-   OwnerCode            VARCHAR(8)                     not null,
-   CodeCode             VARCHAR(16)                    not null,
-   CodeDate             TIMESTAMP                           default sysdate not null,
-   CurNo                decimal(6,0)                    default 1 not null,
-   LastCodeDate         TIMESTAMP,
-   CreateDate           TIMESTAMP,
-   LastModifyDate       TIMESTAMP
+   Owner_Code            VARCHAR(8)                     not null,
+   Code_Code             VARCHAR(16)                    not null,
+   Code_Date             TIMESTAMP                      default sysdate not null,
+   Cur_No                decimal(6,0)                   default 1 not null,
+   Last_Code_Date         TIMESTAMP,
+   Create_Date           TIMESTAMP,
+   Last_Modify_Date       TIMESTAMP
 );
 
 alter table F_OptFlowNoInfo
-   add constraint PK_F_OPTFLOWNOINFO primary key (OwnerCode, CodeDate, CodeCode);
+   add constraint PK_F_OPTFLOWNOINFO primary key (Owner_Code, Code_Date, Code_Code);
 
 /*==============================================================*/
 /* Table: F_OptFlowNoPool                                       */
 /*==============================================================*/
 create table F_OptFlowNoPool  (
-   OwnerCode            VARCHAR(8)                     not null,
-   CodeCode             VARCHAR(16)                    not null,
-   CodeDate             TIMESTAMP                           default sysdate not null,
-   CurNo                decimal(6,0)                    default 1 not null,
-   CreateDate           TIMESTAMP
+   Owner_Code            VARCHAR(8)                     not null,
+   Code_Code             VARCHAR(16)                    not null,
+   Code_Date             TIMESTAMP                      default sysdate not null,
+   Cur_No                decimal(6,0)                   default 1 not null,
+   Create_Date           TIMESTAMP
 );
 
 alter table F_OptFlowNoPool
-   add constraint PK_F_OPTFLOWNOPOOL primary key (OwnerCode, CodeDate, CodeCode, CurNo);
+   add constraint PK_F_OPTFLOWNOPOOL primary key (Owner_Code, Code_Date, Code_Code, Cur_No);
 
 
 
