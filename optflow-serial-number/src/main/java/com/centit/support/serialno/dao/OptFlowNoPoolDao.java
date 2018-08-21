@@ -1,5 +1,6 @@
 package com.centit.support.serialno.dao;
 
+import com.centit.support.database.utils.PageDesc;
 import com.centit.support.serialno.po.OptFlowNoPool;
 import com.centit.support.serialno.po.OptFlowNoPoolId;
 
@@ -53,4 +54,7 @@ public interface OptFlowNoPoolDao {
      * @return long
      */
     long fetchFirstLsh(String ownerCode, String codeCode, Date codeBaseDate);
+
+    public List<OptFlowNoPool> listLshInPool(Map<String, Object> filterMap, PageDesc pageDesc);
+
 }

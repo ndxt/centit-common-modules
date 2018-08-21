@@ -1,7 +1,10 @@
 package com.centit.support.serialno.dao.jdbcimpl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.support.serialno.dao.OptFlowNoPoolDao;
 import com.centit.support.serialno.po.OptFlowNoPool;
 import com.centit.support.serialno.po.OptFlowNoPoolId;
@@ -13,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository("optFlowNoPoolDao")
@@ -63,4 +67,13 @@ public class OptFlowNoPoolDaoImpl extends BaseDaoImpl<OptFlowNoPool, OptFlowNoPo
     public void updateOptFlowNoPool(OptFlowNoPool optFlowNoPool){
         super.updateObject(optFlowNoPool);
     }*/
+    @Override
+    public List<OptFlowNoPool> listLshInPool(Map<String, Object> filterMap, PageDesc pageDesc){
+        JSONArray jsonArray = listObjectsAsJson(filterMap,pageDesc);
+        List<OptFlowNoPool> list = JSONObject.parseArray(jsonArray.toJSONString(),OptFlowNoPool.class);
+        if(list!=null && list.size()>0){
+            return  list;
+        }
+        return null;
+    }
 }

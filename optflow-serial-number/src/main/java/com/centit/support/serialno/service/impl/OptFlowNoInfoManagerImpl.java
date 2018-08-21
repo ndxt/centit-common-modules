@@ -184,6 +184,17 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
             optFlowNoInfoDao.saveNewOptFlowNoInfo(noInfo);
         } else {
             if (noInfo.getCurNo() < currCode) {
+                //存在跨号，将中间的号码保存至OptFlowNoPool中
+                if(currCode-noInfo.getCurNo()>1){
+                    long startIdx = noInfo.getCurNo()+1;
+                    for(long i = startIdx ;i<currCode;i++){
+                        OptFlowNoPoolId cid = new OptFlowNoPoolId(ownerCode, codeDate, codeCode, i);
+                        OptFlowNoPool pool = new OptFlowNoPool();
+                        pool.setCid(cid);
+                        pool.setCreateDate(new Date());
+                        optFlowNoPoolDao.saveNewOptFlowNoPool(pool);
+                    }
+                }
                 noInfo.setCurNo(currCode);
                 noInfo.setLastCodeDate(DatetimeOpt.currentUtilDate());
                 optFlowNoInfoDao.updateOptFlowNoInfo(noInfo);
@@ -305,10 +316,7 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
         filterMap.put("codeDate", codeBaseDate);
         filterMap.put("codeCode", codeCode);
 
-        return optFlowNoPoolDao.pageQuery(
-            QueryParameterPrepare.makeMybatisOrderByParam(
-                QueryParameterPrepare.prepPageParams(filterMap,pageDesc,
-                        optFlowNoPoolDao.pageCount(filterMap)),OptFlowNoPool.class));
+        return optFlowNoPoolDao.listLshInPool(filterMap,pageDesc);
     }
 
     public List<OptFlowNoPool> listLshBaseDayInPool(String ownerCode,
