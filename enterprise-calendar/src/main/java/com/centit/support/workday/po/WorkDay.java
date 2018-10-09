@@ -11,9 +11,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @Auther: guo_jh
- * @Date: 2018/6/29 10:46
- * @Description:
+ * @author : guo_jh
+ * Date: 2018/6/29 10:46
+ * Description:
  */
 @Entity
 @Table(

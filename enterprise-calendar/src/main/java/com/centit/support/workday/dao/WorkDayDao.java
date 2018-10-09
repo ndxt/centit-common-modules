@@ -11,9 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Auther: guo_jh
- * @Date: 2018/6/29 10:59
- * @Description:
+ * @author : guo_jh
+ * Date: 2018/6/29 10:59
+ * Description:
  */
 @Repository
 public class WorkDayDao extends BaseDaoImpl<WorkDay, Date> {

@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Auther: guo_jh
- * @Date: 2018/6/29 11:03
- * @Description:
+ * @author guo_jh
+ * Date: 2018/6/29 11:03
+ * Description:
  */
 @Service
 public class WorkDayManagerImpl extends BaseEntityManagerImpl<WorkDay, Date, WorkDayDao> implements WorkDayManager {
@@ -43,7 +43,7 @@ public class WorkDayManagerImpl extends BaseEntityManagerImpl<WorkDay, Date, Wor
             if (DatetimeOpt.getDayOfWeek(workDay) > 0 && DatetimeOpt.getDayOfWeek(workDay) < 6) {
                 result = true;
             }
-        } else if (day != null) {
+        } else /*if (day != null)*/ {
             if ("B".equals(day.getDayType())) {//B:周末调休成工作时间
                 result = true;
             } else if ("C".equals(day.getDayType()) && DatetimeOpt.getDayOfWeek(workDay) > 0 && DatetimeOpt.getDayOfWeek(workDay) < 6) {//C: 正常上班

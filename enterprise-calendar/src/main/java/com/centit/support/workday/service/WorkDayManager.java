@@ -6,9 +6,9 @@ import com.centit.support.workday.po.WorkDay;
 import java.util.Date;
 
 /**
- * @Auther: guo_jh
- * @Date: 2018/6/29 11:01
- * @Description:
+ * @author guo_jh@centit
+ *  2018/6/29 11:01
+ *  WorkDayManager
  */
 public interface WorkDayManager extends BaseEntityManager<WorkDay, Date> {
 

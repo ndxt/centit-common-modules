@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Auther: guo_jh
- * @Date: 2018/6/27 19:31
- * @Description:企业工作日历
+ * @author : guo_jh
+ * Date: 2018/6/27 19:31
+ * Description:企业工作日历
  */
 
 @Controller
@@ -36,7 +36,7 @@ public class EnterpriseCalendarController extends BaseController {
      * 获取指定范围内特殊日期集合
      *
      * @param curDate  当前选中时间,默认取系统当前时间
-     * @param response
+     * @param response HttpServletResponse
      */
     @RequestMapping(value = "/findMarkDay", method = RequestMethod.GET)
     public void findMarkDay(@Valid Date curDate, HttpServletResponse response) {
@@ -59,8 +59,8 @@ public class EnterpriseCalendarController extends BaseController {
     /**
      * 更新日期标记
      *
-     * @param workDay
-     * @param response
+     * @param workDay 工作日信息
+     * @param response HttpServletResponse
      */
     @RequestMapping(value = "/saveData", method = RequestMethod.POST)
     public void saveData(WorkDay workDay, HttpServletResponse response) {
