@@ -6,6 +6,7 @@
     <modules>
         <module>optflow-serial-number</module>
         <module>enterprise-calendar</module>
+        <module>database-metadata</module>
     </modules>
     <parent>
         <artifactId>framework-snapshot-dependencies</artifactId>
