@@ -72,8 +72,8 @@ public class MetaDataServiceImpl implements MetaDataService {
         return jdbcMetadata.listAllTable();
     }
 
+    @Override
     public void syncDb(String databaseCode){
-        DatabaseInfo dbInfo = integrationEnvironment.getDatabaseInfo(databaseCode);
         List<SimpleTableInfo> dbTables = listRealTables(databaseCode);
         List<MetaTable> metaTables = metaTableDao.listObjectsByFilter("where DATABASE_CODE = ?", new Object[]{databaseCode});
         Comparator<TableInfo> comparator = (o1, o2) -> StringUtils.compare(o1.getTableName(), o2.getTableName());
@@ -89,7 +89,7 @@ public class MetaDataServiceImpl implements MetaDataService {
                 //列
                 List<SimpleTableField> columns = table.getColumns();
                 for(SimpleTableField tableField : columns){
-                    MetaColumn column = dbCol2MetaCol(tableField);
+                    MetaColumn column = new MetaColumn().convertFromTableField(tableField);
                     column.setTableId(metaTable.getTableId());
                     metaColumnDao.saveNewObject(column);
                 }
@@ -110,26 +110,31 @@ public class MetaDataServiceImpl implements MetaDataService {
                 //表
                 metaTableDao.updateObject(oldTable.convertFromDbTable(newTable));
                 //列
-                List<MetaColumn> oldColumn = oldTable.getColumns();
+                oldTable = metaTableDao.fetchObjectReferences(oldTable);
+                List<MetaColumn> oldColumns = oldTable.getColumns();
                 List<SimpleTableField> newColumns = newTable.getColumns();
                 Comparator<TableField> columnComparator = (o1, o2) -> StringUtils.compare(o1.getColumnName(), o2.getColumnName());
-                Triple<List<SimpleTableField>, List<Pair<MetaColumn, SimpleTableField>>, List<MetaColumn>> columnCompared = compareMetaBetweenDbTables(oldColumn, newColumns, columnComparator);
+                Triple<List<SimpleTableField>, List<Pair<MetaColumn, SimpleTableField>>, List<MetaColumn>> columnCompared = compareMetaBetweenDbTables(oldColumns, newColumns, columnComparator);
                 if(columnCompared.getLeft() != null && columnCompared.getLeft().size() > 0){
                     //新增
                     for(SimpleTableField tableField : columnCompared.getLeft()){
-
+                        MetaColumn metaColumn = new MetaColumn().convertFromTableField(tableField);
+                        metaColumn.setTableId(oldTable.getTableId());
+                        metaColumnDao.saveNewObject(metaColumn);
                     }
                 }
                 if(columnCompared.getRight() != null && columnCompared.getRight().size() > 0){
                     //删除
                     for(MetaColumn metaColumn : columnCompared.getRight()){
-
+                        metaColumnDao.deleteObject(metaColumn);
                     }
                 }
                 if(columnCompared.getMiddle() != null && columnCompared.getMiddle().size() > 0){
                     //更新
                     for(Pair<MetaColumn, SimpleTableField> columnPair : columnCompared.getMiddle()){
-
+                        MetaColumn oldColumn = columnPair.getLeft();
+                        SimpleTableField newColumn = columnPair.getRight();
+                        metaColumnDao.updateObject(oldColumn.convertFromTableField(newColumn));
                     }
                 }
             }

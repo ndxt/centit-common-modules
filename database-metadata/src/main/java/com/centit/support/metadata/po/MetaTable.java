@@ -3,10 +3,13 @@ package com.centit.support.metadata.po;
 import com.centit.support.database.metadata.SimpleTableInfo;
 import com.centit.support.database.metadata.TableInfo;
 import com.centit.support.database.metadata.TableReference;
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
 import com.centit.support.database.utils.DBType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -29,7 +32,8 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     @Id
     @Column(name = "TABLE_ID")
     @ApiModelProperty(value = "表ID")
-    private Long tableId;
+    @ValueGenerator(strategy = GeneratorType.UUID)
+    private String tableId;
 
     /**
      * 所属数据库ID
@@ -58,23 +62,23 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     private String tableName;
 
     /**
-     * 字段名
+     * 字段名 tableType =  C ，大字段是，这是 表结构不会根据字段的变更而变更
      */
     @Column(name = "EXT_COLUMN_NAME")
     @Length(max = 64, message = "字段长度不能大于{max}")
-    @ApiModelProperty(value = "未知")//todo 意思不明确
+    @ApiModelProperty(value = "未知")
     private String extColumnName;
 
     /**
-     * 字段格式
+     * 字段格式 J: JSON or X: XML
      */
     @Column(name = "EXT_COLUMN_FORMAT")
     @Length(max = 10, message = "字段长度不能大于{max}")
-    @ApiModelProperty(value = "未知")//todo 意思不明确
+    @ApiModelProperty(value = "未知")
     private String extColumnFormat;
 
     /**
-     * 表名称
+     * 表中文名称
      */
     @Column(name = "TABLE_LABEL_NAME")
     @NotBlank(message = "字段不能为空")
@@ -83,13 +87,14 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     private String tableLabelName;
 
     /**
+     * 控制表是否可以被修改，不是控制数据
      * 状态 系统 S / R 查询(只读)/ N 新建(读写)
      */
     @Column(name = "TABLE_STATE")
     @NotBlank(message = "字段不能为空")
     @Pattern(regexp = "[SRN]")
     @Length(max = 1, message = "字段长度不能大于{max}")
-    @ApiModelProperty(value = "表状态（S-系统；R-只读；N-可读写）")//todo 意思不明确
+    @ApiModelProperty(value = "表状态（S-系统；R-只读；N-可读写）")
     private String tableState;
     /**
      * 描述
@@ -139,14 +144,14 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     @Transient
     private DBType databaseType;
 
-    public void setDatabaseType(DBType databaseType) {
-        this.databaseType = databaseType;
-        if (this.mdColumns != null) {
-            for (MetaColumn col : this.mdColumns) {
-                col.setDatabaseType(databaseType);
-            }
-        }
-    }
+//    public void setDatabaseType(DBType databaseType) {
+//        this.databaseType = databaseType;
+//        if (this.mdColumns != null) {
+//            for (MetaColumn col : this.mdColumns) {
+//                col.setDatabaseType(databaseType);
+//            }
+//        }
+//    }
 
 
 
@@ -182,9 +187,9 @@ public class MetaTable implements TableInfo, java.io.Serializable {
         return this.mdRelations;
     }
 
-    public void setMdRelations(Set<MetaRelation> mdRelations) {
-        this.mdRelations = mdRelations;
-    }
+//    public void setMdRelations(Set<MetaRelation> mdRelations) {
+//        this.mdRelations = mdRelations;
+//    }
 
     public void addMdRelation(MetaRelation mdRelation) {
         if (this.mdRelations == null)
@@ -210,6 +215,15 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     public MetaTable convertFromDbTable(SimpleTableInfo tableInfo){
         //TODO
         this.tableName = tableInfo.getTableName();
+        if(StringUtils.isNotBlank(tableInfo.getTableLabelName())) {
+            this.tableLabelName = tableInfo.getTableLabelName();
+        }
+        if(StringUtils.isNotBlank(tableInfo.getTableComment())){
+            this.tableComment = tableInfo.getTableComment();
+        }
+        this.tableType = tableInfo.getTableType();
+        this.tableState = "S";
+        this.workFlowOptType = "0";
         return this;
     }
 

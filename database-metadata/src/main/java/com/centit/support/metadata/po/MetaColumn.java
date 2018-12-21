@@ -8,6 +8,7 @@ import com.centit.support.metadata.utils.FieldType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -29,7 +30,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
     @Id
     @Column(name = "TABLE_ID")
     @NotBlank(message = "字段不能为空")
-    private Long tableId;
+    private String tableId;
 
     @ApiModelProperty(value = "字段名")
     @Id
@@ -50,7 +51,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
 
     @ApiModelProperty(value = "显示顺序")
     @Column(name = "COLUMN_ORDER")
-    private Long  columnOrder;
+    private Long columnOrder;
 
     @ApiModelProperty(value = "字段类型")
     @Column(name = "COLUMN_TYPE")
@@ -60,20 +61,21 @@ public class MetaColumn implements TableField,java.io.Serializable {
 
     @ApiModelProperty(value = "字段长度")
     @Column(name = "MAX_LENGTH")
-    private Integer maxLength;
+    private int maxLength;
 
     @ApiModelProperty(value = "字段精度")
     @Column(name = "SCALE")
-    private Integer scale;
+    private int scale;
 
     /**
-     * 字段类别 null
+     * 字段类别 控制自定义表单中是否可以 访问字段
+     * 比如： 最后修改时间、工作流相关的字段、更新版本号，自定义表单中就不用显示
      */
     @ApiModelProperty(value = "字段类别")
     @Column(name = "ACCESS_TYPE")
     @NotBlank(message = "字段不能为空")
     @Length(  message = "字段长度不能大于{max}")
-    private String  accessType;//todo
+    private String  accessType;
 
     /**
      * 是否必填 null
@@ -102,7 +104,6 @@ public class MetaColumn implements TableField,java.io.Serializable {
      *  0：没有：1： 数据字典(列表)   2： 数据字典(树型)   3：JSON表达式 4：sql语句   5：SQL（树）
        9 :框架内置字典（用户、机构、角色等等）  Y：年份 M：月份   F:文件（column_Type 必须为 varchar（64））
      */
-
     @Column(name = "REFERENCE_TYPE")
     @Length(  message = "字段长度不能大于{max}")
     private String  referenceType;
@@ -126,14 +127,14 @@ public class MetaColumn implements TableField,java.io.Serializable {
     private String  validateInfo;
 
     /**
-     * 自动生成规则   C 常量  U uuid S sequence
+     * 自动生成规则   C 常量 F 表达式  U uuid S sequence
      */
     @Column(name = "AUTO_CREATE_RULE")
     @Length(max = 200, message = "字段长度不能大于{max}")
     private String  autoCreateRule;
 
     /**
-     * 自动生成参数 常量的值或者sequence的名字
+     * 自动生成参数 常量的值、表达式 、 或者sequence的名字
      */
     @Column(name = "AUTO_CREATE_PARAM")
     @Length(max = 200, message = "字段长度不能大于{max}")
@@ -153,8 +154,28 @@ public class MetaColumn implements TableField,java.io.Serializable {
     @Transient
     private DBType databaseType;
 
-    public void setDatabaseType(DBType databaseType) {
-        this.databaseType = databaseType;
+//    public void setDatabaseType(DBType databaseType) {
+//        this.databaseType = databaseType;
+//    }
+
+    public MetaColumn convertFromTableField(SimpleTableField tableField){
+        this.columnName = tableField.getColumnName();
+        this.columnFieldType = tableField.getColumnType();
+        if(StringUtils.isNotBlank(tableField.getFieldLabelName())){
+            this.fieldLabelName = tableField.getFieldLabelName();
+        }
+        if(StringUtils.isNotBlank(tableField.getColumnComment())){
+            this.columnComment = tableField.getColumnComment();
+        }
+        if(StringUtils.isNotBlank(tableField.getColumnComment())){
+            this.columnComment = tableField.getColumnComment();
+        }
+        this.maxLength = tableField.getMaxLength();
+        this.scale = tableField.getScale();
+        this.mandatory = tableField.isMandatory() ? "T" : "F";
+        this.accessType = "N";//字段类别.H：隐藏；R：只读；C：只能创建不能修改；N：可读写
+        this.columnState = "N";
+        return this;
     }
 
 
@@ -216,7 +237,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
 
     @Override
     public String getJavaType() {
-        return MetaColumn.mapToFieldType(this.columnFieldType,this.scale ==null?0:this.scale);
+        return MetaColumn.mapToFieldType(this.columnFieldType,this.scale);
     }
 
     @Override
@@ -235,9 +256,15 @@ public class MetaColumn implements TableField,java.io.Serializable {
                 "float".equalsIgnoreCase(this.columnFieldType) ||
                 "varchar".equalsIgnoreCase(this.columnFieldType)||
                 "number".equalsIgnoreCase(this.columnFieldType))
-            return maxLength ==null?0: maxLength.intValue();
+            return maxLength;
         return 0;
     }
+
+    public void setMaxLength(int maxLength){
+        this.maxLength =  maxLength;
+    }
+
+
     @Override
     public int getPrecision() {
         return getMaxLength();
@@ -246,8 +273,12 @@ public class MetaColumn implements TableField,java.io.Serializable {
     public int getScale() {
         if("float".equalsIgnoreCase(this.columnFieldType) ||
                 "number".equalsIgnoreCase(this.columnFieldType))
-            return scale ==null?0: scale.intValue();
+            return scale;
         return 0;
+    }
+
+    public void setScale(int scale){
+        this.scale = scale;
     }
 
     @Override

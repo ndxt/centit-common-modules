@@ -45,7 +45,7 @@ public class MetaRelation implements TableReference, java.io.Serializable {
      * 从表表ID 表单主键
      */
     @Column(name = "CHILD_TABLE_ID")
-    private Long  childTableId;
+    private String  childTableId;
     /**
      * 关联名称 null
      */

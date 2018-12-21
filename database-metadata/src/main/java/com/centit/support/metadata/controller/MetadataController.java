@@ -47,8 +47,9 @@ public class MetadataController {
     @ApiOperation(value = "同步数据库")
     @ApiImplicitParam(name = "databaseCode", value = "数据库ID")
     @GetMapping(value = "/{databaseCode}/synchronization")
+    @WrapUpResponseBody
     public void syncDb(@PathVariable String databaseCode){
-
+        metaDataService.syncDb(databaseCode);
     }
 
     @ApiOperation(value = "同步数据库表")
