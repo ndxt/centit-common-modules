@@ -1,8 +1,10 @@
 package com.centit.support.metadata.po;
 
+import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.database.metadata.SimpleTableInfo;
 import com.centit.support.database.metadata.TableInfo;
 import com.centit.support.database.metadata.TableReference;
+import com.centit.support.database.orm.GeneratorTime;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
 import com.centit.support.database.utils.DBType;
@@ -25,7 +27,7 @@ import java.util.*;
 @Entity
 @Table(name = "F_META_TABLE")
 public class MetaTable implements TableInfo, java.io.Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 201901031000L;
     /**
      * 表ID 表编号
      */
@@ -50,6 +52,7 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     @Pattern(regexp = "[TVC]")//todo regex
     @Length(max = 1, message = "字段长度不能大于{max}")
     @ApiModelProperty(value = "表类别（T-表；V-视图；C-大字段）")
+    @DictionaryMap(fieldName = "tableTypeText", value = "TableType")
     private String tableType;
 
     /**
@@ -95,6 +98,7 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     @Pattern(regexp = "[SRN]")
     @Length(max = 1, message = "字段长度不能大于{max}")
     @ApiModelProperty(value = "表状态（S-系统；R-只读；N-可读写）")
+    @DictionaryMap(fieldName = "tableStateText", value = "TableState")
     private String tableState;
     /**
      * 描述
@@ -110,6 +114,7 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     @Column(name = "WORKFLOW_OPT_TYPE")
     @NotBlank(message = "字段不能为空")
     @Length(max = 1, message = "字段长度不能大于{max}")
+    @DictionaryMap(fieldName = "workFlowOptTypeText", value = "WorkFlowType")
     private String workFlowOptType;
 
     /**
@@ -125,21 +130,23 @@ public class MetaTable implements TableInfo, java.io.Serializable {
      * 更改时间
      */
     @Column(name = "LAST_MODIFY_DATE")
+    @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.ALWAYS, value = "today()")
     private Date lastModifyDate;
     /**
      * 更改人员
      */
     @Column(name = "RECORDER")
     @Length(max = 64, message = "字段长度不能大于{max}")
+    @DictionaryMap(fieldName = "recorderName", value = "userCode")
     private String recorder;
 
     @OneToMany(mappedBy="cid.mdTable",orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "TABLE_ID", referencedColumnName = "TABLE_ID")
-    private Set<MetaColumn> mdColumns;
+    private List<MetaColumn> mdColumns;
 
     @OneToMany(mappedBy="parentTable",orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "TABLE_ID", referencedColumnName = "TABLE_ID")
-    private Set<MetaRelation> mdRelations;
+    private List<MetaRelation> mdRelations;
 
     @Transient
     private DBType databaseType;
@@ -155,15 +162,15 @@ public class MetaTable implements TableInfo, java.io.Serializable {
 
 
 
-    public Set<MetaColumn> getMdColumns() {
+    public List<MetaColumn> getMdColumns() {
         if (this.mdColumns == null)
-            this.mdColumns = new HashSet<>();
+            this.mdColumns = new ArrayList<>();
         return this.mdColumns;
     }
 
     public void addMdColumn(MetaColumn mdColumn) {
         if (this.mdColumns == null)
-            this.mdColumns = new HashSet<>();
+            this.mdColumns = new ArrayList<>();
         this.mdColumns.add(mdColumn);
     }
 
@@ -181,9 +188,9 @@ public class MetaTable implements TableInfo, java.io.Serializable {
         return res;
     }
 
-    public Set<MetaRelation> getMdRelations() {
+    public List<MetaRelation> getMdRelations() {
         if (this.mdRelations == null)
-            this.mdRelations = new HashSet<MetaRelation>();
+            this.mdRelations = new ArrayList<>();
         return this.mdRelations;
     }
 
@@ -193,7 +200,7 @@ public class MetaTable implements TableInfo, java.io.Serializable {
 
     public void addMdRelation(MetaRelation mdRelation) {
         if (this.mdRelations == null)
-            this.mdRelations = new HashSet<MetaRelation>();
+            this.mdRelations = new ArrayList<>();
         this.mdRelations.add(mdRelation);
     }
 
@@ -283,7 +290,7 @@ public class MetaTable implements TableInfo, java.io.Serializable {
 
     @Override
     public List<MetaColumn> getColumns() {
-        return new ArrayList<>(mdColumns);
+        return mdColumns;
     }
 
     @Override

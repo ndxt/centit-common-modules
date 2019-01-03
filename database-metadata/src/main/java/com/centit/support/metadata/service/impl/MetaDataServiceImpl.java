@@ -5,6 +5,7 @@ import com.centit.framework.ip.po.DatabaseInfo;
 import com.centit.framework.ip.service.IntegrationEnvironment;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.metadata.*;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.support.metadata.dao.MetaColumnDao;
 import com.centit.support.metadata.dao.MetaTableDao;
 import com.centit.support.metadata.po.MetaColumn;
@@ -48,15 +49,8 @@ public class MetaDataServiceImpl implements MetaDataService {
     }
 
     @Override
-    public List<MetaTable> listMetaTables(String databaseCode) {
-        DatabaseInfo databaseInfo = integrationEnvironment.getDatabaseInfo(databaseCode);
-            JdbcMetadata jdbcMetadata = new JdbcMetadata();
-            try {
-                jdbcMetadata.setDBConfig(JdbcConnect.getConn(databaseInfo));
-            }catch (SQLException e){
-                logger.error("连接数据库【{}】出错",databaseInfo.getDatabaseName());
-            }
-        return null;
+    public List<MetaTable> listMetaTables(String databaseCode, PageDesc pageDesc) {
+        return metaTableDao.listObjectsByProperties(CollectionsOpt.createHashMap("databaseCode", databaseCode), pageDesc);
     }
 
     @Override
@@ -205,4 +199,13 @@ public class MetaDataServiceImpl implements MetaDataService {
         return column;
     }
 
+    @Override
+    public void updateMetaTable(String tableName, String tableLabelName, String tableComment) {
+        metaTableDao.updateMetaTable(tableName, tableLabelName, tableComment);
+    }
+
+    @Override
+    public MetaTable getMetaTable(String tableName) {
+        return metaTableDao.getObjectByProperties(CollectionsOpt.createHashMap("tableName", tableName));
+    }
 }
