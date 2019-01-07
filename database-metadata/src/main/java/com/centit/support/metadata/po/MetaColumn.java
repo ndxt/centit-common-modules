@@ -12,6 +12,8 @@ import com.centit.support.metadata.utils.FieldType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
@@ -25,6 +27,7 @@ import java.util.Date;
 */
 @ApiModel
 @Data
+@NoArgsConstructor
 @Entity
 @Table(name = "F_META_COLUMN")
 public class MetaColumn implements TableField,java.io.Serializable {
@@ -42,18 +45,18 @@ public class MetaColumn implements TableField,java.io.Serializable {
     @NotBlank(message = "字段不能为空")
     private String  columnName;
 
-    @ApiModelProperty(value = "字段显示名")
+    @ApiModelProperty(value = "字段显示名（可编辑）")
     @Column(name = "FIELD_LABEL_NAME")
     @NotBlank(message = "字段不能为空")
     @Length(max = 64, message = "字段长度不能大于{max}")
     private String  fieldLabelName;
 
-    @ApiModelProperty(value = "字段描述")
+    @ApiModelProperty(value = "字段描述（可编辑）")
     @Column(name = "COLUMN_COMMENT")
     @Length(max = 256, message = "字段长度不能大于{max}")
     private String  columnComment;
 
-    @ApiModelProperty(value = "显示顺序")
+    @ApiModelProperty(value = "显示顺序（可编辑）")
     @Column(name = "COLUMN_ORDER")
     private Long columnOrder;
 
@@ -75,16 +78,16 @@ public class MetaColumn implements TableField,java.io.Serializable {
      * 字段类别 控制自定义表单中是否可以 访问字段
      * 比如： 最后修改时间、工作流相关的字段、更新版本号，自定义表单中就不用显示
      */
-    @ApiModelProperty(value = "字段类别")
+    @ApiModelProperty(value = "字段类别（可编辑）")
     @Column(name = "ACCESS_TYPE")
     @NotBlank(message = "字段不能为空")
     @Length(  message = "字段长度不能大于{max}")
     private String  accessType;
 
     /**
-     * 是否必填 null
+     * 是否必填
      */
-    @ApiModelProperty(value = "是否必填")
+    @ApiModelProperty(value = "是否必填（可编辑）")
     @Column(name = "MANDATORY")
     @Length(  message = "字段长度不能大于{max}")
     private String  mandatory;
@@ -168,7 +171,11 @@ public class MetaColumn implements TableField,java.io.Serializable {
     @Transient
     private DBType databaseType;
 
-//    public void setDatabaseType(DBType databaseType) {
+    public MetaColumn(@NotBlank(message = "字段不能为空") String tableId, @NotBlank(message = "字段不能为空") String columnName) {
+        this.tableId = tableId;
+        this.columnName = columnName;
+    }
+    //    public void setDatabaseType(DBType databaseType) {
 //        this.databaseType = databaseType;
 //    }
 

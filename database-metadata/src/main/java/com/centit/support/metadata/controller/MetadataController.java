@@ -89,6 +89,17 @@ public class MetadataController {
         return PageQueryResult.createResult(list, pageDesc);
     }
 
+    @ApiOperation(value = "查询单个列元数据")
+    @ApiImplicitParams(value = {
+        @ApiImplicitParam(name = "tableId", value = "表元数据ID"),
+        @ApiImplicitParam(name = "columnName", value = "列名")
+    })
+    @GetMapping(value = "/{tableId}/{columnName}")
+    @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
+    public MetaColumn getColumn(@PathVariable String tableId, @PathVariable String columnName){
+        return metaDataService.getMetaColumn(tableId, columnName);
+    }
+
     @ApiOperation(value = "修改表元数据")
     @ApiImplicitParams(value = {
         @ApiImplicitParam(name = "tableName", value = "表名"),
@@ -114,8 +125,10 @@ public class MetadataController {
 
     @ApiOperation(value = "查询关联关系元数据")
     @GetMapping(value = "/relation")
-    public PageQueryResult<MetaRelation> metaRelation(){
-        return PageQueryResult.createResultMapDict(null, null);
+    @WrapUpResponseBody
+    public PageQueryResult<MetaRelation> metaRelation(PageDesc pageDesc){
+        List<MetaRelation> list = metaDataService.listMetaRelation(pageDesc);
+        return PageQueryResult.createResultMapDict(list, pageDesc);
     }
 
     @ApiOperation(value = "新建关联关系元数据")

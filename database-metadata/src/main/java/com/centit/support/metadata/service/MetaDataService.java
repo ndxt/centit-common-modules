@@ -8,6 +8,7 @@ import com.centit.support.metadata.po.MetaColumn;
 import com.centit.support.metadata.po.MetaRelation;
 import com.centit.support.metadata.po.MetaTable;
 
+import javax.persistence.Column;
 import java.util.List;
 
 public interface MetaDataService {
@@ -26,9 +27,11 @@ public interface MetaDataService {
 
     MetaTable getMetaTable(String databaseCode, String tableName);
 
-    List<MetaRelation> listMetaRelation();
+    List<MetaRelation> listMetaRelation(PageDesc pageDesc);
 
     List<MetaColumn> listMetaColumns(String databaseCode, String tableName, PageDesc pageDesc);
 
     void createRelation(MetaRelation relation);
+
+    MetaColumn getMetaColumn(String tableId, String columnName);
 }

@@ -192,18 +192,6 @@ public class MetaDataServiceImpl implements MetaDataService {
         return new ImmutableTriple<>(insertList,updateList,delList);
     }
 
-    private MetaColumn dbCol2MetaCol(SimpleTableField tableField){
-        MetaColumn column = new MetaColumn();
-        column.setColumnName(tableField.getColumnName());
-        column.setFieldLabelName(tableField.getFieldLabelName());
-        column.setColumnComment(tableField.getColumnComment());
-        column.setColumnFieldType(tableField.getColumnType());
-        column.setMaxLength(tableField.getMaxLength());
-        column.setScale(tableField.getScale());
-        column.setAccessType(tableField.getColumnType());
-        return column;
-    }
-
     @Override
     public void updateMetaTable(String tableName, String tableLabelName, String tableComment) {
         metaTableDao.updateMetaTable(tableName, tableLabelName, tableComment);
@@ -216,7 +204,7 @@ public class MetaDataServiceImpl implements MetaDataService {
     }
 
     @Override
-    public List<MetaRelation> listMetaRelation() {
+    public List<MetaRelation> listMetaRelation(PageDesc pageDesc) {
         return metaRelationDao.listObjects();
     }
 
@@ -230,5 +218,10 @@ public class MetaDataServiceImpl implements MetaDataService {
     public void createRelation(MetaRelation relation) {
         metaRelationDao.saveNewObject(relation);
         metaRelationDao.saveObjectReferences(relation);
+    }
+
+    @Override
+    public MetaColumn getMetaColumn(String tableId, String columnName) {
+        return metaColumnDao.getObjectById(new MetaColumn(tableId, columnName));
     }
 }
