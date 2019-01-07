@@ -7,8 +7,10 @@ import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.metadata.*;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.metadata.dao.MetaColumnDao;
+import com.centit.support.metadata.dao.MetaRelationDao;
 import com.centit.support.metadata.dao.MetaTableDao;
 import com.centit.support.metadata.po.MetaColumn;
+import com.centit.support.metadata.po.MetaRelation;
 import com.centit.support.metadata.po.MetaTable;
 import com.centit.support.metadata.service.MetaDataService;
 import com.centit.support.metadata.utils.JdbcConnect;
@@ -42,6 +44,9 @@ public class MetaDataServiceImpl implements MetaDataService {
 
     @Autowired
     private MetaColumnDao metaColumnDao;
+
+    @Autowired
+    private MetaRelationDao metaRelationDao;
 
     @Override
     public List<DatabaseInfo> listDatabase() {
@@ -205,7 +210,25 @@ public class MetaDataServiceImpl implements MetaDataService {
     }
 
     @Override
-    public MetaTable getMetaTable(String tableName) {
-        return metaTableDao.getObjectByProperties(CollectionsOpt.createHashMap("tableName", tableName));
+    public MetaTable getMetaTable(String databaseCode, String tableName) {
+        return metaTableDao.getObjectByProperties(
+            CollectionsOpt.createHashMap("databaseCode", databaseCode, "tableName", tableName));
+    }
+
+    @Override
+    public List<MetaRelation> listMetaRelation() {
+        return metaRelationDao.listObjects();
+    }
+
+    @Override
+    public List<MetaColumn> listMetaColumns(String databaseCode, String tableName, PageDesc pageDesc) {
+        return metaColumnDao.listObjectsByProperties(
+            CollectionsOpt.createHashMap("databaseCode", databaseCode, "tableName", tableName), pageDesc);
+    }
+
+    @Override
+    public void createRelation(MetaRelation relation) {
+        metaRelationDao.saveNewObject(relation);
+        metaRelationDao.saveObjectReferences(relation);
     }
 }

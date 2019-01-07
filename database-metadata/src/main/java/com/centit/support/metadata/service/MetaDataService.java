@@ -1,8 +1,11 @@
 package com.centit.support.metadata.service;
 
+import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.ip.po.DatabaseInfo;
 import com.centit.support.database.metadata.SimpleTableInfo;
 import com.centit.support.database.utils.PageDesc;
+import com.centit.support.metadata.po.MetaColumn;
+import com.centit.support.metadata.po.MetaRelation;
 import com.centit.support.metadata.po.MetaTable;
 
 import java.util.List;
@@ -21,5 +24,11 @@ public interface MetaDataService {
 
     void updateMetaTable(String tableName, String tableLabelName, String tableComment);
 
-    MetaTable getMetaTable(String tableName);
+    MetaTable getMetaTable(String databaseCode, String tableName);
+
+    List<MetaRelation> listMetaRelation();
+
+    List<MetaColumn> listMetaColumns(String databaseCode, String tableName, PageDesc pageDesc);
+
+    void createRelation(MetaRelation relation);
 }

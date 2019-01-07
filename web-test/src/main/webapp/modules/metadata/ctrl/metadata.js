@@ -4,16 +4,14 @@
   var Mustache = require('plugins/mustache.min');
   var Config = require('config');
 	
-	// var MetadataEdit = require('./metadata.edit');
-	// var MetadataSync = require('./metadata.sync');
+	var MetadataEdit = require('./metadata.edit');
 
 	let metaTableUrl = 'service/metadata/{{databaseCode}}/tables';
     
 	// 角色信息列表
 	var Metadata = Page.extend(function() {
 		this.injecte([
-	        // new MetadataEdit('metadata_edit')
-	        // new MetadataSync('metadata_sync')
+	        new MetadataEdit('metadata_edit')
 	    ]);
 		
 		// @override
@@ -24,7 +22,7 @@
         textField: 'databaseName',
         valueField: 'databaseCode',
         onSelect:function(param){
-          $('#ta').cdatagrid({
+          /*$('#ta').cdatagrid({
             url: Mustache.render(metaTableUrl, param),
             columns:[[
               {field:'tableName',title:'表名',width:100},
@@ -34,11 +32,19 @@
               {field:'lastModifyDate',title:'最后修改日期',width:100,align:'right'},
               {field:'recorderName',title:'修改人',width:100,align:'right'}
             ]]
-          });
+          });*/
+          panel.find('table').datagrid({
+            url: Mustache.render(metaTableUrl, param)
+          })
         }
       });
 
-      $('#ta').cdatagrid({
+      panel.find('table').cdatagrid({
+        url: 'service/metadata/framework/tables',
+        controller:this
+      })
+
+     /* $('#ta').cdatagrid({
         url: 'service/metadata/framework/tables',
         columns:[[
           {field:'tableName',title:'表名',width:100},
@@ -48,11 +54,13 @@
           {field:'lastModifyDate',title:'最后修改日期',width:100,align:'right'},
           {field:'recorderName',title:'修改人',width:100,align:'right'}
         ]]
-      });
+      });*/
 
 		  panel.find('#sync').click(function(){
         let dababaseCode = databaseCombo.combobox('getValue');
-        $.get(Config.ContextPath + 'service/metadata/'+dababaseCode+'/synchronization',
+        $.get(Config.ContextPath + 'service/metadata/'+dababaseCode+'/synchronization',function(){
+          $('#ta').cdatagrid('reload');
+          }
         )
       })
 		};

@@ -6,8 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-
-
 /**
  * @author zouwy
  */
@@ -17,49 +15,31 @@ public class MetaRelDetail implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
 
     /**
-     * 关联代码 null
+     * 关联代码
      */
     @Column(name = "RELATION_ID")
     private Long relationId;
 
     /**
-     * p字段代码 null
+     * p字段代码
      */
     @Column(name = "PARENT_COLUMN_NAME")
     @NotBlank(message = "字段不能为空")
     private String parentColumnName;
 
     /**
-     * C字段代码 null
+     * C字段代码
      */
     @Column(name = "CHILD_COLUMN_NAME")
     @NotBlank(message = "字段不能为空")
     @Length(max = 32, message = "字段长度不能大于{max}")
     private String  childColumnName;
 
-
-
-
-//    public com.centit.metaform.po.MetaRelDetailId getCid() {
-//        return this.cid;
-//    }
-
-//    public void setCid(com.centit.metaform.po.MetaRelDetailId id) {
-//        this.cid = id;
-//    }
-  
-  
     public String getParentColumnName() {
-//        if(this.cid==null)
-//            this.cid = new com.centit.metaform.po.MetaRelDetailId();
-//        return this.cid.getParentColumnName();
         return this.parentColumnName;
     }
 
     public void setParentColumnName(String parentColumnName) {
-//        if(this.cid==null)
-//            this.cid = new com.centit.metaform.po.MetaRelDetailId();
-//        this.cid.setParentColumnName(parentColumnName);
         this.parentColumnName = parentColumnName;
     }
 
@@ -71,8 +51,6 @@ public class MetaRelDetail implements java.io.Serializable {
         this.relationId = relation;
     }
 
-    // Property accessors
-  
     public String getChildColumnName() {
         return this.childColumnName;
     }
@@ -81,11 +59,8 @@ public class MetaRelDetail implements java.io.Serializable {
         this.childColumnName = childColumnName;
     }
 
-
-
     public MetaRelDetail copy(MetaRelDetail other){
   
-//        this.setCid(other.getCid());
         this.parentColumnName = other.getParentColumnName();
   
         this.childColumnName= other.getChildColumnName();
@@ -95,10 +70,6 @@ public class MetaRelDetail implements java.io.Serializable {
 
     public MetaRelDetail copyNotNullProperty(MetaRelDetail other){
   
-//    if( other.getCid() != null)
-//        this.setCid(other.getCid());
-//    if( other.getParentColumnName() != null)
-//        this.setParentColumnName(other.getParentColumnName());
         if (other.getParentColumnName() != null)
             this.parentColumnName = other.getParentColumnName();
         if (other.getRelationId() != null)

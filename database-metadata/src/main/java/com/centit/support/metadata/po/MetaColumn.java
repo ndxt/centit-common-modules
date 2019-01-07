@@ -1,8 +1,12 @@
 package com.centit.support.metadata.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.database.metadata.SimpleTableField;
 import com.centit.support.database.metadata.TableField;
+import com.centit.support.database.orm.GeneratorTime;
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
 import com.centit.support.database.utils.DBType;
 import com.centit.support.metadata.utils.FieldType;
 import io.swagger.annotations.ApiModel;
@@ -24,7 +28,7 @@ import java.util.Date;
 @Entity
 @Table(name = "F_META_COLUMN")
 public class MetaColumn implements TableField,java.io.Serializable {
-    private static final long serialVersionUID =  1L;
+    private static final long serialVersionUID =  201901071109L;
 
     @ApiModelProperty(value = "表ID")
     @Id
@@ -104,24 +108,29 @@ public class MetaColumn implements TableField,java.io.Serializable {
      *  0：没有：1： 数据字典(列表)   2： 数据字典(树型)   3：JSON表达式 4：sql语句   5：SQL（树）
        9 :框架内置字典（用户、机构、角色等等）  Y：年份 M：月份   F:文件（column_Type 必须为 varchar（64））
      */
+    @ApiModelProperty(value = "引用数据类型（0：没有 1：数据字典(列表)   2： 数据字典(树型)   3：JSON表达式 4：sql语句   5：SQL（树）\n" +
+        "9 :框架内置字典（用户、机构、角色等等）  Y：年份 M：月份   F:文件（column_Type 必须为 varchar（64）））")
     @Column(name = "REFERENCE_TYPE")
     @Length(  message = "字段长度不能大于{max}")
     private String  referenceType;
     /**
      * 引用数据 根据paramReferenceType类型（1,2,3）填写对应值
      */
+    @ApiModelProperty(value = "引用数据")
     @Column(name = "REFERENCE_DATA")
     @Length(max = 1000, message = "字段长度不能大于{max}")
     private String  referenceData;
     /**
      * 约束表达式 regex表达式
      */
+    @ApiModelProperty(value = "约束表达式 regex表达式")
     @Column(name = "VALIDATE_REGEX")
     @Length(max = 200, message = "字段长度不能大于{max}")
     private String  validateRegex;
     /**
      * 约束提示 约束不通过提示信息
      */
+    @ApiModelProperty(value = "约束提示 约束不通过提示信息")
     @Column(name = "VALIDATE_INFO")
     @Length(max = 200, message = "字段长度不能大于{max}")
     private String  validateInfo;
@@ -129,6 +138,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
     /**
      * 自动生成规则   C 常量 F 表达式  U uuid S sequence
      */
+    @ApiModelProperty(value = "自动生成规则   C 常量 F 表达式  U uuid S sequence")
     @Column(name = "AUTO_CREATE_RULE")
     @Length(max = 200, message = "字段长度不能大于{max}")
     private String  autoCreateRule;
@@ -136,6 +146,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
     /**
      * 自动生成参数 常量的值、表达式 、 或者sequence的名字
      */
+    @ApiModelProperty(value = "自动生成参数 常量的值、表达式、或者sequence的名字")
     @Column(name = "AUTO_CREATE_PARAM")
     @Length(max = 200, message = "字段长度不能大于{max}")
     private String  autoCreateParam;
@@ -143,12 +154,15 @@ public class MetaColumn implements TableField,java.io.Serializable {
      * 更改时间 null
      */
     @Column(name = "LAST_MODIFY_DATE")
+    @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.ALWAYS, value = "today()")
     private Date  lastModifyDate;
     /**
      * 更改人员 null
      */
+    @ApiModelProperty(value = "更改人员")
     @Column(name = "RECORDER")
     @Length(max = 8, message = "字段长度不能大于{max}")
+    @DictionaryMap(fieldName = "recorderName", value = "userCode")
     private String  recorder;
 
     @Transient
@@ -164,10 +178,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
         if(StringUtils.isNotBlank(tableField.getFieldLabelName())){
             this.fieldLabelName = tableField.getFieldLabelName();
         }
-        if(StringUtils.isNotBlank(tableField.getColumnComment())){
-            this.columnComment = tableField.getColumnComment();
-        }
-        if(StringUtils.isNotBlank(tableField.getColumnComment())){
+        if(StringUtils.isNotBlank(tableField.getColumnComment()) && StringUtils.isBlank(this.columnComment)){
             this.columnComment = tableField.getColumnComment();
         }
         this.maxLength = tableField.getMaxLength();
@@ -178,8 +189,6 @@ public class MetaColumn implements TableField,java.io.Serializable {
         return this;
     }
 
-
-  
     /**
      * 这个是用于生产数据库表创建语句的，不是用来生成表单默认值的
      */
