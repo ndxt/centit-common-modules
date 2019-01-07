@@ -14,8 +14,8 @@ public class MetaTableDao extends BaseDaoImpl<MetaTable, String> {
         return null;
     }
 
-    public void updateMetaTable(String tableName, String tableLabelName, String tableComment) {
-        String sql = "update F_META_TABLE set TABLE_LABEL_NAME = ?, TABLE_COMMENT = ? where TABLE_NAME = ?";
-        DatabaseOptUtils.doExecuteSql(this, sql, new Object[]{tableLabelName, tableComment, tableName});
+    public void updateMetaTable(String tableId, String tableLabelName, String tableComment, String userCode) {
+        String sql = "update F_META_TABLE set TABLE_LABEL_NAME = ?, TABLE_COMMENT = ?, RECORDER = ? where TABLE_ID = ?";
+        DatabaseOptUtils.doExecuteSql(this, sql, new Object[]{tableLabelName, tableComment, userCode, tableId});
     }
 }

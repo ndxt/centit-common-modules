@@ -1,5 +1,6 @@
 package com.centit.support.metadata.po;
 
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.database.metadata.SimpleTableInfo;
 import com.centit.support.database.metadata.TableInfo;
@@ -231,6 +232,7 @@ public class MetaTable implements TableInfo, java.io.Serializable {
         this.tableType = tableInfo.getTableType();
         this.tableState = "S";
         this.workFlowOptType = "0";
+        this.recorder = WebOptUtils.getLoginUser().getUserCode();
         return this;
     }
 

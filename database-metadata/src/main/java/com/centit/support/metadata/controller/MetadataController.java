@@ -59,7 +59,7 @@ public class MetadataController {
         metaDataService.syncDb(databaseCode);
     }
 
-    @ApiOperation(value = "同步数据库表")
+/*    @ApiOperation(value = "同步数据库表")
     @ApiImplicitParams(value = {
         @ApiImplicitParam(name = "databaseCode", value = "数据库ID"),
         @ApiImplicitParam(name = "tableId", value = "表名")
@@ -67,25 +67,23 @@ public class MetadataController {
     @GetMapping(value = "/{databaseCode}/{tableId}/synchronization")
     public void syncTable(@PathVariable String databaseCode, @PathVariable String tableId){
         metaDataService.syncTable(databaseCode, tableId);
-    }
+    }*/
 
     @ApiOperation(value = "查询单个表元数据")
-    @ApiImplicitParam(name = "tableName", value = "表名")
-    @GetMapping(value = "/{databaseCode}/tables/{tableName}")
+    @ApiImplicitParam(name = "tableId", value = "表ID")
+    @GetMapping(value = "/table/{tableId}")
     @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
-    public MetaTable getMetaTable(@PathVariable String databaseCode, @PathVariable String tableName){
-        return metaDataService.getMetaTable(databaseCode, tableName);
+    public MetaTable getMetaTable(@PathVariable String tableId){
+        return metaDataService.getMetaTable(tableId);
     }
 
     @ApiOperation(value = "查询列元数据")
     @ApiImplicitParams(value = {
-        @ApiImplicitParam(name = "databaseCode", value = "数据库代码"),
-        @ApiImplicitParam(name = "tableName", value = "表名")
+        @ApiImplicitParam(name = "tableId", value = "表ID")
     })
-    @GetMapping(value = "/{databaseCode}/{tableName}/columns")
-    public PageQueryResult<MetaColumn> listColumns(@PathVariable String databaseCode, @PathVariable String tableName,
-                                                   PageDesc pageDesc){
-        List<MetaColumn> list = metaDataService.listMetaColumns(databaseCode, tableName, pageDesc);
+    @GetMapping(value = "/{tableId}/columns")
+    public PageQueryResult<MetaColumn> listColumns(@PathVariable String tableId, PageDesc pageDesc){
+        List<MetaColumn> list = metaDataService.listMetaColumns(tableId, pageDesc);
         return PageQueryResult.createResult(list, pageDesc);
     }
 
@@ -102,24 +100,23 @@ public class MetadataController {
 
     @ApiOperation(value = "修改表元数据")
     @ApiImplicitParams(value = {
-        @ApiImplicitParam(name = "tableName", value = "表名"),
+        @ApiImplicitParam(name = "tableId", value = "表ID"),
         @ApiImplicitParam(name = "tableLabelName", value = "中文名"),
         @ApiImplicitParam(name = "tableComment", value = "描述")
     })
-    @PutMapping(value = "/{tableName}")
+    @PutMapping(value = "/table/{tableId}")
     @WrapUpResponseBody
-    public void updateMetaTable(@PathVariable String tableName, String tableLabelName, String tableComment){
-        metaDataService.updateMetaTable(tableName, tableLabelName, tableComment);
+    public void updateMetaTable(@PathVariable String tableId, String tableLabelName, String tableComment){
+        metaDataService.updateMetaTable(tableId, tableLabelName, tableComment);
     }
 
     @ApiOperation(value = "修改列元数据")
     @ApiImplicitParams(value = {
-        @ApiImplicitParam(name = "tableName", value = "表名"),
+        @ApiImplicitParam(name = "tableId", value = "表ID"),
         @ApiImplicitParam(name = "columnName", value = "列名")
     })
-    @PutMapping(value = "/{tableName}/columns/{columnName}")
-    public void updateMetaColumns(@PathVariable String tableName, @PathVariable String columnName,
-                                  MetaColumn metaColumn){
+    @PutMapping(value = "/column")
+    public void updateMetaColumns(MetaColumn metaColumn){
 
     }
 
@@ -132,8 +129,14 @@ public class MetadataController {
     }
 
     @ApiOperation(value = "新建关联关系元数据")
-    @PostMapping(value = "/relations")
+    @PostMapping(value = "/relation")
     public void createRelation(MetaRelation relation){
+        metaDataService.createRelation(relation);
+    }
+
+    @ApiOperation(value = "新建关联关系元数据")
+    @PutMapping(value = "/relation")
+    public void updateRelation(MetaRelation relation){
         metaDataService.createRelation(relation);
     }
 

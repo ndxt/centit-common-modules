@@ -23,13 +23,13 @@ public interface MetaDataService {
 
     void syncDb(String databaseCode);
 
-    void updateMetaTable(String tableName, String tableLabelName, String tableComment);
+    void updateMetaTable(String tableId, String tableLabelName, String tableComment);
 
-    MetaTable getMetaTable(String databaseCode, String tableName);
+    MetaTable getMetaTable(String tableId);
 
     List<MetaRelation> listMetaRelation(PageDesc pageDesc);
 
-    List<MetaColumn> listMetaColumns(String databaseCode, String tableName, PageDesc pageDesc);
+    List<MetaColumn> listMetaColumns(String tableName, PageDesc pageDesc);
 
     void createRelation(MetaRelation relation);
 

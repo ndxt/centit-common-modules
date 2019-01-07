@@ -9,7 +9,7 @@
     // @override
     this.load = function (panel, data) {
       var form = panel.find('form');
-      Core.ajax(Config.ContextPath + 'service/metadata/' + data.tableName, {
+      Core.ajax(Config.ContextPath + 'service/metadata/'+data.databaseCode+'/tables/' + data.tableName, {
         type: 'json',
         method: 'get'
       }).then(function (data) {
@@ -36,7 +36,7 @@
                     data:data
                 }).then(closeCallback);*/
       form.form('ajax', {
-        url: Config.ContextPath + 'service/metadata/' + data.tableName,
+        url: Config.ContextPath + 'service/metadata/table/' +data.tableId,
         method: 'PUT',
         // data: data,
       }).then(function(){

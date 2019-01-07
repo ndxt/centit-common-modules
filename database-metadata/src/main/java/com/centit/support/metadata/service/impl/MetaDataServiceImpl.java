@@ -1,6 +1,7 @@
 package com.centit.support.metadata.service.impl;
 
 import com.centit.framework.common.ObjectException;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.ip.po.DatabaseInfo;
 import com.centit.framework.ip.service.IntegrationEnvironment;
 import com.centit.support.algorithm.CollectionsOpt;
@@ -193,14 +194,13 @@ public class MetaDataServiceImpl implements MetaDataService {
     }
 
     @Override
-    public void updateMetaTable(String tableName, String tableLabelName, String tableComment) {
-        metaTableDao.updateMetaTable(tableName, tableLabelName, tableComment);
+    public void updateMetaTable(String tableId, String tableLabelName, String tableComment) {
+        metaTableDao.updateMetaTable(tableId, tableLabelName, tableComment, WebOptUtils.getLoginUser().getUserCode());
     }
 
     @Override
-    public MetaTable getMetaTable(String databaseCode, String tableName) {
-        return metaTableDao.getObjectByProperties(
-            CollectionsOpt.createHashMap("databaseCode", databaseCode, "tableName", tableName));
+    public MetaTable getMetaTable(String tableId) {
+        return metaTableDao.getObjectById(tableId);
     }
 
     @Override
@@ -209,9 +209,9 @@ public class MetaDataServiceImpl implements MetaDataService {
     }
 
     @Override
-    public List<MetaColumn> listMetaColumns(String databaseCode, String tableName, PageDesc pageDesc) {
+    public List<MetaColumn> listMetaColumns(String tableId, PageDesc pageDesc) {
         return metaColumnDao.listObjectsByProperties(
-            CollectionsOpt.createHashMap("databaseCode", databaseCode, "tableName", tableName), pageDesc);
+            CollectionsOpt.createHashMap("tableId", tableId), pageDesc);
     }
 
     @Override
