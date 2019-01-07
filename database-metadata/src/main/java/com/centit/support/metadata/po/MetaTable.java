@@ -5,6 +5,7 @@ import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.database.metadata.SimpleTableInfo;
 import com.centit.support.database.metadata.TableInfo;
 import com.centit.support.database.metadata.TableReference;
+import com.centit.support.database.orm.GeneratorCondition;
 import com.centit.support.database.orm.GeneratorTime;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
@@ -131,7 +132,7 @@ public class MetaTable implements TableInfo, java.io.Serializable {
      * 更改时间
      */
     @Column(name = "LAST_MODIFY_DATE")
-    @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.ALWAYS, value = "today()")
+    @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.NEW_UPDATE, condition = GeneratorCondition.ALWAYS, value = "today()")
     private Date lastModifyDate;
     /**
      * 更改人员
@@ -232,7 +233,6 @@ public class MetaTable implements TableInfo, java.io.Serializable {
         this.tableType = tableInfo.getTableType();
         this.tableState = "S";
         this.workFlowOptType = "0";
-        this.recorder = WebOptUtils.getLoginUser().getUserCode();
         return this;
     }
 

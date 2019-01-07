@@ -17,7 +17,7 @@ import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
  * Created by codefan on 17-7-18.
  */
 @Configuration
-@ComponentScan(basePackages = {"com.centit.support"},
+@ComponentScan(basePackages = {"com.centit"},
         excludeFilters = @ComponentScan.Filter(value = org.springframework.stereotype.Controller.class))
 @PropertySource(value = "classpath:system.properties")
 @Import(value = {JdbcConfig.class, SpringSecurityDaoConfig.class})

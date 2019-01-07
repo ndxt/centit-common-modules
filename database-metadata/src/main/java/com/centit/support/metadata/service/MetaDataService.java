@@ -21,9 +21,9 @@ public interface MetaDataService {
 
     void syncTable(String databaseCode, String tableId);
 
-    void syncDb(String databaseCode);
+    void syncDb(String databaseCode, String recorder);
 
-    void updateMetaTable(String tableId, String tableLabelName, String tableComment);
+    void updateMetaTable(String tableId, String tableLabelName, String tableComment, String recorder);
 
     MetaTable getMetaTable(String tableId);
 

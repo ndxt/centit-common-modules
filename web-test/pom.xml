@@ -17,6 +17,12 @@
     <dependencies>
         <dependency>
             <groupId>com.centit.framework</groupId>
+            <artifactId>framework-session</artifactId>
+            <version>4.4-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
             <artifactId>framework-system-static</artifactId>
         </dependency>
 

@@ -73,7 +73,7 @@ public class MetaDataServiceImpl implements MetaDataService {
     }
 
     @Override
-    public void syncDb(String databaseCode){
+    public void syncDb(String databaseCode, String recorder){
         List<SimpleTableInfo> dbTables = listRealTables(databaseCode);
         List<MetaTable> metaTables = metaTableDao.listObjectsByFilter("where DATABASE_CODE = ?", new Object[]{databaseCode});
         Comparator<TableInfo> comparator = (o1, o2) -> StringUtils.compare(o1.getTableName(), o2.getTableName());
@@ -84,7 +84,7 @@ public class MetaDataServiceImpl implements MetaDataService {
                 //表
                 MetaTable metaTable = new MetaTable().convertFromDbTable(table);
                 metaTable.setDatabaseCode(databaseCode);
-                metaTable.setTableType("T");//表
+                metaTable.setRecorder(recorder);
                 metaTableDao.saveNewObject(metaTable);
                 //列
                 List<SimpleTableField> columns = table.getColumns();
@@ -106,6 +106,7 @@ public class MetaDataServiceImpl implements MetaDataService {
             //更新
             for(Pair<MetaTable, SimpleTableInfo> pair : triple.getMiddle()){
                 MetaTable oldTable = pair.getLeft();
+                oldTable.setRecorder(recorder);
                 SimpleTableInfo newTable = pair.getRight();
                 //表
                 metaTableDao.updateObject(oldTable.convertFromDbTable(newTable));
@@ -120,6 +121,7 @@ public class MetaDataServiceImpl implements MetaDataService {
                     for(SimpleTableField tableField : columnCompared.getLeft()){
                         MetaColumn metaColumn = new MetaColumn().convertFromTableField(tableField);
                         metaColumn.setTableId(oldTable.getTableId());
+                        metaColumn.setRecorder(recorder);
                         metaColumnDao.saveNewObject(metaColumn);
                     }
                 }
@@ -133,6 +135,7 @@ public class MetaDataServiceImpl implements MetaDataService {
                     //更新
                     for(Pair<MetaColumn, SimpleTableField> columnPair : columnCompared.getMiddle()){
                         MetaColumn oldColumn = columnPair.getLeft();
+                        oldColumn.setRecorder(recorder);
                         SimpleTableField newColumn = columnPair.getRight();
                         metaColumnDao.updateObject(oldColumn.convertFromTableField(newColumn));
                     }
@@ -194,8 +197,12 @@ public class MetaDataServiceImpl implements MetaDataService {
     }
 
     @Override
-    public void updateMetaTable(String tableId, String tableLabelName, String tableComment) {
-        metaTableDao.updateMetaTable(tableId, tableLabelName, tableComment, WebOptUtils.getLoginUser().getUserCode());
+    public void updateMetaTable(String tableId, String tableLabelName, String tableComment, String recorder) {
+        MetaTable metaTable = metaTableDao.getObjectById(tableId);
+        metaTable.setTableComment(tableComment);
+        metaTable.setTableLabelName(tableLabelName);
+        metaTable.setRecorder(recorder);
+        metaTableDao.updateObject(metaTable);
     }
 
     @Override

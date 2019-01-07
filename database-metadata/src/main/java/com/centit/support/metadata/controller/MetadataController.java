@@ -1,9 +1,12 @@
 package com.centit.support.metadata.controller;
 
+import com.centit.framework.common.ObjectException;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.WrapUpContentType;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.ip.po.DatabaseInfo;
+import com.centit.framework.security.model.CentitUserDetails;
 import com.centit.support.database.metadata.SimpleTableInfo;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.metadata.po.MetaColumn;
@@ -14,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.omg.PortableServer.POAPackage.ObjectAlreadyActive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,7 +60,11 @@ public class MetadataController {
     @GetMapping(value = "/{databaseCode}/synchronization")
     @WrapUpResponseBody
     public void syncDb(@PathVariable String databaseCode){
-        metaDataService.syncDb(databaseCode);
+        CentitUserDetails userDetails = WebOptUtils.getLoginUser();
+        if(userDetails == null){
+            throw new ObjectException("未登录");
+        }
+        metaDataService.syncDb(databaseCode, userDetails.getUserCode());
     }
 
 /*    @ApiOperation(value = "同步数据库表")
@@ -107,7 +115,11 @@ public class MetadataController {
     @PutMapping(value = "/table/{tableId}")
     @WrapUpResponseBody
     public void updateMetaTable(@PathVariable String tableId, String tableLabelName, String tableComment){
-        metaDataService.updateMetaTable(tableId, tableLabelName, tableComment);
+        CentitUserDetails userDetails = WebOptUtils.getLoginUser();
+        if(userDetails == null){
+            throw new ObjectException("未登录");
+        }
+        metaDataService.updateMetaTable(tableId, tableLabelName, tableComment, userDetails.getUserCode());
     }
 
     @ApiOperation(value = "修改列元数据")
