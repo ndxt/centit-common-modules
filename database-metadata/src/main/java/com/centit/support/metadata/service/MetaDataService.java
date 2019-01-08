@@ -19,8 +19,6 @@ public interface MetaDataService {
 
     List<SimpleTableInfo> listRealTables(String databaseCode);
 
-    void syncTable(String databaseCode, String tableId);
-
     void syncDb(String databaseCode, String recorder);
 
     void updateMetaTable(String tableId, String tableLabelName, String tableComment, String recorder);

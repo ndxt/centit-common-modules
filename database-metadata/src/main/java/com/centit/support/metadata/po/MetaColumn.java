@@ -32,13 +32,13 @@ import java.util.Date;
 public class MetaColumn implements TableField,java.io.Serializable {
     private static final long serialVersionUID =  201901071109L;
 
-    @ApiModelProperty(value = "表ID")
+    @ApiModelProperty(value = "表ID", hidden = true)
     @Id
     @Column(name = "TABLE_ID")
     @NotBlank(message = "字段不能为空")
     private String tableId;
 
-    @ApiModelProperty(value = "字段名")
+    @ApiModelProperty(value = "字段名", hidden = true)
     @Id
     @Column(name = "COLUMN_NAME")
     @NotBlank(message = "字段不能为空")
@@ -59,17 +59,17 @@ public class MetaColumn implements TableField,java.io.Serializable {
     @Column(name = "COLUMN_ORDER")
     private Long columnOrder;
 
-    @ApiModelProperty(value = "字段类型")
+    @ApiModelProperty(value = "字段类型", hidden = true)
     @Column(name = "COLUMN_TYPE")
     @NotBlank(message = "字段不能为空")
     @Length(max = 32, message = "字段长度不能大于{max}")
     private String columnType;
 
-    @ApiModelProperty(value = "字段长度")
+    @ApiModelProperty(value = "字段长度", hidden = true)
     @Column(name = "MAX_LENGTH")
     private int maxLength;
 
-    @ApiModelProperty(value = "字段精度")
+    @ApiModelProperty(value = "字段精度", hidden = true)
     @Column(name = "SCALE")
     private int scale;
 
@@ -86,7 +86,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
     /**
      * 是否必填
      */
-    @ApiModelProperty(value = "是否必填（可编辑）")
+    @ApiModelProperty(value = "是否必填（可编辑）", hidden = true)
     @Column(name = "MANDATORY")
     @Length(  message = "字段长度不能大于{max}")
     private String  mandatory;
@@ -94,7 +94,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
     /**
      * 是否为主键
      */
-    @ApiModelProperty(value = "是否主键")
+    @ApiModelProperty(value = "是否主键", hidden = true)
     @Column(name = "PRIMARYKEY")
     @Length(  message = "字段长度不能大于{max}")
     private String primaryKey;
@@ -154,19 +154,21 @@ public class MetaColumn implements TableField,java.io.Serializable {
     /**
      * 更改时间
      */
+    @ApiModelProperty(hidden = true)
     @Column(name = "LAST_MODIFY_DATE")
     @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.NEW_UPDATE, condition = GeneratorCondition.ALWAYS, value = "today()")
     private Date  lastModifyDate;
     /**
      * 更改人员 null
      */
-    @ApiModelProperty(value = "更改人员")
+    @ApiModelProperty(value = "更改人员", hidden = true)
     @Column(name = "RECORDER")
     @Length(max = 8, message = "字段长度不能大于{max}")
     @DictionaryMap(fieldName = "recorderName", value = "userCode")
     private String  recorder;
 
     @Transient
+    @ApiModelProperty(hidden = true)
     private DBType databaseType;
 
     public MetaColumn(@NotBlank(message = "字段不能为空") String tableId, @NotBlank(message = "字段不能为空") String columnName) {
@@ -186,8 +188,6 @@ public class MetaColumn implements TableField,java.io.Serializable {
         this.maxLength = tableField.getMaxLength();
         this.scale = tableField.getScale();
         this.mandatory = tableField.isMandatory() ? "T" : "F";
-        this.accessType = "N";//字段类别.H：隐藏；R：只读；C：只能创建不能修改；N：可读写
-        this.columnState = "N";
         return this;
     }
 
@@ -209,6 +209,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
     }
 
 
+    @ApiModelProperty(hidden = true)
     @Override
     public String getPropertyName() {
         return SimpleTableField.mapPropName(getColumnName());

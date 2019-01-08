@@ -144,12 +144,6 @@ public class MetaDataServiceImpl implements MetaDataService {
         }
     }
 
-    @Override
-    public void syncTable(String databaseCode, String tableId) {
-        DatabaseInfo dbInfo = integrationEnvironment.getDatabaseInfo(databaseCode);
-        MetaTable metaTable = metaTableDao.getObjectWithReferences(tableId);
-    }
-
     private <K,V> Triple<List<K>, List<Pair<V, K>>, List<V>>
             compareMetaBetweenDbTables(List<V> metaTables, List<K> simpleTableInfos, Comparator comparator){
         if(metaTables==null ||metaTables.size()==0)

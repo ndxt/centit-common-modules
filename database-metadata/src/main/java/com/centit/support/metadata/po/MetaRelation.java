@@ -25,13 +25,14 @@ import java.util.Set;
 @Entity
 @Table(name = "F_META_RELATION")
 public class MetaRelation implements TableReference, java.io.Serializable {
-    private static final long serialVersionUID =  201901041034L;
 
+    private static final long serialVersionUID = -2136097274479560955L;
     /**
      * 关联代码 关联关系，类似与外键，但不创建外键
      */
     @Id
     @Column(name = "RELATION_ID")
+    @ApiModelProperty(hidden = true)
     @ValueGenerator(strategy = GeneratorType.UUID)
     private Long relationId;
 
@@ -40,14 +41,14 @@ public class MetaRelation implements TableReference, java.io.Serializable {
      */
     @ApiModelProperty(value = "主表ID")
     @Column(name = "PARENT_TABLE_ID")
-    private Long  parentTableId;
+    private Long parentTableId;
 
     /**
      * 从表表ID 表单主键
      */
     @ApiModelProperty(value = "从表ID")
     @Column(name = "CHILD_TABLE_ID")
-    private String  childTableId;
+    private String childTableId;
 
     /**
      * 关联名称
@@ -56,14 +57,14 @@ public class MetaRelation implements TableReference, java.io.Serializable {
     @Column(name = "RELATION_NAME")
     @NotBlank(message = "字段不能为空")
     @Length(max = 64, message = "字段长度不能大于{max}")
-    private String  relationName;
+    private String relationName;
 
     /**
      * 状态
      */
     @ApiModelProperty(value = "状态")
     @Column(name = "RELATION_STATE")
-    private String  relationState;
+    private String relationState;
 
     /**
      * 关联说明
@@ -71,51 +72,63 @@ public class MetaRelation implements TableReference, java.io.Serializable {
     @ApiModelProperty(value = "描述")
     @Column(name = "RELATION_COMMENT")
     @Length(max = 256, message = "字段长度不能大于{max}")
-    private String  relationComment;
+    private String relationComment;
 
     /**
      * 更改时间
      */
     @Column(name = "LAST_MODIFY_DATE")
+    @ApiModelProperty(hidden = true)
     @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.NEW_UPDATE, condition = GeneratorCondition.ALWAYS, value = "today()")
-    private Date  lastModifyDate;
+    private Date lastModifyDate;
 
     /**
      * 更改人员
      */
     @Column(name = "RECORDER")
+    @ApiModelProperty(hidden = true)
     @Length(max = 8, message = "字段长度不能大于{max}")
     @DictionaryMap(fieldName = "recorderName", value = "userCode")
-    private String  recorder;
+    private String recorder;
 
+    @ApiModelProperty(value = "关联明细")
+    @OneToMany(targetEntity = MetaRelDetail.class)
+    @JoinColumn(name = "relationId", referencedColumnName = "relationId")
     private Set<MetaRelDetail> relationDetails;
 
     @Override
+    @ApiModelProperty(hidden = true)
     public String getReferenceCode() {
-        return String.valueOf( this.relationId);
+        return String.valueOf(this.relationId);
     }
+
     @Override
+    @ApiModelProperty(hidden = true)
     public String getReferenceName() {
         return this.relationName;
     }
+
     @Override
+    @ApiModelProperty(value = "子表名称")
     public String getTableName() {
-        // TODO Auto-generated method stub
-        return String.valueOf( this.childTableId);
+        return String.valueOf(this.childTableId);
     }
+
     @Override
+    @ApiModelProperty(value = "父表名称")
     public String getParentTableName() {
-        // TODO Auto-generated method stub
-        return String.valueOf( this.parentTableId);
+        return String.valueOf(this.parentTableId);
     }
+
     @Override
+    @ApiModelProperty(hidden = true)
     public Map<String, String> getReferenceColumns() {
-        // TODO Auto-generated method stub
         return null;
     }
+
     @Override
+    @ApiModelProperty(hidden = true)
     public boolean containColumn(String sCol) {
-        // TODO Auto-generated method stub
         return false;
     }
 }

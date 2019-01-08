@@ -162,8 +162,6 @@ public class MetaTable implements TableInfo, java.io.Serializable {
 //        }
 //    }
 
-
-
     public List<MetaColumn> getMdColumns() {
         if (this.mdColumns == null)
             this.mdColumns = new ArrayList<>();

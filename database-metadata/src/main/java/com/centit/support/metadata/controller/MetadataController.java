@@ -67,16 +67,6 @@ public class MetadataController {
         metaDataService.syncDb(databaseCode, userDetails.getUserCode());
     }
 
-/*    @ApiOperation(value = "同步数据库表")
-    @ApiImplicitParams(value = {
-        @ApiImplicitParam(name = "databaseCode", value = "数据库ID"),
-        @ApiImplicitParam(name = "tableId", value = "表名")
-    })
-    @GetMapping(value = "/{databaseCode}/{tableId}/synchronization")
-    public void syncTable(@PathVariable String databaseCode, @PathVariable String tableId){
-        metaDataService.syncTable(databaseCode, tableId);
-    }*/
-
     @ApiOperation(value = "查询单个表元数据")
     @ApiImplicitParam(name = "tableId", value = "表ID")
     @GetMapping(value = "/table/{tableId}")
