@@ -2,6 +2,7 @@ package com.centit.support.metadata.po;
 
 import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.database.metadata.TableReference;
+import com.centit.support.database.orm.GeneratorCondition;
 import com.centit.support.database.orm.GeneratorTime;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
@@ -76,7 +77,7 @@ public class MetaRelation implements TableReference, java.io.Serializable {
      * 更改时间
      */
     @Column(name = "LAST_MODIFY_DATE")
-    @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.ALWAYS, value = "today()")
+    @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.NEW_UPDATE, condition = GeneratorCondition.ALWAYS, value = "today()")
     private Date  lastModifyDate;
 
     /**

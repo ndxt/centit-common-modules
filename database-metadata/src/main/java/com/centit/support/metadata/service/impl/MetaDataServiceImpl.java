@@ -231,4 +231,9 @@ public class MetaDataServiceImpl implements MetaDataService {
     public MetaColumn getMetaColumn(String tableId, String columnName) {
         return metaColumnDao.getObjectById(new MetaColumn(tableId, columnName));
     }
+
+    @Override
+    public void updateMetaColumn(MetaColumn metaColumn) {
+        metaColumnDao.updateObject(metaColumn);
+    }
 }

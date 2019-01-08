@@ -90,6 +90,7 @@ public class MetadataController {
         @ApiImplicitParam(name = "tableId", value = "表ID")
     })
     @GetMapping(value = "/{tableId}/columns")
+    @WrapUpResponseBody
     public PageQueryResult<MetaColumn> listColumns(@PathVariable String tableId, PageDesc pageDesc){
         List<MetaColumn> list = metaDataService.listMetaColumns(tableId, pageDesc);
         return PageQueryResult.createResult(list, pageDesc);
@@ -127,9 +128,12 @@ public class MetadataController {
         @ApiImplicitParam(name = "tableId", value = "表ID"),
         @ApiImplicitParam(name = "columnName", value = "列名")
     })
-    @PutMapping(value = "/column")
-    public void updateMetaColumns(MetaColumn metaColumn){
-
+    @PutMapping(value = "/column/{tableId}/{columnName}")
+    @WrapUpResponseBody
+    public void updateMetaColumns(@PathVariable String tableId, @PathVariable String columnName, MetaColumn metaColumn){
+        metaColumn.setTableId(tableId);
+        metaColumn.setColumnName(columnName);
+        metaDataService.updateMetaColumn(metaColumn);
     }
 
     @ApiOperation(value = "查询关联关系元数据")
@@ -142,12 +146,14 @@ public class MetadataController {
 
     @ApiOperation(value = "新建关联关系元数据")
     @PostMapping(value = "/relation")
+    @WrapUpResponseBody
     public void createRelation(MetaRelation relation){
         metaDataService.createRelation(relation);
     }
 
     @ApiOperation(value = "新建关联关系元数据")
     @PutMapping(value = "/relation")
+    @WrapUpResponseBody
     public void updateRelation(MetaRelation relation){
         metaDataService.createRelation(relation);
     }
