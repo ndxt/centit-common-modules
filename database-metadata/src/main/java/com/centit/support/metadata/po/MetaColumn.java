@@ -1,6 +1,5 @@
 package com.centit.support.metadata.po;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.database.metadata.SimpleTableField;
 import com.centit.support.database.metadata.TableField;
@@ -78,7 +77,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
      * 字段类别 控制自定义表单中是否可以 访问字段
      * 比如： 最后修改时间、工作流相关的字段、更新版本号，自定义表单中就不用显示
      */
-    @ApiModelProperty(value = "字段类别（可编辑）(是否可访问)")
+    @ApiModelProperty(value = "字段类别（可编辑）(字段类别.H：隐藏；R：只读；C：只能创建不能修改；N：可读写)")
     @Column(name = "ACCESS_TYPE")
     @NotBlank(message = "字段不能为空")
     @Length(  message = "字段长度不能大于{max}")
@@ -93,7 +92,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
     private String  mandatory;
 
     /**
-     * 是否为主键 null
+     * 是否为主键
      */
     @ApiModelProperty(value = "是否主键")
     @Column(name = "PRIMARYKEY")
@@ -111,8 +110,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
      *  0：没有：1： 数据字典(列表)   2： 数据字典(树型)   3：JSON表达式 4：sql语句   5：SQL（树）
        9 :框架内置字典（用户、机构、角色等等）  Y：年份 M：月份   F:文件（column_Type 必须为 varchar（64））
      */
-    @ApiModelProperty(value = "引用数据类型（可编辑）（0：没有 1：数据字典(列表)   2： 数据字典(树型)   3：JSON表达式 4：sql语句   5：SQL（树）\n" +
-        "9 :框架内置字典（用户、机构、角色等等）  Y：年份 M：月份   F:文件（column_Type 必须为 varchar（64）））")
+    @ApiModelProperty(value = "引用数据类型（可编辑）（0：没有 1：数据字典(列表) 2：数据字典(树型) 3：JSON表达式 4：sql语句 5：SQL（树）Y：年份 M：月份 )")
     @Column(name = "REFERENCE_TYPE")
     @Length(  message = "字段长度不能大于{max}")
     private String  referenceType;
@@ -295,7 +293,6 @@ public class MetaColumn implements TableField,java.io.Serializable {
     }
 
     @Override
-    @JSONField(serialize=false)
     public String getColumnType() {
         return FieldType.mapToDBColumnType(this.databaseType, this.columnType);
     }
