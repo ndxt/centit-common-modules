@@ -142,25 +142,17 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     @DictionaryMap(fieldName = "recorderName", value = "userCode")
     private String recorder;
 
-    @OneToMany(mappedBy="cid.mdTable",orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = MetaColumn.class)
     @JoinColumn(name = "TABLE_ID", referencedColumnName = "TABLE_ID")
     private List<MetaColumn> mdColumns;
 
-    @OneToMany(mappedBy="parentTable",orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "TABLE_ID", referencedColumnName = "TABLE_ID")
+    @OneToMany(targetEntity = MetaRelation.class)
+    @JoinColumn(name = "tableId", referencedColumnName = "parentTableId")
     private List<MetaRelation> mdRelations;
 
     @Transient
+    @ApiModelProperty(hidden = true)
     private DBType databaseType;
-
-//    public void setDatabaseType(DBType databaseType) {
-//        this.databaseType = databaseType;
-//        if (this.mdColumns != null) {
-//            for (MetaColumn col : this.mdColumns) {
-//                col.setDatabaseType(databaseType);
-//            }
-//        }
-//    }
 
     public List<MetaColumn> getMdColumns() {
         if (this.mdColumns == null)
@@ -194,9 +186,9 @@ public class MetaTable implements TableInfo, java.io.Serializable {
         return this.mdRelations;
     }
 
-//    public void setMdRelations(Set<MetaRelation> mdRelations) {
-//        this.mdRelations = mdRelations;
-//    }
+    public void setMdRelations(List<MetaRelation> mdRelations) {
+        this.mdRelations = mdRelations;
+    }
 
     public void addMdRelation(MetaRelation mdRelation) {
         if (this.mdRelations == null)
@@ -234,14 +226,14 @@ public class MetaTable implements TableInfo, java.io.Serializable {
         return this;
     }
 
-
-
     @Override
+    @ApiModelProperty(hidden = true)
     public String getPkName() {
         return "PK_" + this.tableName;
     }
 
     @Override
+    @ApiModelProperty(hidden = true)
     public String getSchema() {
         return null;
     }
@@ -250,6 +242,7 @@ public class MetaTable implements TableInfo, java.io.Serializable {
      * @return 默认排序语句
      */
     @Override
+    @ApiModelProperty(hidden = true)
     public String getOrderBy() {
         return null;
     }
@@ -289,11 +282,13 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     }
 
     @Override
+    @ApiModelProperty(hidden = true)
     public List<MetaColumn> getColumns() {
         return mdColumns;
     }
 
     @Override
+    @ApiModelProperty(hidden = true)
     public List<String> getPkColumns() {
         if (mdColumns == null)
             return null;
@@ -308,8 +303,8 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     }
 
     @Override
+    @ApiModelProperty(hidden = true)
     public List<? extends TableReference> getReferences() {
-        // TODO Auto-generated method stub
         return null;
     }
 }

@@ -137,8 +137,8 @@ public class MetadataController {
     @ApiOperation(value = "新建关联关系元数据")
     @PostMapping(value = "/relation")
     @WrapUpResponseBody
-    public void createRelation(MetaRelation relation){
-        metaDataService.createRelation(relation);
+    public void createRelations(MetaTable metaTable){
+        metaDataService.createRelations(metaTable);
     }
 
     @ApiOperation(value = "新建关联关系元数据")
@@ -147,5 +147,4 @@ public class MetadataController {
     public void updateRelation(MetaRelation relation){
         metaDataService.createRelation(relation);
     }
-
 }

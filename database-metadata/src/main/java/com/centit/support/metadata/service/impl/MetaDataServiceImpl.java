@@ -222,6 +222,11 @@ public class MetaDataServiceImpl implements MetaDataService {
     }
 
     @Override
+    public void createRelations(MetaTable metaTable) {
+        metaTableDao.saveObjectReference(metaTable, "mdRelations");
+    }
+
+    @Override
     public MetaColumn getMetaColumn(String tableId, String columnName) {
         return metaColumnDao.getObjectById(new MetaColumn(tableId, columnName));
     }
