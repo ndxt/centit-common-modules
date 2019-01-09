@@ -127,10 +127,10 @@ public class MetadataController {
     }
 
     @ApiOperation(value = "查询关联关系元数据")
-    @GetMapping(value = "/relation")
+    @GetMapping(value = "/{tableId}/relations")
     @WrapUpResponseBody
-    public PageQueryResult<MetaRelation> metaRelation(PageDesc pageDesc){
-        List<MetaRelation> list = metaDataService.listMetaRelation(pageDesc);
+    public PageQueryResult<MetaRelation> metaRelation(@PathVariable String tableId, PageDesc pageDesc){
+        List<MetaRelation> list = metaDataService.listMetaRelation(tableId, pageDesc);
         return PageQueryResult.createResultMapDict(list, pageDesc);
     }
 

@@ -1,5 +1,7 @@
 package com.centit.support.metadata.po;
 
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,7 +27,7 @@ public class MetaRelDetail implements java.io.Serializable {
      */
     @Column(name = "RELATION_ID")
     @ApiModelProperty(hidden = true)
-    private Long relationId;
+    private String relationId;
 
     /**
      * p字段代码

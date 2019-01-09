@@ -14,8 +14,8 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author zouwy
@@ -34,14 +34,14 @@ public class MetaRelation implements TableReference, java.io.Serializable {
     @Column(name = "RELATION_ID")
     @ApiModelProperty(hidden = true)
     @ValueGenerator(strategy = GeneratorType.UUID)
-    private Long relationId;
+    private String relationId;
 
     /**
      * 主表表ID 表单主键
      */
     @ApiModelProperty(value = "主表ID")
     @Column(name = "PARENT_TABLE_ID")
-    private Long parentTableId;
+    private String parentTableId;
 
     /**
      * 从表表ID 表单主键
@@ -94,7 +94,7 @@ public class MetaRelation implements TableReference, java.io.Serializable {
     @ApiModelProperty(value = "关联明细")
     @OneToMany(targetEntity = MetaRelDetail.class)
     @JoinColumn(name = "relationId", referencedColumnName = "relationId")
-    private Set<MetaRelDetail> relationDetails;
+    private List<MetaRelDetail> relationDetails;
 
     @Override
     @ApiModelProperty(hidden = true)

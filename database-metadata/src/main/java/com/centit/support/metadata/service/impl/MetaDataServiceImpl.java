@@ -11,6 +11,7 @@ import com.centit.support.metadata.dao.MetaColumnDao;
 import com.centit.support.metadata.dao.MetaRelationDao;
 import com.centit.support.metadata.dao.MetaTableDao;
 import com.centit.support.metadata.po.MetaColumn;
+import com.centit.support.metadata.po.MetaRelDetail;
 import com.centit.support.metadata.po.MetaRelation;
 import com.centit.support.metadata.po.MetaTable;
 import com.centit.support.metadata.service.MetaDataService;
@@ -205,8 +206,12 @@ public class MetaDataServiceImpl implements MetaDataService {
     }
 
     @Override
-    public List<MetaRelation> listMetaRelation(PageDesc pageDesc) {
-        return metaRelationDao.listObjects();
+    public List<MetaRelation> listMetaRelation(String tableId, PageDesc pageDesc) {
+        List<MetaRelation> list = metaRelationDao.listObjectsByProperty("parentTableId", tableId);
+        for(MetaRelation relation : list){
+            metaRelationDao.fetchObjectReferences(relation);
+        }
+        return list;
     }
 
     @Override
@@ -223,7 +228,10 @@ public class MetaDataServiceImpl implements MetaDataService {
 
     @Override
     public void createRelations(MetaTable metaTable) {
-        metaTableDao.saveObjectReference(metaTable, "mdRelations");
+        for(MetaRelation relation : metaTable.getMdRelations()){
+            metaRelationDao.saveNewObject(relation);
+            metaRelationDao.saveObjectReferences(relation);
+        }
     }
 
     @Override

@@ -99,8 +99,7 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     @NotBlank(message = "字段不能为空")
     @Pattern(regexp = "[SRN]")
     @Length(max = 1, message = "字段长度不能大于{max}")
-    @ApiModelProperty(value = "表状态（S-系统；R-只读；N-可读写）")
-    @DictionaryMap(fieldName = "tableStateText", value = "TableState")
+    @ApiModelProperty(value = "表状态（S-系统；R-只读；N-可读写；H-隐藏）")
     private String tableState;
     /**
      * 描述
@@ -116,7 +115,6 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     @Column(name = "WORKFLOW_OPT_TYPE")
     @NotBlank(message = "字段不能为空")
     @Length(max = 1, message = "字段长度不能大于{max}")
-    @DictionaryMap(fieldName = "workFlowOptTypeText", value = "WorkFlowType")
     private String workFlowOptType;
 
     /**

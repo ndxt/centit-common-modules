@@ -25,7 +25,7 @@ public interface MetaDataService {
 
     MetaTable getMetaTable(String tableId);
 
-    List<MetaRelation> listMetaRelation(PageDesc pageDesc);
+    List<MetaRelation> listMetaRelation(String tableId, PageDesc pageDesc);
 
     List<MetaColumn> listMetaColumns(String tableName, PageDesc pageDesc);
 
