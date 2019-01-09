@@ -1,6 +1,7 @@
 package com.centit.support.serialno.service.impl;
 
-import com.centit.framework.core.dao.QueryParameterPrepare;
+import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.support.serialno.dao.OptFlowNoInfoDao;
 import com.centit.support.serialno.dao.OptFlowNoPoolDao;
 import com.centit.support.serialno.po.OptFlowNoInfo;
@@ -8,8 +9,6 @@ import com.centit.support.serialno.po.OptFlowNoInfoId;
 import com.centit.support.serialno.po.OptFlowNoPool;
 import com.centit.support.serialno.po.OptFlowNoPoolId;
 import com.centit.support.serialno.service.OptFlowNoInfoManager;
-import com.centit.support.algorithm.DatetimeOpt;
-import com.centit.support.database.utils.PageDesc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
