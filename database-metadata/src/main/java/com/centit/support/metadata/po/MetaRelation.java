@@ -1,5 +1,6 @@
 package com.centit.support.metadata.po;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.database.metadata.TableReference;
 import com.centit.support.database.orm.GeneratorCondition;
@@ -98,12 +99,14 @@ public class MetaRelation implements TableReference, java.io.Serializable {
 
     @Override
     @ApiModelProperty(hidden = true)
+    @JSONField(serialize = false)
     public String getReferenceCode() {
         return String.valueOf(this.relationId);
     }
 
     @Override
     @ApiModelProperty(hidden = true)
+    @JSONField(serialize = false)
     public String getReferenceName() {
         return this.relationName;
     }

@@ -31,7 +31,7 @@ public interface MetaDataService {
 
     void createRelation(MetaRelation relation);
 
-    void createRelations(MetaTable metaTable);
+    void saveRelations(String tableId, List<MetaRelation> relations);
 
     MetaColumn getMetaColumn(String tableId, String columnName);
 

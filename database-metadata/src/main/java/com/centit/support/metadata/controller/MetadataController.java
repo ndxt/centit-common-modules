@@ -17,7 +17,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.omg.PortableServer.POAPackage.ObjectAlreadyActive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -135,16 +134,9 @@ public class MetadataController {
     }
 
     @ApiOperation(value = "新建关联关系元数据")
-    @PostMapping(value = "/relation")
+    @PostMapping(value = "/{tableId}/relation")
     @WrapUpResponseBody
-    public void createRelations(MetaTable metaTable){
-        metaDataService.createRelations(metaTable);
-    }
-
-    @ApiOperation(value = "新建关联关系元数据")
-    @PutMapping(value = "/relation")
-    @WrapUpResponseBody
-    public void updateRelation(MetaRelation relation){
-        metaDataService.createRelation(relation);
+    public void createRelations(@PathVariable String tableId, MetaTable metaTable){
+        metaDataService.saveRelations(tableId, metaTable.getMdRelations());
     }
 }

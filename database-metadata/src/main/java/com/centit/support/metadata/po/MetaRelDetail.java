@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
@@ -25,6 +26,7 @@ public class MetaRelDetail implements java.io.Serializable {
     /**
      * 关联代码
      */
+    @Id
     @Column(name = "RELATION_ID")
     @ApiModelProperty(hidden = true)
     private String relationId;
@@ -32,6 +34,7 @@ public class MetaRelDetail implements java.io.Serializable {
     /**
      * p字段代码
      */
+    @Id
     @Column(name = "PARENT_COLUMN_NAME")
     @NotBlank(message = "字段不能为空")
     @ApiModelProperty(value = "父表列名")
@@ -40,6 +43,7 @@ public class MetaRelDetail implements java.io.Serializable {
     /**
      * C字段代码
      */
+    @Id
     @Column(name = "CHILD_COLUMN_NAME")
     @NotBlank(message = "字段不能为空")
     @ApiModelProperty(value = "子表列名")

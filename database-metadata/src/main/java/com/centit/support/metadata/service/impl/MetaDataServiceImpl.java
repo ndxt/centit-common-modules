@@ -16,6 +16,7 @@ import com.centit.support.metadata.po.MetaRelation;
 import com.centit.support.metadata.po.MetaTable;
 import com.centit.support.metadata.service.MetaDataService;
 import com.centit.support.metadata.utils.JdbcConnect;
+import com.sun.xml.internal.ws.api.wsdl.parser.MetaDataResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -227,10 +228,44 @@ public class MetaDataServiceImpl implements MetaDataService {
     }
 
     @Override
-    public void createRelations(MetaTable metaTable) {
-        for(MetaRelation relation : metaTable.getMdRelations()){
-            metaRelationDao.saveNewObject(relation);
-            metaRelationDao.saveObjectReferences(relation);
+    public void saveRelations(String tableId, List<MetaRelation> relations) {
+        List<MetaRelation> dbRelations = metaRelationDao.listObjectsByProperty("parentTableId", tableId);
+
+        Triple<List<MetaRelation>, List<Pair<MetaRelation,MetaRelation>>, List<MetaRelation>> comparedRelation =
+            CollectionsOpt.compareTwoList(dbRelations, relations,
+                (o1, o2) -> StringUtils.compare(o1.getChildTableId(), o2.getChildTableId()));
+
+        if(comparedRelation.getLeft() != null){
+            //insert
+            for(MetaRelation relation : comparedRelation.getLeft()){
+                metaRelationDao.saveNewObject(relation);
+                metaRelationDao.saveObjectReferences(relation);
+            }
+        }
+
+        if(comparedRelation.getRight() != null){
+            //delete
+            for(MetaRelation relation : comparedRelation.getRight()){
+                relation = metaRelationDao.fetchObjectReferences(relation);
+                metaRelationDao.deleteObject(relation);
+                metaRelationDao.deleteObjectReferences(relation);
+            }
+        }
+
+        if(comparedRelation.getMiddle() != null){
+            //update
+            for(Pair<MetaRelation, MetaRelation> pair : comparedRelation.getMiddle()){
+                MetaRelation oldRelation = pair.getLeft();
+                oldRelation = metaRelationDao.fetchObjectReferences(oldRelation);
+                MetaRelation newRelation = pair.getRight();
+                oldRelation.setRelationName(newRelation.getRelationName());
+                oldRelation.setRelationComment(newRelation.getRelationComment());
+                metaRelationDao.updateObject(oldRelation);
+
+                metaRelationDao.deleteObjectReferences(oldRelation);
+                newRelation.setRelationId(oldRelation.getRelationId());
+                metaRelationDao.saveObjectReferences(newRelation);
+            }
         }
     }
 
