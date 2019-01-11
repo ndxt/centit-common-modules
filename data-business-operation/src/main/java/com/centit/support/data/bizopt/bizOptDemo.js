@@ -3,14 +3,5 @@ function doBiz01(bizModel) {
   item.cust = bizModel.bizData.ds1.data.length
   item.city = bizModel.bizData.ds2.data.length
 
-  return {
-    'modelName': 'biz01',
-    'modeTag': bizModel.modeTag,
-    'bizData': {
-      'ret': {
-        'dataSetName': 'ds01',
-        'data': [item, item]
-      }
-    }
-  }
+  return creataSingleDataSetModel('default', [item,item] ,bizModel)
 }
