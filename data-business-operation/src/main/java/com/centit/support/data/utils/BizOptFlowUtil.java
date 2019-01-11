@@ -5,8 +5,10 @@ import com.centit.support.data.bizopt.PersistenceOperation;
 import com.centit.support.data.core.BizOptFlow;
 
 public abstract class BizOptFlowUtil {
-    public static BizOptFlow createDataExchangeFlow(
+
+    public static int runDataExchange(
         DataLoadSupplier loadData, PersistenceOperation saveData){
-        return new BizOptFlow().setSupplier(loadData).addOperation(saveData);
+        BizOptFlow bof = new BizOptFlow().setSupplier(loadData).addOperation(saveData);
+        return bof.run();
     }
 }
