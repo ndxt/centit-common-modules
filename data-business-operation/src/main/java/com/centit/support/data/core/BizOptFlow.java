@@ -16,6 +16,9 @@ public class BizOptFlow {
      */
     public List<BizOperation> operations;
 
+    /**
+     * @return 返回真正运行的次数
+     */
     public int run(){
         int n = 0;
         do{
@@ -35,8 +38,9 @@ public class BizOptFlow {
         return supplier;
     }
 
-    public void setSupplier(BizSupplier supplier) {
+    public BizOptFlow setSupplier(BizSupplier supplier) {
         this.supplier = supplier;
+        return this;
     }
 
     public List<BizOperation> getOperations() {
@@ -47,10 +51,11 @@ public class BizOptFlow {
         this.operations = operations;
     }
 
-    public void addOperation(BizOperation operation) {
+    public BizOptFlow addOperation(BizOperation operation) {
         if(this.operations == null){
             this.operations = new ArrayList<>(5);
         }
         this.operations.add(operation);
+        return this;
     }
 }
