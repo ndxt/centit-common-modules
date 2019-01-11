@@ -1,6 +1,7 @@
 package com.centit.support.data.core;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class BizModel {
@@ -17,7 +18,7 @@ public class BizModel {
     /**
      * 模型数据
      */
-    private Map<String, DataSet> bizData;
+    private List<DataSet> bizData;
 
     public BizModel(){
 
@@ -28,11 +29,11 @@ public class BizModel {
 
     }
 
-    public void addDataSet(String dataSetName , DataSet dataSet) {
+    public void addDataSet(DataSet dataSet) {
         if(this.bizData == null){
-            this.bizData = new HashMap<>(5);
+            this.bizData = new ArrayList<>(5);
         }
-        this.bizData.put(dataSetName, dataSet);
+        this.bizData.add(dataSet);
     }
 
     public boolean isEmpty(){
@@ -56,11 +57,11 @@ public class BizModel {
         this.modeTag = modeTag;
     }
 
-    public Map<String, DataSet> getBizData() {
+    public List<DataSet> getBizData() {
         return bizData;
     }
 
-    public void setBizData(Map<String, DataSet> bizData) {
+    public void setBizData(List<DataSet> bizData) {
         this.bizData = bizData;
     }
 }

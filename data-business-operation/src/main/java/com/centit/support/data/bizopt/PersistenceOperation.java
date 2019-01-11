@@ -30,18 +30,19 @@ public class PersistenceOperation implements BizOperation {
         if(dataWriters==null || bizModel==null || bizModel.isEmpty()){
             return bizModel;
         }
-        for(Map.Entry<String, DataSet> ent : bizModel.getBizData().entrySet()){
-            DataSetWriter dataSetWriter = dataWriters.get(ent.getKey());
+
+        for(DataSet ent : bizModel.getBizData()){
+            DataSetWriter dataSetWriter = dataWriters.get(ent.getDataSetName());
             if(dataSetWriter!=null){
-                switch (getWriterIndicate(ent.getKey())) {
+                switch (getWriterIndicate(ent.getDataSetName())) {
                 case WRITER_INDICATE_APPEND:
-                    dataSetWriter.append(ent.getValue());
+                    dataSetWriter.append(ent);
                     break;
                 case WRITER_INDICATE_MERGE:
-                    dataSetWriter.merge(ent.getValue());
+                    dataSetWriter.merge(ent);
                     break;
                 default:
-                    dataSetWriter.save(ent.getValue());
+                    dataSetWriter.save(ent);
                     break;
                 }
             }

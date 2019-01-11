@@ -2,12 +2,10 @@ function creataSingleDataSetModel(dsName, dataList , bizModel) {
   var ds = {
     'dataSetName': dsName,
     'data': dataList
-  }
-  var bm = {
+  };
+  return {
     'modelName': bizModel.modelName,
     'modeTag': bizModel.modeTag,
-    'bizData': {}
+    'bizData': [ds]
   }
-  bm.bizData[dsName] = ds
-  return bm
 }
