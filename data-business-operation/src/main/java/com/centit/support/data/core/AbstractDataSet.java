@@ -11,17 +11,17 @@ public abstract class AbstractDataSet implements DataSet {
     /**
      * 返回 DataSet 的名称
      */
-    String dataSetName;
+    protected String dataSetName;
     /**
      * 返回 DataSet 的类型
      */
-    String dataSetType;
+    protected String dataSetType;
 
     /**
      * 数据集中的数据
      * 是一个 对象（Map）列表；可以类比为JSONArray
      */
-    List<Map<String, Object>> data;
+    protected List<Map<String, Object>> data;
     /**
      * @return 是否已按照维度属性排序
      */
