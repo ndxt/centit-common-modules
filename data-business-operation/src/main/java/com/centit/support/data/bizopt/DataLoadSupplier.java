@@ -50,11 +50,12 @@ public class DataLoadSupplier implements BizSupplier {
         return loadData();
     }
 
-    public void setDataReader(String dataSetName, DataSetReader reader){
+    public DataLoadSupplier dataReader(String dataSetName, DataSetReader reader){
         if(dataReaders == null){
             dataReaders = new HashMap<>(5);
         }
         dataReaders.put(dataSetName, reader);
+        return this;
     }
 
     public Map<String, DataSetReader> getDataReaders() {

@@ -18,9 +18,13 @@ public class PersistenceOperation implements BizOperation {
     public static final String WRITER_INDICATE_MERGE = "merge";
     public static final String WRITER_INDICATE_UPDATE = "merge";
 
-
-
+    /**
+     * 给 dataWriters 边个名字， 一般这个名字和 dataSet名字对应
+     */
     private Map<String, DataSetWriter> dataWriters;
+    /**
+     *
+     */
     private Map<String, String> writerIndicates;
 
 
@@ -30,7 +34,9 @@ public class PersistenceOperation implements BizOperation {
         if(dataWriters==null || bizModel==null || bizModel.isEmpty()){
             return bizModel;
         }
-
+        /**
+         * 保证写入顺序和 bizModel 的 DataSet的顺序一致
+         */
         for(DataSet ent : bizModel.getBizData()){
             DataSetWriter dataSetWriter = dataWriters.get(ent.getDataSetName());
             if(dataSetWriter!=null){
@@ -50,18 +56,26 @@ public class PersistenceOperation implements BizOperation {
         return bizModel;
     }
 
-    public void setWriterIndicate(String dataSetName, String indicate){
+    public PersistenceOperation writerIndicate(String dataSetName, String indicate){
         if(writerIndicates == null){
             writerIndicates = new HashMap<>(5);
         }
         writerIndicates.put(dataSetName, indicate);
+        return this;
     }
 
-    public void setDataWriter(String dataSetName, DataSetWriter writer){
+    public PersistenceOperation dataWriter(String dataSetName, DataSetWriter writer){
         if(dataWriters == null){
             dataWriters = new HashMap<>(5);
         }
         dataWriters.put(dataSetName, writer);
+        return this;
+    }
+
+    public PersistenceOperation dataWriter(String dataSetName, DataSetWriter writer, String indicate){
+        dataWriter(dataSetName, writer);
+        writerIndicate(dataSetName, indicate);
+        return this;
     }
 
     public Map<String, DataSetWriter> getDataWriters() {
