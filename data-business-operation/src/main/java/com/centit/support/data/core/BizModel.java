@@ -1,8 +1,11 @@
 package com.centit.support.data.core;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class BizModel {
+    public static final BizModel EMPTY_BIZ_MODEL
+        = new BizModel("EMPTY_BIZ_MODEL");
     /**
      * 模型名称
      */
@@ -23,6 +26,13 @@ public class BizModel {
     public BizModel(String modelName){
         this.modelName = modelName;
 
+    }
+
+    public void addDataSet(String dataSetName , DataSet dataSet) {
+        if(this.bizData == null){
+            this.bizData = new HashMap<>(5);
+        }
+        this.bizData.put(dataSetName, dataSet);
     }
 
     public boolean isEmpty(){

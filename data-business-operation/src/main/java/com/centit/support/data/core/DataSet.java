@@ -11,7 +11,7 @@ import java.util.Map;
  * 3. 一个返回数据列表的程序接口
  */
 public interface DataSet {
-
+    String SINGLE_DATA_SET_DEFALUT_NAME = "default";
     /**
      * 返回 DataSet 的名称
      * @return  DataSet 的名称
@@ -32,11 +32,18 @@ public interface DataSet {
      * 返回 所有数据维度，这个维度是有序的，这个属性不是必须的
      * @return 维度
      */
-    List<String> getDimension();
+    List<String> getDimensions();
 
     /**
      * 数据集中的数据
      * @return 是一个 对象（Map）列表；可以类比为JSONArray
      */
     List<Map<String, Object>> getData();
+
+    /**
+     * @return 是否为空的数据集
+     */
+    default boolean isEmpty(){
+        return  getData()==null ||  getData().size()==0;
+    }
 }

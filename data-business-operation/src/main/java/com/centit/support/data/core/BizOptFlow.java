@@ -20,7 +20,7 @@ public class BizOptFlow {
         int n = 0;
         do{
             BizModel bm = supplier.get();
-            if(bm == null){
+            if(bm == null/*|| bm.isEmpty()*/){
                 break;
             }
             n ++;
