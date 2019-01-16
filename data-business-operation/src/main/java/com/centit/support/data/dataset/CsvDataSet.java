@@ -4,7 +4,7 @@ import com.centit.support.data.core.DataSet;
 
 import java.util.Map;
 
-public class CvsDataSet extends FileDataSet{
+public class CsvDataSet extends FileDataSet{
 
     /**
      * 读取 dataSet 数据集
