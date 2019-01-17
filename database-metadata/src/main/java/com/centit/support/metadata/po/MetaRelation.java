@@ -24,7 +24,7 @@ import java.util.Map;
 @ApiModel
 @Data
 @Entity
-@Table(name = "F_META_RELATION")
+@Table(name = "F_MD_RELATION")
 public class MetaRelation implements TableReference, java.io.Serializable {
 
     private static final long serialVersionUID = -2136097274479560955L;
@@ -65,7 +65,7 @@ public class MetaRelation implements TableReference, java.io.Serializable {
      */
     @ApiModelProperty(value = "状态")
     @Column(name = "RELATION_STATE")
-    private String relationState;
+    private String relationState = "T";
 
     /**
      * 关联说明
@@ -74,23 +74,6 @@ public class MetaRelation implements TableReference, java.io.Serializable {
     @Column(name = "RELATION_COMMENT")
     @Length(max = 256, message = "字段长度不能大于{max}")
     private String relationComment;
-
-    /**
-     * 更改时间
-     */
-    @Column(name = "LAST_MODIFY_DATE")
-    @ApiModelProperty(hidden = true)
-    @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.NEW_UPDATE, condition = GeneratorCondition.ALWAYS, value = "today()")
-    private Date lastModifyDate;
-
-    /**
-     * 更改人员
-     */
-    @Column(name = "RECORDER")
-    @ApiModelProperty(hidden = true)
-    @Length(max = 8, message = "字段长度不能大于{max}")
-    @DictionaryMap(fieldName = "recorderName", value = "userCode")
-    private String recorder;
 
     @ApiModelProperty(value = "关联明细")
     @OneToMany(targetEntity = MetaRelDetail.class)

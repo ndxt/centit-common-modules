@@ -1,5 +1,6 @@
 package com.centit.support.metadata.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.ObjectException;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.WrapUpContentType;
@@ -104,12 +105,12 @@ public class MetadataController {
     })
     @PutMapping(value = "/table/{tableId}")
     @WrapUpResponseBody
-    public void updateMetaTable(@PathVariable String tableId, String tableLabelName, String tableComment){
+    public void updateMetaTable(@PathVariable String tableId, String tableName, String tableComment, String tableState){
         CentitUserDetails userDetails = WebOptUtils.getLoginUser();
         if(userDetails == null){
             throw new ObjectException("未登录");
         }
-        metaDataService.updateMetaTable(tableId, tableLabelName, tableComment, userDetails.getUserCode());
+        metaDataService.updateMetaTable(tableId, tableName, tableComment, tableState, userDetails.getUserCode());
     }
 
     @ApiOperation(value = "修改列元数据")
@@ -117,11 +118,11 @@ public class MetadataController {
         @ApiImplicitParam(name = "tableId", value = "表ID"),
         @ApiImplicitParam(name = "columnName", value = "列名")
     })
-    @PutMapping(value = "/column/{tableId}/{columnName}")
+    @PutMapping(value = "/column/{tableId}/{columnCode}")
     @WrapUpResponseBody
-    public void updateMetaColumns(@PathVariable String tableId, @PathVariable String columnName, MetaColumn metaColumn){
+    public void updateMetaColumns(@PathVariable String tableId, @PathVariable String columnCode, MetaColumn metaColumn){
         metaColumn.setTableId(tableId);
-        metaColumn.setColumnName(columnName);
+        metaColumn.setColumnCode(columnCode);
         metaDataService.updateMetaColumn(metaColumn);
     }
 
@@ -138,5 +139,11 @@ public class MetadataController {
     @WrapUpResponseBody
     public void createRelations(@PathVariable String tableId, MetaTable metaTable){
         metaDataService.saveRelations(tableId, metaTable.getMdRelations());
+    }
+
+    @GetMapping(value = "/{databaseCode}/table_cascade/{tableName}")
+    public List<MetaTable> getMetaTableCascade(@PathVariable String databaseCode, @PathVariable String tableName){
+        JSONObject table = metaDataService.getMetaTableCascade(databaseCode, tableName);
+        return null;
     }
 }

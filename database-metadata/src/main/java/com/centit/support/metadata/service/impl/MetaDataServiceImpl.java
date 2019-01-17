@@ -1,22 +1,21 @@
 package com.centit.support.metadata.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.ObjectException;
-import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.ip.po.DatabaseInfo;
 import com.centit.framework.ip.service.IntegrationEnvironment;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.metadata.*;
+import com.centit.support.database.utils.DBType;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.metadata.dao.MetaColumnDao;
 import com.centit.support.metadata.dao.MetaRelationDao;
 import com.centit.support.metadata.dao.MetaTableDao;
 import com.centit.support.metadata.po.MetaColumn;
-import com.centit.support.metadata.po.MetaRelDetail;
 import com.centit.support.metadata.po.MetaRelation;
 import com.centit.support.metadata.po.MetaTable;
 import com.centit.support.metadata.service.MetaDataService;
 import com.centit.support.metadata.utils.JdbcConnect;
-import com.sun.xml.internal.ws.api.wsdl.parser.MetaDataResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -193,10 +192,11 @@ public class MetaDataServiceImpl implements MetaDataService {
     }
 
     @Override
-    public void updateMetaTable(String tableId, String tableLabelName, String tableComment, String recorder) {
+    public void updateMetaTable(String tableId, String tableName, String tableComment, String tableState, String recorder) {
         MetaTable metaTable = metaTableDao.getObjectById(tableId);
         metaTable.setTableComment(tableComment);
-        metaTable.setTableLabelName(tableLabelName);
+        metaTable.setTableName(tableName);
+        metaTable.setTableState(tableState);
         metaTable.setRecorder(recorder);
         metaTableDao.updateObject(metaTable);
     }
@@ -277,5 +277,21 @@ public class MetaDataServiceImpl implements MetaDataService {
     @Override
     public void updateMetaColumn(MetaColumn metaColumn) {
         metaColumnDao.updateObject(metaColumn);
+    }
+
+    @Override
+    public JSONObject getMetaTableCascade(String databaseCode, String tableName) {
+        JSONObject json = new JSONObject();
+        DatabaseInfo dbInfo = integrationEnvironment.getDatabaseInfo(databaseCode);
+        DBType dbType = DBType.mapDBType(dbInfo.getDatabaseUrl());
+        json.put("databaseType", dbType);
+        MetaTable metaTable = metaTableDao.getObjectByProperties(
+            CollectionsOpt.createHashMap("databaseCode", databaseCode, "tableName", tableName));
+        metaTableDao.fetchObjectReferences(metaTable);
+        for(MetaRelation relation :metaTable.getMdRelations()){
+            relation.getChildTableId();
+        }
+
+        return json;
     }
 }

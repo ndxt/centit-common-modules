@@ -1,5 +1,6 @@
 package com.centit.support.metadata.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.ip.po.DatabaseInfo;
 import com.centit.support.database.metadata.SimpleTableInfo;
@@ -21,7 +22,7 @@ public interface MetaDataService {
 
     void syncDb(String databaseCode, String recorder);
 
-    void updateMetaTable(String tableId, String tableLabelName, String tableComment, String recorder);
+    void updateMetaTable(String tableId, String tableName, String tableComment, String tableState, String recorder);
 
     MetaTable getMetaTable(String tableId);
 
@@ -36,4 +37,6 @@ public interface MetaDataService {
     MetaColumn getMetaColumn(String tableId, String columnName);
 
     void updateMetaColumn(MetaColumn metaColumn);
+
+    JSONObject getMetaTableCascade(String databaseCode, String tableName);
 }

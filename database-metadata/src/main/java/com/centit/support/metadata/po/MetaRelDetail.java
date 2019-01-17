@@ -19,7 +19,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Entity
 @ApiModel(value = "关联明细")
-@Table(name = "F_META_REL_DETIAL")
+@Table(name = "F_MD_REL_DETAIL")
 public class MetaRelDetail implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -35,7 +35,7 @@ public class MetaRelDetail implements java.io.Serializable {
      * p字段代码
      */
     @Id
-    @Column(name = "PARENT_COLUMN_NAME")
+    @Column(name = "PARENT_COLUMN_CODE")
     @NotBlank(message = "字段不能为空")
     @ApiModelProperty(value = "父表列名")
     private String parentColumnName;
@@ -44,7 +44,7 @@ public class MetaRelDetail implements java.io.Serializable {
      * C字段代码
      */
     @Id
-    @Column(name = "CHILD_COLUMN_NAME")
+    @Column(name = "CHILD_COLUMN_CODE")
     @NotBlank(message = "字段不能为空")
     @ApiModelProperty(value = "子表列名")
     @Length(max = 32, message = "字段长度不能大于{max}")

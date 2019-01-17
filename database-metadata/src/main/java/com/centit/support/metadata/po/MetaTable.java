@@ -1,6 +1,6 @@
 package com.centit.support.metadata.po;
 
-import com.centit.framework.common.WebOptUtils;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.database.metadata.SimpleTableInfo;
 import com.centit.support.database.metadata.TableInfo;
@@ -19,7 +19,9 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author zouwy
@@ -27,9 +29,16 @@ import java.util.*;
 @Data
 @ApiModel(value = "表元数据")
 @Entity
-@Table(name = "F_META_TABLE")
+@Table(name = "F_MD_TABLE")
 public class MetaTable implements TableInfo, java.io.Serializable {
-    private static final long serialVersionUID = 201901031000L;
+
+    private static final long serialVersionUID = -6882747282877249264L;
+
+    /**
+     * 主键前缀
+     */
+    private static final String PRIMARY_KEY_PREFIX = "PK_";
+
     /**
      * 表ID 表编号
      */
@@ -47,11 +56,11 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     private String databaseCode;
 
     /**
-     * 类别 表 T table /视图 V view /大字段 C LOB/CLOB  目前只能是表
+     * 类别 表 T table /视图 V view
      */
     @Column(name = "TABLE_TYPE")
     @NotBlank(message = "字段不能为空")
-    @Pattern(regexp = "[TVC]")//todo regex
+    @Pattern(regexp = "[TV]")
     @Length(max = 1, message = "字段长度不能大于{max}")
     @ApiModelProperty(value = "表类别（T-表；V-视图；C-大字段）")
     @DictionaryMap(fieldName = "tableTypeText", value = "TableType")
@@ -60,36 +69,20 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     /**
      * 表代码/表名
      */
-    @Column(name = "TABLE_NAME")
+    @Column(name = "TABLE_CODE")
     @NotBlank(message = "字段不能为空")
     @Length(max = 64, message = "字段长度不能大于{max}")
     @ApiModelProperty(value = "表名")
-    private String tableName;
-
-    /**
-     * 字段名 tableType =  C ，大字段是，这是 表结构不会根据字段的变更而变更
-     */
-    @Column(name = "EXT_COLUMN_NAME")
-    @Length(max = 64, message = "字段长度不能大于{max}")
-    @ApiModelProperty(value = "未知")
-    private String extColumnName;
-
-    /**
-     * 字段格式 J: JSON or X: XML
-     */
-    @Column(name = "EXT_COLUMN_FORMAT")
-    @Length(max = 10, message = "字段长度不能大于{max}")
-    @ApiModelProperty(value = "未知")
-    private String extColumnFormat;
+    private String tableCode;
 
     /**
      * 表中文名称
      */
-    @Column(name = "TABLE_LABEL_NAME")
+    @Column(name = "TABLE_NAME")
     @NotBlank(message = "字段不能为空")
     @Length(max = 100, message = "字段长度不能大于{max}")
     @ApiModelProperty(value = "表中文名")
-    private String tableLabelName;
+    private String tableName;
 
     /**
      * 控制表是否可以被修改，不是控制数据
@@ -99,8 +92,9 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     @NotBlank(message = "字段不能为空")
     @Pattern(regexp = "[SRN]")
     @Length(max = 1, message = "字段长度不能大于{max}")
-    @ApiModelProperty(value = "表状态（S-系统；R-只读；N-可读写；H-隐藏）")
+    @ApiModelProperty(value = "表状态（C-新建；R-只读；N-可读写；H-隐藏）")
     private String tableState;
+
     /**
      * 描述
      */
@@ -114,24 +108,17 @@ public class MetaTable implements TableInfo, java.io.Serializable {
      */
     @Column(name = "WORKFLOW_OPT_TYPE")
     @NotBlank(message = "字段不能为空")
+    @Pattern(regexp = "[0-2]")
     @Length(max = 1, message = "字段长度不能大于{max}")
     private String workFlowOptType;
 
     /**
-     * /Y/N 更新时是否校验时间戳 添加 Last_modify_time datetime
-     */
-
-    @Column(name = "UPDATE_CHECK_TIMESTAMP")
-    @NotBlank(message = "字段不能为空")
-    @Length(max = 1, message = "字段长度不能大于{max}")
-    private String updateCheckTimeStamp;
-
-    /**
      * 更改时间
      */
-    @Column(name = "LAST_MODIFY_DATE")
+    @Column(name = "RECORD_DATE")
     @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.NEW_UPDATE, condition = GeneratorCondition.ALWAYS, value = "today()")
-    private Date lastModifyDate;
+    private Date recordDate;
+
     /**
      * 更改人员
      */
@@ -184,10 +171,6 @@ public class MetaTable implements TableInfo, java.io.Serializable {
         return this.mdRelations;
     }
 
-    public void setMdRelations(List<MetaRelation> mdRelations) {
-        this.mdRelations = mdRelations;
-    }
-
     public void addMdRelation(MetaRelation mdRelation) {
         if (this.mdRelations == null)
             this.mdRelations = new ArrayList<>();
@@ -210,24 +193,25 @@ public class MetaTable implements TableInfo, java.io.Serializable {
 
     //将数据库表同步到元数据表
     public MetaTable convertFromDbTable(SimpleTableInfo tableInfo){
-        //TODO
-        this.tableName = tableInfo.getTableName();
+
+        this.tableCode = tableInfo.getTableName();
         if(StringUtils.isNotBlank(tableInfo.getTableLabelName())) {
-            this.tableLabelName = tableInfo.getTableLabelName();
+            this.tableName = tableInfo.getTableLabelName();
         }
         if(StringUtils.isNotBlank(tableInfo.getTableComment())){
             this.tableComment = tableInfo.getTableComment();
         }
         this.tableType = tableInfo.getTableType();
-        this.tableState = "S";
+        this.tableState = "C";
         this.workFlowOptType = "0";
         return this;
     }
 
     @Override
     @ApiModelProperty(hidden = true)
+    @JSONField(serialize = false)
     public String getPkName() {
-        return "PK_" + this.tableName;
+        return PRIMARY_KEY_PREFIX + this.tableName;
     }
 
     @Override
@@ -304,5 +288,12 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     @ApiModelProperty(hidden = true)
     public List<? extends TableReference> getReferences() {
         return null;
+    }
+
+    @Override
+    @ApiModelProperty(hidden = true)
+    @JSONField(serialize = false)
+    public String getTableLabelName() {
+        return this.getTableName();
     }
 }
