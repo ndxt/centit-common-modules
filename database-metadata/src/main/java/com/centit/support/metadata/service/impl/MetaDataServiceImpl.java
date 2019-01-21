@@ -1,5 +1,6 @@
 package com.centit.support.metadata.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.ObjectException;
 import com.centit.framework.ip.po.DatabaseInfo;
@@ -12,10 +13,12 @@ import com.centit.support.metadata.dao.MetaColumnDao;
 import com.centit.support.metadata.dao.MetaRelationDao;
 import com.centit.support.metadata.dao.MetaTableDao;
 import com.centit.support.metadata.po.MetaColumn;
+import com.centit.support.metadata.po.MetaRelDetail;
 import com.centit.support.metadata.po.MetaRelation;
 import com.centit.support.metadata.po.MetaTable;
 import com.centit.support.metadata.service.MetaDataService;
 import com.centit.support.metadata.utils.JdbcConnect;
+import com.centit.support.metadata.vo.MetaTableCascade;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -280,18 +283,24 @@ public class MetaDataServiceImpl implements MetaDataService {
     }
 
     @Override
-    public JSONObject getMetaTableCascade(String databaseCode, String tableName) {
-        JSONObject json = new JSONObject();
+    public MetaTableCascade getMetaTableCascade(String databaseCode, String tableCode) {
+        MetaTableCascade tableCascade = new MetaTableCascade();
         DatabaseInfo dbInfo = integrationEnvironment.getDatabaseInfo(databaseCode);
         DBType dbType = DBType.mapDBType(dbInfo.getDatabaseUrl());
-        json.put("databaseType", dbType);
+        tableCascade.setDatabaseType(dbType.toString());
         MetaTable metaTable = metaTableDao.getObjectByProperties(
-            CollectionsOpt.createHashMap("databaseCode", databaseCode, "tableName", tableName));
+            CollectionsOpt.createHashMap("databaseCode", databaseCode, "tableCode", tableCode));
+        tableCascade.addTable(metaTable);
         metaTableDao.fetchObjectReferences(metaTable);
         for(MetaRelation relation :metaTable.getMdRelations()){
-            relation.getChildTableId();
-        }
+            String childTableId = relation.getChildTableId();
+            MetaTable childTable = metaTableDao.getObjectById(childTableId);
 
-        return json;
+            metaRelationDao.fetchObjectReferences(relation);
+            tableCascade.addTable(childTable, relation.getRelationDetails());
+        }
+        tableCascade.setTableFields(metaTable.getMdColumns());
+
+        return tableCascade;
     }
 }

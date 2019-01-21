@@ -1,6 +1,5 @@
 package com.centit.support.metadata.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.ObjectException;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.WrapUpContentType;
@@ -14,6 +13,7 @@ import com.centit.support.metadata.po.MetaColumn;
 import com.centit.support.metadata.po.MetaRelation;
 import com.centit.support.metadata.po.MetaTable;
 import com.centit.support.metadata.service.MetaDataService;
+import com.centit.support.metadata.vo.MetaTableCascade;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -141,9 +141,10 @@ public class MetadataController {
         metaDataService.saveRelations(tableId, metaTable.getMdRelations());
     }
 
-    @GetMapping(value = "/{databaseCode}/table_cascade/{tableName}")
-    public List<MetaTable> getMetaTableCascade(@PathVariable String databaseCode, @PathVariable String tableName){
-        JSONObject table = metaDataService.getMetaTableCascade(databaseCode, tableName);
-        return null;
+    @ApiOperation(value = "元数据级联字段")
+    @GetMapping(value = "/{databaseCode}/table_cascade/{tableCode}")
+    @WrapUpResponseBody
+    public MetaTableCascade getMetaTableCascade(@PathVariable String databaseCode, @PathVariable String tableCode){
+        return metaDataService.getMetaTableCascade(databaseCode, tableCode);
     }
 }

@@ -8,6 +8,7 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.support.metadata.po.MetaColumn;
 import com.centit.support.metadata.po.MetaRelation;
 import com.centit.support.metadata.po.MetaTable;
+import com.centit.support.metadata.vo.MetaTableCascade;
 
 import javax.persistence.Column;
 import java.util.List;
@@ -38,5 +39,5 @@ public interface MetaDataService {
 
     void updateMetaColumn(MetaColumn metaColumn);
 
-    JSONObject getMetaTableCascade(String databaseCode, String tableName);
+    MetaTableCascade getMetaTableCascade(String databaseCode, String tableCode);
 }
