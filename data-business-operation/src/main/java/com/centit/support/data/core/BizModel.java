@@ -18,7 +18,7 @@ public class BizModel {
     /**
      * 模型数据
      */
-    private List<DataSet> bizData;
+    protected List<DataSet> bizData;
 
     public BizModel(){
 
