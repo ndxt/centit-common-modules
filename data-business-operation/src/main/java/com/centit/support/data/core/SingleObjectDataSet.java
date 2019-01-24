@@ -21,7 +21,10 @@ public class SingleObjectDataSet  extends SimpleDataSet {
     }
 
     public void setObject(Object obj) {
-        if (data == null || data.size() == 0) {
+        if(data == null){
+            data = new ArrayList<>(1);
+            data.add(CollectionsOpt.createHashMap(SINGLE_DATA_FIELD_NAME, obj));
+        } else if ( data.size() == 0) {
             data.add(CollectionsOpt.createHashMap(SINGLE_DATA_FIELD_NAME, obj));
         } else {
             data.set(0, CollectionsOpt.createHashMap(SINGLE_DATA_FIELD_NAME, obj));

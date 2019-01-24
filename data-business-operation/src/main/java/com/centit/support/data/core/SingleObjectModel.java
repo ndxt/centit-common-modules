@@ -14,12 +14,14 @@ public class SingleObjectModel extends BizModel {
     public SingleObjectModel(Object obj){
         super();
         bizData = new ArrayList<>(1);
-        SingleObjectDataSet dataSet = new SingleObjectDataSet(obj);
-        bizData.add(dataSet);
+        bizData.add(new SingleObjectDataSet(obj));
     }
 
     public void setObject(Object obj){
-        if(bizData == null || bizData.size() == 0){
+        if(bizData == null){
+            bizData = new ArrayList<>(1);
+            bizData.add(new SingleObjectDataSet(obj));
+        } else if(bizData.size() == 0){
             bizData.add(new SingleObjectDataSet(obj));
         } else {
             bizData.set(0, new SingleObjectDataSet(obj));

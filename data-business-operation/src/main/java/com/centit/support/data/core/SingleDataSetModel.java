@@ -27,7 +27,10 @@ public class SingleDataSetModel extends BizModel {
     }
 
     public void setDataSet(DataSet dataSet){
-        if(bizData == null || bizData.size() == 0){
+        if(bizData == null){
+            bizData = new ArrayList<>(1);
+            bizData.add(dataSet);
+        } else if(bizData.size() == 0){
             bizData.add(dataSet);
         } else {
             bizData.set(0, dataSet);

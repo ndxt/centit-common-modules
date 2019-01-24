@@ -6,6 +6,15 @@ import com.centit.support.data.core.BizSupplier;
 public class SimpleBizSupplier implements BizSupplier {
 
     private BizModel bizModel;
+
+    public SimpleBizSupplier(){
+
+    }
+
+    public SimpleBizSupplier(BizModel bizModel) {
+        this.bizModel = bizModel;
+    }
+
     /**
      * 业务数据是否是 批量的
      * 如果是，处理器将反复调用 。知道 get() 返回 null 结束

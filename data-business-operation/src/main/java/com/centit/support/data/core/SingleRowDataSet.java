@@ -20,7 +20,10 @@ public class SingleRowDataSet extends SimpleDataSet{
     }
 
     public void setRowData(Map<String, Object> rowData){
-        if(data == null || data.size() == 0){
+        if(data == null){
+            data = new ArrayList<>(1);
+            data.add(rowData);
+        } else if(data.size() == 0){
             data.add(rowData);
         } else {
             data.set(0, rowData);
