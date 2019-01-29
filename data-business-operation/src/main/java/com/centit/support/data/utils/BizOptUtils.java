@@ -29,6 +29,7 @@ public class BizOptUtils {
         return new SingleDataSetModel(dataSet);
     }
 
+    @SuppressWarnings("unchecked")
     public static DataSet castObjectToDataSet(Object obj) {
         if(obj==null){
             return null;
@@ -46,7 +47,7 @@ public class BizOptUtils {
                 return new SingleRowDataSet(objectMap);
             }
         } else if(obj instanceof Collection){
-            Collection<Object> objs = (Collection<java.lang.Object>)obj;
+            Collection<Object> objs = (Collection<Object>)obj;
             List<Map<String, Object>> data = new ArrayList<>(objs.size());
             for(Object object : objs){
                 if(object instanceof Map){
