@@ -12,18 +12,7 @@ import java.util.Map;
  *      数据库连接信息 DatabaseInfo
  *      对应的表信息 SimpleTableInfo
  */
-public class SQLDataSet implements DataSetReader, DataSetWriter {
-
-
-    /**
-     * 读取 dataSet 数据集
-     * @param params 模块的自定义参数
-     * @return dataSet 数据集
-     */
-    @Override
-    public DataSet load(Map<String, Object> params) {
-        return null;
-    }
+public class SQLDataSetWriter implements DataSetWriter {
 
     /**
      * 将 dataSet 数据集 持久化

@@ -26,7 +26,6 @@ public class BizModel {
 
     public BizModel(String modelName){
         this.modelName = modelName;
-
     }
 
     public void addDataSet(DataSet dataSet) {
