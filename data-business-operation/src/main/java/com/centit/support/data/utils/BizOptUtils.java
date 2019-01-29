@@ -10,7 +10,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class BizOptUtils {
+public abstract class BizOptUtils {
+
+    @SuppressWarnings("unchecked")
     public static BizModel castObjectToBizModel(Object obj) {
         if(obj==null){
             return null;
