@@ -1,81 +1,54 @@
 package com.centit.support;
 
+import com.centit.framework.config.SpringSecurityDaoConfig;
 import com.centit.framework.ip.service.IntegrationEnvironment;
 import com.centit.framework.ip.service.impl.JsonIntegrationEnvironment;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import com.centit.framework.jdbc.config.JdbcConfig;
+import com.centit.framework.model.adapter.PlatformEnvironment;
+import com.centit.framework.security.model.CentitUserDetailsService;
+import com.centit.framework.security.model.StandardPasswordEncoderImpl;
+import com.centit.framework.staticsystem.service.impl.JsonPlatformEnvironment;
+import com.centit.framework.staticsystem.service.impl.UserDetailsServiceImpl;
+import org.springframework.context.annotation.*;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 /**
  * Created by codefan on 17-7-18.
  */
 @Configuration
-@ComponentScan(basePackages = {"com.centit.support"},
+@ComponentScan(basePackages = {"com.centit"},
         excludeFilters = @ComponentScan.Filter(value = org.springframework.stereotype.Controller.class))
+@PropertySource(value = "classpath:system.properties")
+@Import(value = {JdbcConfig.class, SpringSecurityDaoConfig.class})
 public class ServiceConfig {
-
-//    @Value("${app.home:./}")
-//    private String appHome;
-//
-//    @Bean(initMethod = "initialEnvironment")
-//    @Lazy(value = false)
-//    public InitialWebRuntimeEnvironment initialEnvironment() {
-//        return new InitialWebRuntimeEnvironment();
-//    }
-//
-//    /**
-//     * 这个bean必须要有
-//     * @return CentitPasswordEncoder 密码加密算法
-//     */
-//    @Bean("passwordEncoder")
-//    public StandardPasswordEncoderImpl passwordEncoder() {
-//        return  new StandardPasswordEncoderImpl();
-//    }
-//    //这个bean必须要有 可以配置不同策略的session保存方案
-//
-//    //@Value("${message.sender.email.hostName:}")
-//    //@Value("${message.sender.email.smtpPort:25}")
-//    //@Value("${message.sender.email.userName:}")
-//    //@Value("${message.sender.email.userPassword:}")
-//    //@Value("${message.sender.email.serverEmail:}")
-//
-//    @Bean
-//    public EmailMessageSenderImpl emailMessageManager(){
-//        EmailMessageSenderImpl messageManager = new EmailMessageSenderImpl();
-//        messageManager.setHostName("mail.centit.com");
-//        messageManager.setSmtpPort(25);
-//        messageManager.setUserName("accounts");
-//        messageManager.setUserPassword("yhs@yhs1");
-//        messageManager.setServerEmail("noreplay@centit.com");
-//        return messageManager;
-//    }
-//
-//    @Bean
-//    public NotificationCenter notificationCenter() {
-//        NotificationCenterImpl notificationCenter = new NotificationCenterImpl();
-//        //这个不是必须的,只是为了在没有真正的发送类时不报错
-//        notificationCenter.initDummyMsgSenders();
-//        //打开消息推送服务日志
-//        notificationCenter.setWriteNoticeLog(true);
-//        return notificationCenter;
-//    }
-//
-//    @Bean
-//    @Lazy(value = false)
-//    public OperationLogWriter operationLogWriter() {
-//        TextOperationLogWriterImpl  operationLog =  new TextOperationLogWriterImpl();
-//        operationLog.setOptLogHomePath(appHome+"/logs");
-//        operationLog.init();
-//        return operationLog;
-//    }
-//
-//    @Bean
-//    public InstantiationServiceBeanPostProcessor instantiationServiceBeanPostProcessor() {
-//        return new InstantiationServiceBeanPostProcessor();
-//    }
 
     @Bean
     public IntegrationEnvironment integrationEnvironment(){
         return new JsonIntegrationEnvironment();
     }
+
+    @Bean
+    public CsrfTokenRepository csrfTokenRepository() {
+        return new HttpSessionCsrfTokenRepository();
+    }
+
+    @Bean
+    public PlatformEnvironment platformEnvironment(){
+        JsonPlatformEnvironment platformEnvironment = new JsonPlatformEnvironment();
+        return platformEnvironment;
+    }
+
+    @Bean
+    public CentitUserDetailsService centitUserDetailsService(PlatformEnvironment platformEnvironment) {
+        UserDetailsServiceImpl userDetailsService = new UserDetailsServiceImpl();
+        userDetailsService.setPlatformEnvironment(platformEnvironment);
+        return userDetailsService;
+    }
+
+    @Bean("passwordEncoder")
+    public StandardPasswordEncoderImpl passwordEncoder() {
+        return  new StandardPasswordEncoderImpl();
+    }
+
 }

@@ -1,16 +1,24 @@
 package com.centit.support.metadata.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.ObjectException;
 import com.centit.framework.ip.po.DatabaseInfo;
 import com.centit.framework.ip.service.IntegrationEnvironment;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.metadata.*;
+import com.centit.support.database.utils.DBType;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.support.metadata.dao.MetaColumnDao;
+import com.centit.support.metadata.dao.MetaRelationDao;
 import com.centit.support.metadata.dao.MetaTableDao;
 import com.centit.support.metadata.po.MetaColumn;
+import com.centit.support.metadata.po.MetaRelDetail;
+import com.centit.support.metadata.po.MetaRelation;
 import com.centit.support.metadata.po.MetaTable;
 import com.centit.support.metadata.service.MetaDataService;
 import com.centit.support.metadata.utils.JdbcConnect;
+import com.centit.support.metadata.vo.MetaTableCascade;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -42,21 +50,17 @@ public class MetaDataServiceImpl implements MetaDataService {
     @Autowired
     private MetaColumnDao metaColumnDao;
 
+    @Autowired
+    private MetaRelationDao metaRelationDao;
+
     @Override
     public List<DatabaseInfo> listDatabase() {
         return integrationEnvironment.listDatabaseInfo();
     }
 
     @Override
-    public List<MetaTable> listMetaTables(String databaseCode) {
-        DatabaseInfo databaseInfo = integrationEnvironment.getDatabaseInfo(databaseCode);
-            JdbcMetadata jdbcMetadata = new JdbcMetadata();
-            try {
-                jdbcMetadata.setDBConfig(JdbcConnect.getConn(databaseInfo));
-            }catch (SQLException e){
-                logger.error("连接数据库【{}】出错",databaseInfo.getDatabaseName());
-            }
-        return null;
+    public List<MetaTable> listMetaTables(String databaseCode, PageDesc pageDesc) {
+        return metaTableDao.listObjectsByProperties(CollectionsOpt.createHashMap("databaseCode", databaseCode), pageDesc);
     }
 
     @Override
@@ -72,8 +76,8 @@ public class MetaDataServiceImpl implements MetaDataService {
         return jdbcMetadata.listAllTable();
     }
 
-    public void syncDb(String databaseCode){
-        DatabaseInfo dbInfo = integrationEnvironment.getDatabaseInfo(databaseCode);
+    @Override
+    public void syncDb(String databaseCode, String recorder){
         List<SimpleTableInfo> dbTables = listRealTables(databaseCode);
         List<MetaTable> metaTables = metaTableDao.listObjectsByFilter("where DATABASE_CODE = ?", new Object[]{databaseCode});
         Comparator<TableInfo> comparator = (o1, o2) -> StringUtils.compare(o1.getTableName(), o2.getTableName());
@@ -84,12 +88,12 @@ public class MetaDataServiceImpl implements MetaDataService {
                 //表
                 MetaTable metaTable = new MetaTable().convertFromDbTable(table);
                 metaTable.setDatabaseCode(databaseCode);
-                metaTable.setTableType("T");//表
+                metaTable.setRecorder(recorder);
                 metaTableDao.saveNewObject(metaTable);
                 //列
                 List<SimpleTableField> columns = table.getColumns();
                 for(SimpleTableField tableField : columns){
-                    MetaColumn column = dbCol2MetaCol(tableField);
+                    MetaColumn column = new MetaColumn().convertFromTableField(tableField);
                     column.setTableId(metaTable.getTableId());
                     metaColumnDao.saveNewObject(column);
                 }
@@ -106,40 +110,42 @@ public class MetaDataServiceImpl implements MetaDataService {
             //更新
             for(Pair<MetaTable, SimpleTableInfo> pair : triple.getMiddle()){
                 MetaTable oldTable = pair.getLeft();
+                oldTable.setRecorder(recorder);
                 SimpleTableInfo newTable = pair.getRight();
                 //表
                 metaTableDao.updateObject(oldTable.convertFromDbTable(newTable));
                 //列
-                List<MetaColumn> oldColumn = oldTable.getColumns();
+                oldTable = metaTableDao.fetchObjectReferences(oldTable);
+                List<MetaColumn> oldColumns = oldTable.getColumns();
                 List<SimpleTableField> newColumns = newTable.getColumns();
                 Comparator<TableField> columnComparator = (o1, o2) -> StringUtils.compare(o1.getColumnName(), o2.getColumnName());
-                Triple<List<SimpleTableField>, List<Pair<MetaColumn, SimpleTableField>>, List<MetaColumn>> columnCompared = compareMetaBetweenDbTables(oldColumn, newColumns, columnComparator);
+                Triple<List<SimpleTableField>, List<Pair<MetaColumn, SimpleTableField>>, List<MetaColumn>> columnCompared = compareMetaBetweenDbTables(oldColumns, newColumns, columnComparator);
                 if(columnCompared.getLeft() != null && columnCompared.getLeft().size() > 0){
                     //新增
                     for(SimpleTableField tableField : columnCompared.getLeft()){
-
+                        MetaColumn metaColumn = new MetaColumn().convertFromTableField(tableField);
+                        metaColumn.setTableId(oldTable.getTableId());
+                        metaColumn.setRecorder(recorder);
+                        metaColumnDao.saveNewObject(metaColumn);
                     }
                 }
                 if(columnCompared.getRight() != null && columnCompared.getRight().size() > 0){
                     //删除
                     for(MetaColumn metaColumn : columnCompared.getRight()){
-
+                        metaColumnDao.deleteObject(metaColumn);
                     }
                 }
                 if(columnCompared.getMiddle() != null && columnCompared.getMiddle().size() > 0){
                     //更新
                     for(Pair<MetaColumn, SimpleTableField> columnPair : columnCompared.getMiddle()){
-
+                        MetaColumn oldColumn = columnPair.getLeft();
+                        oldColumn.setRecorder(recorder);
+                        SimpleTableField newColumn = columnPair.getRight();
+                        metaColumnDao.updateObject(oldColumn.convertFromTableField(newColumn));
                     }
                 }
             }
         }
-    }
-
-    @Override
-    public void syncTable(String databaseCode, String tableId) {
-        DatabaseInfo dbInfo = integrationEnvironment.getDatabaseInfo(databaseCode);
-        MetaTable metaTable = metaTableDao.getObjectWithReferences(tableId);
     }
 
     private <K,V> Triple<List<K>, List<Pair<V, K>>, List<V>>
@@ -188,16 +194,113 @@ public class MetaDataServiceImpl implements MetaDataService {
         return new ImmutableTriple<>(insertList,updateList,delList);
     }
 
-    private MetaColumn dbCol2MetaCol(SimpleTableField tableField){
-        MetaColumn column = new MetaColumn();
-        column.setColumnName(tableField.getColumnName());
-        column.setFieldLabelName(tableField.getFieldLabelName());
-        column.setColumnComment(tableField.getColumnComment());
-        column.setColumnFieldType(tableField.getColumnType());
-        column.setMaxLength(tableField.getMaxLength());
-        column.setScale(tableField.getScale());
-        column.setAccessType(tableField.getColumnType());
-        return column;
+    @Override
+    public void updateMetaTable(String tableId, String tableName, String tableComment, String tableState, String recorder) {
+        MetaTable metaTable = metaTableDao.getObjectById(tableId);
+        metaTable.setTableComment(tableComment);
+        metaTable.setTableName(tableName);
+        metaTable.setTableState(tableState);
+        metaTable.setRecorder(recorder);
+        metaTableDao.updateObject(metaTable);
     }
 
+    @Override
+    public MetaTable getMetaTable(String tableId) {
+        return metaTableDao.getObjectById(tableId);
+    }
+
+    @Override
+    public List<MetaRelation> listMetaRelation(String tableId, PageDesc pageDesc) {
+        List<MetaRelation> list = metaRelationDao.listObjectsByProperty("parentTableId", tableId);
+        for(MetaRelation relation : list){
+            metaRelationDao.fetchObjectReferences(relation);
+        }
+        return list;
+    }
+
+    @Override
+    public List<MetaColumn> listMetaColumns(String tableId, PageDesc pageDesc) {
+        return metaColumnDao.listObjectsByProperties(
+            CollectionsOpt.createHashMap("tableId", tableId), pageDesc);
+    }
+
+    @Override
+    public void createRelation(MetaRelation relation) {
+        metaRelationDao.saveNewObject(relation);
+        metaRelationDao.saveObjectReferences(relation);
+    }
+
+    @Override
+    public void saveRelations(String tableId, List<MetaRelation> relations) {
+        List<MetaRelation> dbRelations = metaRelationDao.listObjectsByProperty("parentTableId", tableId);
+
+        Triple<List<MetaRelation>, List<Pair<MetaRelation,MetaRelation>>, List<MetaRelation>> comparedRelation =
+            CollectionsOpt.compareTwoList(dbRelations, relations,
+                (o1, o2) -> StringUtils.compare(o1.getChildTableId(), o2.getChildTableId()));
+
+        if(comparedRelation.getLeft() != null){
+            //insert
+            for(MetaRelation relation : comparedRelation.getLeft()){
+                metaRelationDao.saveNewObject(relation);
+                metaRelationDao.saveObjectReferences(relation);
+            }
+        }
+
+        if(comparedRelation.getRight() != null){
+            //delete
+            for(MetaRelation relation : comparedRelation.getRight()){
+                relation = metaRelationDao.fetchObjectReferences(relation);
+                metaRelationDao.deleteObject(relation);
+                metaRelationDao.deleteObjectReferences(relation);
+            }
+        }
+
+        if(comparedRelation.getMiddle() != null){
+            //update
+            for(Pair<MetaRelation, MetaRelation> pair : comparedRelation.getMiddle()){
+                MetaRelation oldRelation = pair.getLeft();
+                oldRelation = metaRelationDao.fetchObjectReferences(oldRelation);
+                MetaRelation newRelation = pair.getRight();
+                oldRelation.setRelationName(newRelation.getRelationName());
+                oldRelation.setRelationComment(newRelation.getRelationComment());
+                metaRelationDao.updateObject(oldRelation);
+
+                metaRelationDao.deleteObjectReferences(oldRelation);
+                newRelation.setRelationId(oldRelation.getRelationId());
+                metaRelationDao.saveObjectReferences(newRelation);
+            }
+        }
+    }
+
+    @Override
+    public MetaColumn getMetaColumn(String tableId, String columnName) {
+        return metaColumnDao.getObjectById(new MetaColumn(tableId, columnName));
+    }
+
+    @Override
+    public void updateMetaColumn(MetaColumn metaColumn) {
+        metaColumnDao.updateObject(metaColumn);
+    }
+
+    @Override
+    public MetaTableCascade getMetaTableCascade(String databaseCode, String tableCode) {
+        MetaTableCascade tableCascade = new MetaTableCascade();
+        DatabaseInfo dbInfo = integrationEnvironment.getDatabaseInfo(databaseCode);
+        DBType dbType = DBType.mapDBType(dbInfo.getDatabaseUrl());
+        tableCascade.setDatabaseType(dbType.toString());
+        MetaTable metaTable = metaTableDao.getObjectByProperties(
+            CollectionsOpt.createHashMap("databaseCode", databaseCode, "tableCode", tableCode));
+        tableCascade.addTable(metaTable);
+        metaTableDao.fetchObjectReferences(metaTable);
+        for(MetaRelation relation :metaTable.getMdRelations()){
+            String childTableId = relation.getChildTableId();
+            MetaTable childTable = metaTableDao.getObjectById(childTableId);
+
+            metaRelationDao.fetchObjectReferences(relation);
+            tableCascade.addTable(childTable, relation.getRelationDetails());
+        }
+        tableCascade.setTableFields(metaTable.getMdColumns());
+
+        return tableCascade;
+    }
 }

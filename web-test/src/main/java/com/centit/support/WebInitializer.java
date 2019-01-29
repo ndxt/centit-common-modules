@@ -1,5 +1,6 @@
 package com.centit.support;
 
+import com.centit.framework.config.SystemSpringMvcConfig;
 import com.centit.framework.config.WebConfig;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
@@ -21,7 +22,7 @@ public class WebInitializer implements WebApplicationInitializer {
     public void onStartup(ServletContext servletContext) throws ServletException {
 
         initializeSpringConfig(servletContext);
-//        initializeSystemSpringMvcConfig(servletContext);
+        initializeSystemSpringMvcConfig(servletContext);
         initializeNormalSpringMvcConfig(servletContext);
 
         WebConfig.registerRequestContextListener(servletContext);
@@ -30,7 +31,7 @@ public class WebInitializer implements WebApplicationInitializer {
         WebConfig.registerHttpPutFormContentFilter(servletContext);
         WebConfig.registerHiddenHttpMethodFilter(servletContext);
         WebConfig.registerRequestThreadLocalFilter(servletContext);
-//        WebConfig.registerSpringSecurityFilter(servletContext);
+        WebConfig.registerSpringSecurityFilter(servletContext);
         //Session
 //        WebConfig.registerHttpSessionEventPublisher(servletContext);
 //        WebConfig.initializeH2Console(servletContext);
@@ -46,6 +47,15 @@ public class WebInitializer implements WebApplicationInitializer {
         //springContext.s
         servletContext.addListener(new ContextLoaderListener(springContext));
         //servletContext.addListener(new HttpSessionEventPublisher());
+    }
+
+    private void initializeSystemSpringMvcConfig(ServletContext servletContext) {
+        AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
+        context.register(SystemSpringMvcConfig.class, SwaggerConfig.class);
+        ServletRegistration.Dynamic system  = servletContext.addServlet("system", new DispatcherServlet(context));
+        system.addMapping("/system/*");
+        system.setLoadOnStartup(1);
+        system.setAsyncSupported(true);
     }
 
     /**
