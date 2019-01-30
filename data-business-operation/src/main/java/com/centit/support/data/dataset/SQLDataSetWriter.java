@@ -1,10 +1,16 @@
 package com.centit.support.data.dataset;
 
 import com.centit.support.data.core.DataSet;
-import com.centit.support.data.core.DataSetReader;
 import com.centit.support.data.core.DataSetWriter;
+import com.centit.support.data.utils.DBBatchUtils;
+import com.centit.support.database.metadata.TableInfo;
+import com.centit.support.database.utils.DataSourceDescription;
+import com.centit.support.database.utils.TransactionHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * 数据库数据集 读取和写入类
@@ -14,6 +20,16 @@ import java.util.Map;
  */
 public class SQLDataSetWriter implements DataSetWriter {
 
+    private static final Logger logger = LoggerFactory.getLogger(SQLDataSetWriter.class);
+    private DataSourceDescription dataSource;
+
+    private TableInfo tableInfo;
+
+    private Connection connection;
+
+    public SQLDataSetWriter(){
+        connection = null;
+    }
     /**
      * 将 dataSet 数据集 持久化
      *
@@ -21,7 +37,19 @@ public class SQLDataSetWriter implements DataSetWriter {
      */
     @Override
     public void save(DataSet dataSet) {
-
+        try{
+            if(connection == null) {
+                TransactionHandler.executeInTransaction(dataSource,
+                    (conn) -> DBBatchUtils.batchInsertObjects(conn,
+                        tableInfo, dataSet.getData()));
+            }else{
+                TransactionHandler.executeInTransaction(connection,
+                    (conn) -> DBBatchUtils.batchInsertObjects(conn,
+                        tableInfo, dataSet.getData()));
+            }
+        } catch (SQLException e){
+            logger.error(e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -32,6 +60,31 @@ public class SQLDataSetWriter implements DataSetWriter {
      */
     @Override
     public void merge(DataSet dataSet) {
+        try{
+            if(connection == null) {
+                TransactionHandler.executeInTransaction(dataSource,
+                    (conn) -> DBBatchUtils.batchMergeObjects(conn,
+                        tableInfo, dataSet.getData()));
+            }else{
+                TransactionHandler.executeInTransaction(connection,
+                    (conn) -> DBBatchUtils.batchMergeObjects(conn,
+                        tableInfo, dataSet.getData()));
+            }
+        } catch (SQLException e){
+            logger.error(e.getLocalizedMessage());
+        }
 
+    }
+
+    public void setDataSource(DataSourceDescription dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public void setTableInfo(TableInfo tableInfo) {
+        this.tableInfo = tableInfo;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
     }
 }

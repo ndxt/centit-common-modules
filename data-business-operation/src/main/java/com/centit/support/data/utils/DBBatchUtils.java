@@ -28,7 +28,7 @@ import java.util.Map;
 public abstract class DBBatchUtils {
     protected static final Logger logger = LoggerFactory.getLogger(DBBatchUtils.class);
 
-    public List<String> achieveAllFields(final List<Map<String, Object>> objects){
+    public static List<String> achieveAllFields(final List<Map<String, Object>> objects){
         HashSet<String> fields = new HashSet<>();
         for(Map<String, Object> map : objects){
             fields.addAll(map.keySet());
@@ -36,7 +36,7 @@ public abstract class DBBatchUtils {
         return new ArrayList<>(fields);
     }
 
-    public int batchInsertObjects(final Connection conn,
+    public static int batchInsertObjects(final Connection conn,
                                    final TableInfo tableInfo,
                                    final List<Map<String, Object>> objects) throws SQLException {
         List<String> fields = achieveAllFields( objects);
@@ -55,7 +55,7 @@ public abstract class DBBatchUtils {
         return n;
     }
 
-    public int batchUpdateObjects(final Connection conn,
+    public static int batchUpdateObjects(final Connection conn,
                                   final TableInfo tableInfo,
                                   //final Collection<String> fields,
                                   final List<Map<String, Object>> objects) throws SQLException {
@@ -80,7 +80,7 @@ public abstract class DBBatchUtils {
         return n;
     }
 
-    public int batchMergeObjects(final Connection conn,
+    public static int batchMergeObjects(final Connection conn,
                                   final TableInfo tableInfo,
                                   final List<Map<String, Object>> objects) throws SQLException {
         List<String> fields = achieveAllFields( objects);
