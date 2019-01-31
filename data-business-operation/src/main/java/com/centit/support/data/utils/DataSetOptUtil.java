@@ -34,11 +34,9 @@ public abstract class DataSetOptUtil {
 
         for (Map<String, Object> row : data) {
             int i = 0;
-            String key = null;
-            Object value = null;
             for (Map.Entry<String, Object> entry : row.entrySet()) {
-                key = entry.getKey();
-                value = entry.getValue();
+                String key = entry.getKey();
+                Object value = entry.getValue();
                 if(newRow.get(key) == null) {
                     newRow.put(key, value);//保证顺序一致
                 }
