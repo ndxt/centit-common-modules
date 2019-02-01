@@ -30,31 +30,23 @@ public abstract class DataSetOptUtil {
         Object[] groupByData = new Object[groupbyFields.size()];
         Object[] groupByDataCompare = null;
 
-        Map<String, List<Object>> statData = new HashMap<>();//(data.get(0).size()-groupbyFields.size())/0.75
+        Map<String, List<Object>> statDatas = new HashMap<>();//(data.get(0).size()-groupbyFields.size())/0.75
 
         for (Map<String, Object> row : data) {
             int i = 0;
+            Map<String, Object> statData = new HashMap<>();
             for (Map.Entry<String, Object> entry : row.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
-                if(newRow.get(key) == null) {
-                    newRow.put(key, value);//保证顺序一致
-                }
                 if(groupbyFields.contains(key)){
                     groupByData[i++] = value;
                     continue;
                 }
 
-                if(statData.get(key) != null){
-                    statData.get(key).add(value);
-                }else{
-                    List<Object> list = new ArrayList<>();
-                    list.add(value);
-                    statData.put(key, list);
-                }
+                statData.put(key, value);
             }
             if(groupByDataCompare != null && !Arrays.equals(groupByData, groupByDataCompare)){
-                for(Map.Entry<String, List<Object>> statEntry : statData.entrySet()){
+                for(Map.Entry<String, List<Object>> statEntry : statDatas.entrySet()){
                     //todo 判断类型
                     Object[] number = statEntry.getValue().toArray();
                     int sum = 0;
@@ -67,11 +59,21 @@ public abstract class DataSetOptUtil {
                 map.putAll(newRow);
                 newData.add(map);
                 newRow.clear();
-                statData.clear();
+                statDatas.clear();
             }
+            for(Map.Entry<String, Object> stat : statData.entrySet()) {
+                if (statDatas.get(stat.getKey()) != null) {
+                    statDatas.get(stat.getKey()).add(stat.getValue());
+                } else {
+                    List<Object> list = new ArrayList<>();
+                    list.add(stat.getValue());
+                    statDatas.put(stat.getKey(), list);
+                }
+            }
+            newRow.putAll(row);
             groupByDataCompare = ArrayUtils.clone(groupByData);
         }
-        for(Map.Entry<String, List<Object>> statEntry : statData.entrySet()){
+        for(Map.Entry<String, List<Object>> statEntry : statDatas.entrySet()){
             //todo 判断类型
             Object[] number = statEntry.getValue().toArray();
             int sum = 0;
@@ -214,21 +216,25 @@ public abstract class DataSetOptUtil {
         colHeader.add("month");
         SimpleDataSet dataSet = new SimpleDataSet();
         dataSet.setData(list);
+        System.out.println("=================cross===================");
+        System.out.println(JSON.toJSONString(dataSet.getData()));
         DataSet result = crossTabulation(dataSet, rowHeader, colHeader);
         System.out.println(JSON.toJSONString(result.getData()));
 
         List<Map<String, Object>> list1 = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("year", "2018");
             map.put("season", 1);
+            map.put("income", 1+i);
             map.put("seal", i);
             list1.add(map);
         }
         for (int i = 0; i < 4; i++) {
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("year", "2018");
             map.put("season", 2);
+            map.put("income", 2+i);
             map.put("seal", 1 + i);
             list1.add(map);
         }
@@ -236,8 +242,10 @@ public abstract class DataSetOptUtil {
         groupByFields.add("year");
         groupByFields.add("season");
         SimpleDataSet dataSet1 = new SimpleDataSet();
-        dataSet.setData(list1);
-        DataSet result1 = groupbyStat(dataSet, groupByFields);
-        System.out.println(JSON.toJSONString(result.getData()));
+        dataSet1.setData(list1);
+        System.out.println("===================group by========================");
+        System.out.println(JSON.toJSONString(dataSet1.getData()));
+        DataSet result1 = groupbyStat(dataSet1, groupByFields);
+        System.out.println(JSON.toJSONString(result1.getData()));
     }
 }
