@@ -26,8 +26,6 @@ public class DataLoadSupplier implements BizSupplier {
                 bizModel.addDataSet(ds);
             }
         }
-
-
         return  bizModel;
     }
 
