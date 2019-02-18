@@ -8,13 +8,13 @@ import com.centit.support.data.core.DataSetWriter;
  */
 public abstract class FileDataSet implements DataSetReader, DataSetWriter {
 
-    protected String fileBaseDir;
+    protected String filePath;
 
-    public String getFileBaseDir() {
-        return fileBaseDir;
+    public String getFilePath() {
+        return filePath;
     }
 
-    public void setFileBaseDir(String fileBaseDir) {
-        this.fileBaseDir = fileBaseDir;
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 }

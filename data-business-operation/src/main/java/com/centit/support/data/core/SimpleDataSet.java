@@ -1,5 +1,7 @@
 package com.centit.support.data.core;
 
+import com.alibaba.fastjson.JSONArray;
+
 import java.util.List;
 import java.util.Map;
 
@@ -86,5 +88,11 @@ public class SimpleDataSet implements DataSet {
 
     public void setDimensions(List<String> dimensions) {
         this.dimensions = dimensions;
+    }
+
+    public static SimpleDataSet fromJsonArray(JSONArray ja){
+        SimpleDataSet dataSet = new SimpleDataSet();
+        dataSet.setData((List)ja);
+        return dataSet;
     }
 }
