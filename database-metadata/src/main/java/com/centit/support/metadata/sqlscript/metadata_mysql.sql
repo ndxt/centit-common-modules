@@ -8,7 +8,7 @@ drop table if exists F_MD_TABLE;
 
 create table F_MD_COLUMN
 (
-   TABLE_ID                numeric(12,0) not null,
+   TABLE_ID                varchar(64) not null,
    COLUMN_CODE             varchar(32) not null,
    COLUMN_NAME             varchar(64),
    COLUMN_TYPE             varchar(32) not null,
@@ -30,7 +30,7 @@ create table F_MD_COLUMN
 
 create table F_MD_RELATION
 (
-   RELATION_ID                   numeric(12,0) not null,
+   RELATION_ID                   varchar(64) not null,
    RELATION_NAME                 varchar(64) not null,
    PARENT_TABLE_ID               numeric(12,0) not null,
    CHILD_TABLE_ID                numeric(12,0) not null,
@@ -41,7 +41,7 @@ create table F_MD_RELATION
 
 create table F_MD_REL_DETAIL
 (
-   RELATION_ID                numeric(12,0) not null,
+   RELATION_ID                varchar(64) not null,
    PARENT_COLUMN_CODE             varchar(32) not null,
    CHILD_COLUMN_CODE             varchar(32) not null,
    primary key (RELATION_ID, PARENT_COLUMN_CODE)
@@ -49,7 +49,7 @@ create table F_MD_REL_DETAIL
 
 create table F_MD_TABLE
 (
-   TABLE_ID               numeric(12,0) not null,
+   TABLE_ID               varchar(64) not null,
    TABLE_CODE             varchar(32) not null,
    DATABASE_CODE          varchar(32) not null comment '数据库代码',
    TABLE_NAME             varchar(64),

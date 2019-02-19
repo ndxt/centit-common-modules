@@ -1,8 +1,11 @@
 package com.centit.support.data.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.centit.support.algorithm.GeneralAlgorithm;
 import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.data.core.DataSet;
+import com.centit.support.data.core.SimpleDataSet;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,13 +48,7 @@ public abstract class DataSetOptUtil {
             }
             if(groupByDataCompare != null && !Arrays.equals(groupByData, groupByDataCompare)){
                 for(Map.Entry<String, List<Object>> statEntry : statDatas.entrySet()){
-                    //todo 判断类型
-                    Object[] number = statEntry.getValue().toArray();
-                    int sum = 0;
-                    for(int j = 0; j < number.length; j++){
-                        sum += NumberBaseOpt.castObjectToInteger(number[j]);
-                    }
-                    newRow.replace(statEntry.getKey(), sum);
+                    newRow.replace(statEntry.getKey(), GeneralAlgorithm.sumObjects(statEntry.getValue()));
                 }
                 Map<String, Object> map = new LinkedHashMap<>();//data.size()/0.75
                 map.putAll(newRow);
@@ -72,13 +69,7 @@ public abstract class DataSetOptUtil {
             groupByDataCompare = ArrayUtils.clone(groupByData);
         }
         for(Map.Entry<String, List<Object>> statEntry : statDatas.entrySet()){
-            //todo 判断类型
-            Object[] number = statEntry.getValue().toArray();
-            int sum = 0;
-            for(int j = 0; j < number.length; j++){
-                sum += NumberBaseOpt.castObjectToInteger(number[j]);
-            }
-            newRow.replace(statEntry.getKey(), sum);
+            newRow.replace(statEntry.getKey(), GeneralAlgorithm.sumObjects(statEntry.getValue()));
         }
         newData.add(newRow);
 
@@ -172,14 +163,51 @@ public abstract class DataSetOptUtil {
         return inData;
     }
 
-    public static DataSet compareTabulation(DataSet currData, DataSet lastData, List<String> primaryFields) {
-        // 这个函数需要传入 主键列
-        // 需要根据主键排序
-        return currData;
+    /**
+     * 同环比转换
+     * @param currData 本期数据集
+     * @param lastData 上期数据集
+     * @param primaryFields 主键列
+     */
+    public static DataSet compareTabulation(DataSet currDataSet, DataSet lastDataSet, List<String> primaryFields) {
+        if (currDataSet == null || lastDataSet == null) {
+            return null;
+        }
+        List<Map<String, Object>> currData = currDataSet.getData();
+        List<Map<String, Object>> lastData = lastDataSet.getData();
+        if (currData == null || currData.size() == 0 || lastData == null || lastData.size() == 0) {
+            throw new RuntimeException("数据不合法");
+        }
+        if(currData.size() != lastData.size()){
+            throw new RuntimeException("数据不合法");
+        }
+        List<Map<String, Object>> newData = new ArrayList<>();
+        // 根据主键排序
+        sortByFields(currData, primaryFields);
+        sortByFields(lastData, primaryFields);
+        for(int i = 0; i < currData.size(); i++){
+            Map<String, Object> currentRow = currData.get(i);
+            Map<String, Object> lastRow = lastData.get(i);
+
+            Map<String, Object> newRow = new LinkedHashMap<>();
+            for(String primaryField : primaryFields){
+                newRow.put(primaryField, currentRow.get(primaryField));
+                currentRow.remove(primaryField);
+            }
+            for(Map.Entry<String, Object> entry : currentRow.entrySet()){
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                newRow.put(key+":上期", lastRow.get(key));
+                newRow.put(key+":本期", value);
+            }
+            newData.add(newRow);
+        }
+        currDataSet.getData().clear();
+        currDataSet.getData().addAll(newData);
+        return currDataSet;
     }
 
     private static void sortByFields(List<Map<String, Object>> data, List<String> fields) {
-
         Collections.sort(data, (o1, o2) -> {
             int[] sort = new int[fields.size()];
             int i = 0;
@@ -193,6 +221,5 @@ public abstract class DataSetOptUtil {
             }
             return 0;
         });
-
     }
 }
