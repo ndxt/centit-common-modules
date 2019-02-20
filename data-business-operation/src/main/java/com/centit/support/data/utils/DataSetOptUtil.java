@@ -81,6 +81,8 @@ public abstract class DataSetOptUtil {
     /***
      * 交叉制表 数据处理
      * @param inData 输入数据集
+     * @param colHeaderFields 列头信息
+     * @param rowHeaderFields 行头信息
      * @return 输出数据集
      */
     public static DataSet crossTabulation(DataSet inData, List<String> rowHeaderFields, List<String> colHeaderFields) {
@@ -165,8 +167,8 @@ public abstract class DataSetOptUtil {
 
     /**
      * 同环比转换
-     * @param currData 本期数据集
-     * @param lastData 上期数据集
+     * @param currDataSet 本期数据集
+     * @param lastDataSet 上期数据集
      * @param primaryFields 主键列
      */
     public static DataSet compareTabulation(DataSet currDataSet, DataSet lastDataSet, List<String> primaryFields) {
