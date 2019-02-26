@@ -1,5 +1,7 @@
 package com.centit.support.data.core;
 
+import com.centit.support.data.bizopt.SimpleBizSupplier;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +9,10 @@ import java.util.List;
  * 业务流
  */
 public class BizOptFlow {
+
+    public BizOptFlow(){
+
+    }
     /**
      * 业务数据 生产者
      */
@@ -57,5 +63,11 @@ public class BizOptFlow {
         }
         this.operations.add(operation);
         return this;
+    }
+
+    public static BizOptFlow makeSingleOptFlow(BizOperation operation){
+        BizOptFlow optFlow = new BizOptFlow();
+        return optFlow.setSupplier(SimpleBizSupplier.DUMMY_BIZ_SUPPLIER)
+                      .addOperation(operation);
     }
 }

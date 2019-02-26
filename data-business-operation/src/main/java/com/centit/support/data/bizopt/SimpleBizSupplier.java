@@ -5,6 +5,9 @@ import com.centit.support.data.core.BizSupplier;
 
 public class SimpleBizSupplier implements BizSupplier {
 
+    public static final SimpleBizSupplier DUMMY_BIZ_SUPPLIER
+        = new SimpleBizSupplier(BizModel.EMPTY_BIZ_MODEL);
+
     private BizModel bizModel;
 
     public SimpleBizSupplier(){
