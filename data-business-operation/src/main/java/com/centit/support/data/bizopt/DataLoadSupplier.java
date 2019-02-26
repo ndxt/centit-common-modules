@@ -6,14 +6,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DataLoadSupplier implements BizSupplier {
-
     private Map<String, DataSetReader> dataReaders;
-
     private String modelName;
+    private boolean batchWise;
     /**
      * 模型的标识， 就是对应的主键
      */
     private Map<String, Object> modeTag;
+
+    public DataLoadSupplier(){
+        this.batchWise = false;
+    }
 
     protected BizModel loadData(){
         if(dataReaders == null || dataReaders.isEmpty()){
@@ -30,12 +33,13 @@ public class DataLoadSupplier implements BizSupplier {
     }
 
     /**
+     * 在后续的操作中需要改变业务环境(或者modeTag)避免死循环
      * 业务数据是否是 批量的
      * 如果是，处理器将反复调用 。知道 get() 返回 null 结束
      * @return 否是 批量的
      */
     public boolean isBatchWise(){
-        return false;
+        return this.batchWise;
     }
 
     /**
@@ -78,5 +82,9 @@ public class DataLoadSupplier implements BizSupplier {
 
     public void setModeTag(Map<String, Object> modeTag) {
         this.modeTag = modeTag;
+    }
+
+    public void setBatchWise(boolean batchWise) {
+        this.batchWise = batchWise;
     }
 }
