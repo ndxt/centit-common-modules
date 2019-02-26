@@ -8,6 +8,7 @@
         <module>enterprise-calendar</module>
         <module>database-metadata</module>
         <module>data-business-operation</module>
+        <module>centit-quartz-extend</module>
     </modules>
     <parent>
         <artifactId>framework-release-dependencies</artifactId>
