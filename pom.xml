@@ -11,9 +11,9 @@
         <module>centit-quartz-extend</module>
     </modules>
     <parent>
-        <artifactId>framework-release-dependencies</artifactId>
+        <artifactId>framework-snapshot-dependencies</artifactId>
         <groupId>com.centit.framework</groupId>
-        <version>1.1.1812</version>
+        <version>1.1-SNAPSHOT</version>
     </parent>
     <groupId>com.centit.support</groupId>
     <artifactId>centit-common-modules</artifactId>

@@ -10,7 +10,11 @@ public class BizOptFlowJob extends AbstractQuartzJob {
     private BizOptFlow optFlow;
 
     @Override
-    public void runRealJob(JobExecutionContext context) throws JobExecutionException {
-        optFlow.run();
+    public boolean runRealJob(JobExecutionContext context) throws JobExecutionException {
+        return optFlow.run() >= 0;
+    }
+
+    public void setOptFlow(BizOptFlow optFlow) {
+        this.optFlow = optFlow;
     }
 }

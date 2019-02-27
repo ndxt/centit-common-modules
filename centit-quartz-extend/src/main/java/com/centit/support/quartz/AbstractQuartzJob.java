@@ -8,15 +8,19 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractQuartzJob implements Job {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractQuartzJob.class);
-    protected abstract void runRealJob(JobExecutionContext context) throws JobExecutionException;
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractQuartzJob.class);
+    protected abstract boolean runRealJob(JobExecutionContext context) throws JobExecutionException;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         // 这边记录 任务启动日志，内容需要重构
         logger.info("begin");
-        runRealJob(context);
+        boolean success = runRealJob(context);
         // 这边记录 任务完成日志，内容需要重构
-        logger.info("end");
+        if(success) {
+            logger.info("end");
+        } else {
+            logger.error("end");
+        }
     }
 }
