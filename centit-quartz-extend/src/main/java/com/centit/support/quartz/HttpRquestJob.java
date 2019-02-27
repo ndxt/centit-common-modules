@@ -17,11 +17,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HttpRquestJob extends AbstractQuartzJob {
 
     private static ConcurrentHashMap<String, AppSession> appSessionPoolMap = new ConcurrentHashMap<>(10);
-    private static AppSession fetchAppSession(String url){
+    private static AppSession fetchAppSession(String url, String userCode, String password){
         String sUrl = StringUtils.isBlank(url)? "blank": url;
         AppSession appSession = appSessionPoolMap.get(sUrl);
         if(appSession == null){
-            appSession =  new AppSession(url, false, null, null);
+            if(StringUtils.isNotBlank(userCode)){
+                appSession = new AppSession(url, userCode, password);
+            }else {
+                appSession = new AppSession(url);
+            }
             appSessionPoolMap.put(sUrl, appSession);
         }
         return appSession;
@@ -36,7 +40,10 @@ public class HttpRquestJob extends AbstractQuartzJob {
     @Override
     protected void loadExecutionContext(JobExecutionContext context){
         JobDataMap paramMap = context.getMergedJobDataMap();
-        appSession = HttpRquestJob.fetchAppSession(paramMap.getString("osUrl"));
+        appSession = HttpRquestJob.fetchAppSession(
+            paramMap.getString("osUrl"),
+            paramMap.getString("osUser"),
+            paramMap.getString("osUserPwd"));
         requestUrl = paramMap.getString("requestUrl");
         httpMethod = paramMap.getString("httpMethod");
         requstBody = paramMap.getString("requstBody");

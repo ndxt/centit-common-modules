@@ -8,10 +8,32 @@ public abstract class QuartzJobUtils {
 
     private static ConcurrentHashMap<String, Class<? extends AbstractQuartzJob>> jobTypeMap
         = new ConcurrentHashMap<>(10);
+    /**
+     * 注册 job的类型，可以自行扩展 job类别
+     * 类型 必须 扩展AbstractQuartzJob 类， 在这个类中完成了 日志的记录工作，
+     * 日志记录工作也是可以在子类中覆盖的
+     * 目前一共设置了四个类型的job
+     * 1, PrintMessageJob 这个仅用来测试打印消息
+     * 2, CallProcessJob 调用系统程序
+     * 3, JavaBeanJob 调用bean的方法
+     * 4, HttpRquestJob 调用一个web 请求
+     * @param jobType job类别
+     * @param type 类型 必须 扩展AbstractQuartzJob 类
+     */
     public static void registerJobType(String jobType, Class<? extends AbstractQuartzJob> type){
         jobTypeMap.put(jobType, type);
     }
 
+    /**
+     * 定时任务
+     * @param scheduler 主API
+     * @param jobName 和 triggerName 一致，不知道这个有什么区别
+     * @param jobGroup 和 triggerGroupName 一致
+     * @param jobType 任务类别
+     * @param cronExpress 定时器描述
+     * @param param 数据
+     * @throws SchedulerException 执行异常
+     */
     public static void createOrReplaceCronJob(Scheduler scheduler,
                                               String jobName, String jobGroup,
                                               String jobType, String cronExpress,
@@ -44,12 +66,23 @@ public abstract class QuartzJobUtils {
         }
     }
 
+    /**
+     * 定时间隔任务
+     * @param scheduler 主API
+     * @param jobName 和 triggerName 一致，不知道这个有什么区别
+     * @param jobGroup 和 triggerGroupName 一致
+     * @param jobType 任务类别
+     * @param intervalInSeconds 定时器描述
+     * @param param 数据
+     * @throws SchedulerException 执行异常
+     */
     public static void createOrReplaceSimpleJob(Scheduler scheduler,
                                               String jobName, String jobGroup,
                                               String jobType, int intervalInSeconds,
                                               Map<String, Object> param) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
         Trigger trigger = scheduler.getTrigger(triggerKey);
+
         // 新建一个任务
         if(trigger == null){
             JobDetail jobDetail = JobBuilder.newJob(jobTypeMap.get(jobType))
@@ -75,5 +108,22 @@ public abstract class QuartzJobUtils {
                     withIntervalInSeconds(intervalInSeconds).repeatForever()).build();
             scheduler.rescheduleJob(triggerKey, trigger);
         }
+    }
+    /**
+     * 删除定时任务
+     * @param scheduler 主API
+     * @param jobName 和 triggerName 一致，不知道这个有什么区别
+     * @param jobGroup 和 triggerGroupName 一致
+     * @throws SchedulerException 执行异常
+     */
+    public static void deleteJob(Scheduler scheduler,
+                                String jobName, String jobGroup) throws SchedulerException {
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobName,jobGroup);
+        // 停止触发器
+        scheduler.pauseTrigger(triggerKey);
+        // 移除触发器
+        scheduler.unscheduleJob(triggerKey);
+        // 删除任务
+        scheduler.deleteJob(JobKey.jobKey(jobName,jobGroup));
     }
 }
