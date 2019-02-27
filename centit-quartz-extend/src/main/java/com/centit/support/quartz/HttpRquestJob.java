@@ -2,15 +2,30 @@ package com.centit.support.quartz;
 
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.HttpReceiveJSON;
+import com.centit.support.algorithm.GeneralAlgorithm;
 import com.centit.support.network.UrlOptUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HttpRquestJob extends AbstractQuartzJob {
+
+    private static ConcurrentHashMap<String, AppSession> appSessionPoolMap = new ConcurrentHashMap<>(10);
+    private static AppSession fetchAppSession(String url){
+        String sUrl = StringUtils.isBlank(url)? "blank": url;
+        AppSession appSession = appSessionPoolMap.get(sUrl);
+        if(appSession == null){
+            appSession =  new AppSession(url, false, null, null);
+            appSessionPoolMap.put(sUrl, appSession);
+        }
+        return appSession;
+    }
     private AppSession appSession;
 
     private String requestUrl;
@@ -19,7 +34,22 @@ public class HttpRquestJob extends AbstractQuartzJob {
     private String requstBody;// jsonString
 
     @Override
-    public boolean runRealJob(JobExecutionContext context) throws JobExecutionException {
+    protected void loadExecutionContext(JobExecutionContext context){
+        JobDataMap paramMap = context.getMergedJobDataMap();
+        appSession = HttpRquestJob.fetchAppSession(paramMap.getString("osUrl"));
+        requestUrl = paramMap.getString("requestUrl");
+        httpMethod = paramMap.getString("httpMethod");
+        requstBody = paramMap.getString("requstBody");
+        Object obj = paramMap.get("requestParams");
+        if(obj!=null){
+            requestParams =(Map) GeneralAlgorithm.castObjectToType(obj, Map.class);
+        }else{
+            requestParams = new HashMap<>(1);
+        }
+    }
+
+    @Override
+    protected boolean runRealJob(JobExecutionContext context) throws JobExecutionException {
         CloseableHttpClient httpClient = null;
         boolean ret = true;
         try {

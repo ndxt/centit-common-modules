@@ -1,7 +1,9 @@
 package com.centit.support.quartz;
 
+import com.centit.support.algorithm.GeneralAlgorithm;
 import com.centit.support.algorithm.ReflectionOpt;
 import com.centit.support.common.LeftRightPair;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.web.context.ContextLoader;
@@ -9,6 +11,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 public class JavaBeanJob extends AbstractQuartzJob {
@@ -18,7 +21,20 @@ public class JavaBeanJob extends AbstractQuartzJob {
     private Map<String,Object> params;
 
     @Override
-    public boolean runRealJob(JobExecutionContext context) throws JobExecutionException {
+    protected void loadExecutionContext(JobExecutionContext context){
+        JobDataMap paramMap = context.getMergedJobDataMap();
+        beanName = paramMap.getString("beanName");
+        methodName = paramMap.getString("methodName");
+        Object obj = paramMap.get("params");
+        if(obj!=null){
+            params =(Map) GeneralAlgorithm.castObjectToType(obj, Map.class);
+        }else{
+            params = new HashMap<>(1);
+        }
+    }
+
+    @Override
+    protected boolean runRealJob(JobExecutionContext context) throws JobExecutionException {
 
         WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
         Object object = webApplicationContext.getBean(beanName);

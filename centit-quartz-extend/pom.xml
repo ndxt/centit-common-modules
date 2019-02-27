@@ -14,10 +14,9 @@
     <packaging>jar</packaging>
 
     <dependencies>
-
         <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>framework-adapter</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -28,15 +27,15 @@
         </dependency>
 
         <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-adapter</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.centit.support</groupId>
-            <artifactId>data-business-operation</artifactId>
-            <version>${project.version}</version>
-            <optional>true</optional>
-        </dependency>
     </dependencies>
 </project>
