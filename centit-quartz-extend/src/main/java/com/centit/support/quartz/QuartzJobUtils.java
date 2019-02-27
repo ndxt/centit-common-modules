@@ -4,6 +4,12 @@ import org.quartz.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 先腾定时任务抽象类
+ * Quartz 规定一个jobDetail 可以有多个 trigger（反之不行）
+ * 框架为了简单将 一个jobDetail 只对应一个 trigger 这样在方法调用中
+ *  triggerName 就用 jobName， triggerGroupName 就用 jobGroupName
+ */
 public abstract class QuartzJobUtils {
 
     private static ConcurrentHashMap<String, Class<? extends AbstractQuartzJob>> jobTypeMap
@@ -27,7 +33,7 @@ public abstract class QuartzJobUtils {
     /**
      * 定时任务
      * @param scheduler 主API
-     * @param jobName 和 triggerName 一致，不知道这个有什么区别
+     * @param jobName 和 triggerName 一致，
      * @param jobGroup 和 triggerGroupName 一致
      * @param jobType 任务类别
      * @param cronExpress 定时器描述
@@ -69,7 +75,7 @@ public abstract class QuartzJobUtils {
     /**
      * 定时间隔任务
      * @param scheduler 主API
-     * @param jobName 和 triggerName 一致，不知道这个有什么区别
+     * @param jobName 和 triggerName 一致
      * @param jobGroup 和 triggerGroupName 一致
      * @param jobType 任务类别
      * @param intervalInSeconds 定时器描述
@@ -112,7 +118,7 @@ public abstract class QuartzJobUtils {
     /**
      * 删除定时任务
      * @param scheduler 主API
-     * @param jobName 和 triggerName 一致，不知道这个有什么区别
+     * @param jobName 和 triggerName 一致
      * @param jobGroup 和 triggerGroupName 一致
      * @throws SchedulerException 执行异常
      */
