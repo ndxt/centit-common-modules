@@ -33,13 +33,13 @@ public class TestQuartz {
         QuartzJobUtils.registerJobType("exec", CallProcessJob.class);
 
         QuartzJobUtils.createOrReplaceSimpleJob(scheduler, "print",
-            "test", "msg", 3,
+            "test", "msg", 1,
             CollectionsOpt.createHashMap("message", "hello quartz"));
         System.out.println("--------scheduler start ! ------------");
         scheduler.start();
         TimeUnit.SECONDS.sleep(10);
         QuartzJobUtils.createOrReplaceSimpleJob(scheduler, "print",
-            "test", "msg", 4,
+            "test", "msg", 8,
             CollectionsOpt.createHashMap("message", "Hellow quartz!"));
         TimeUnit.SECONDS.sleep(40);
         scheduler.shutdown();
