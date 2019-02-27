@@ -29,7 +29,7 @@ public class HttpRquestJob extends AbstractQuartzJob {
     private AppSession appSession;
 
     private String requestUrl;
-    private Map<String,Object> requestParams;
+    private Map<String,Object> params;
     private String httpMethod;// get put post delete
     private String requstBody;// jsonString
 
@@ -40,11 +40,11 @@ public class HttpRquestJob extends AbstractQuartzJob {
         requestUrl = paramMap.getString("requestUrl");
         httpMethod = paramMap.getString("httpMethod");
         requstBody = paramMap.getString("requstBody");
-        Object obj = paramMap.get("requestParams");
+        Object obj = paramMap.get("params");
         if(obj!=null){
-            requestParams =(Map) GeneralAlgorithm.castObjectToType(obj, Map.class);
+            params =(Map) GeneralAlgorithm.castObjectToType(obj, Map.class);
         }else{
-            requestParams = new HashMap<>(1);
+            params = new HashMap<>(1);
         }
     }
 
@@ -59,18 +59,18 @@ public class HttpRquestJob extends AbstractQuartzJob {
             switch (httpMethod) {
                 case "post":
                     retStr = appSession.jsonPost(httpClient,
-                        UrlOptUtils.appendParamsToUrl(requestUrl, requestParams), requstBody);
+                        UrlOptUtils.appendParamsToUrl(requestUrl, params), requstBody);
                 break;
                 case "put":
                     retStr = appSession.jsonPut(httpClient,
-                            UrlOptUtils.appendParamsToUrl(requestUrl, requestParams), requstBody);
+                            UrlOptUtils.appendParamsToUrl(requestUrl, params), requstBody);
                     break;
                 case "delete":
                     retStr = appSession.doDelete(httpClient,
-                          UrlOptUtils.appendParamsToUrl(requestUrl, requestParams),null);
+                          UrlOptUtils.appendParamsToUrl(requestUrl, params),null);
                     break;
                 default: // "get":
-                    retStr = appSession.simpleGet(httpClient, requestUrl, requestParams);
+                    retStr = appSession.simpleGet(httpClient, requestUrl, params);
                     break;
             }
             if(StringUtils.isNotBlank(retStr)){
@@ -96,8 +96,8 @@ public class HttpRquestJob extends AbstractQuartzJob {
         this.requestUrl = requestUrl;
     }
 
-    public void setRequestParams(Map<String, Object> requestParams) {
-        this.requestParams = requestParams;
+    public void setParams(Map<String, Object> requestParams) {
+        this.params = requestParams;
     }
 
     public void setHttpMethod(String httpMethod) {
