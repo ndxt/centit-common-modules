@@ -1,16 +1,21 @@
 package com.centit.support.data.dataset;
 
+import com.centit.framework.common.ObjectException;
 import com.centit.support.data.core.DataSet;
 import com.centit.support.data.core.DataSetWriter;
 import com.centit.support.data.utils.DBBatchUtils;
+import com.centit.support.database.jsonmaptable.GeneralJsonObjectDao;
 import com.centit.support.database.metadata.TableInfo;
 import com.centit.support.database.utils.DataSourceDescription;
+import com.centit.support.database.utils.DbcpConnectPools;
 import com.centit.support.database.utils.TransactionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Map;
 
 /**
  * 数据库数据集 读取和写入类
@@ -19,36 +24,75 @@ import java.sql.SQLException;
  *      对应的表信息 SimpleTableInfo
  */
 public class SQLDataSetWriter implements DataSetWriter {
-
+    public static String WRITER_ERROR_TAG = "rmdb_dataset_writer_result";
     private static final Logger logger = LoggerFactory.getLogger(SQLDataSetWriter.class);
     private DataSourceDescription dataSource;
 
     private TableInfo tableInfo;
-
     private Connection connection;
+    /** true 数据集整体作为一个事务写入
+     * false 数据集每一条作为一个事物写入
+     * 默认为true 主要式为了效率考虑
+     */
+    private boolean saveAsWhole;
 
     public SQLDataSetWriter(){
+        saveAsWhole = true;
         connection = null;
     }
+
     /**
      * 将 dataSet 数据集 持久化
-     *
      * @param dataSet 数据集
      */
     @Override
     public void save(DataSet dataSet) {
-        try{
-            if(connection == null) {
-                TransactionHandler.executeInTransaction(dataSource,
-                    (conn) -> DBBatchUtils.batchInsertObjects(conn,
-                        tableInfo, dataSet.getData()));
-            }else{
-                TransactionHandler.executeInTransaction(connection,
-                    (conn) -> DBBatchUtils.batchInsertObjects(conn,
-                        tableInfo, dataSet.getData()));
+        if(this.saveAsWhole) {
+            try {
+                if (connection == null) {
+                    TransactionHandler.executeInTransaction(dataSource,
+                        (conn) -> DBBatchUtils.batchInsertObjects(conn,
+                            tableInfo, dataSet.getData()));
+                } else {
+                    TransactionHandler.executeInTransaction(connection,
+                        (conn) -> DBBatchUtils.batchInsertObjects(conn,
+                            tableInfo, dataSet.getData()));
+                }
+                for(Map<String, Object> row : dataSet.getData()){
+                    row.put(WRITER_ERROR_TAG,"ok");
+                }
+            } catch (SQLException e) {
+                logger.error(e.getLocalizedMessage());
+                for(Map<String, Object> row : dataSet.getData()){
+                    row.put(WRITER_ERROR_TAG,e.getMessage());
+                }
             }
-        } catch (SQLException e){
-            logger.error(e.getLocalizedMessage());
+        } else {
+            boolean createConn = false;
+            if (connection == null) {
+                try {
+                    connection = DbcpConnectPools.getDbcpConnect(dataSource);
+                } catch (SQLException e) {
+                    throw new ObjectException(ObjectException.DATABASE_OPERATE_EXCEPTION, e);
+                }
+                createConn = true;
+            }
+
+            for(Map<String, Object> row : dataSet.getData()){
+                try {
+                    TransactionHandler.executeInTransaction(connection,
+                        (conn) ->
+                            GeneralJsonObjectDao.createJsonObjectDao(connection, tableInfo)
+                                .saveNewObject(row));
+                    row.put(WRITER_ERROR_TAG,"ok");
+                } catch (SQLException e) {
+                    row.put(WRITER_ERROR_TAG,e.getMessage());
+                }
+            }
+
+            if(createConn){
+                DbcpConnectPools.closeConnect(connection);
+            }
         }
     }
 
@@ -60,20 +104,59 @@ public class SQLDataSetWriter implements DataSetWriter {
      */
     @Override
     public void merge(DataSet dataSet) {
-        try{
-            if(connection == null) {
-                TransactionHandler.executeInTransaction(dataSource,
-                    (conn) -> DBBatchUtils.batchMergeObjects(conn,
-                        tableInfo, dataSet.getData()));
-            }else{
-                TransactionHandler.executeInTransaction(connection,
-                    (conn) -> DBBatchUtils.batchMergeObjects(conn,
-                        tableInfo, dataSet.getData()));
-            }
-        } catch (SQLException e){
-            logger.error(e.getLocalizedMessage());
-        }
 
+        if(this.saveAsWhole) {
+            try {
+                if (connection == null) {
+                    TransactionHandler.executeInTransaction(dataSource,
+                        (conn) -> DBBatchUtils.batchMergeObjects(conn,
+                            tableInfo, dataSet.getData()));
+                } else {
+                    TransactionHandler.executeInTransaction(connection,
+                        (conn) -> DBBatchUtils.batchMergeObjects(conn,
+                            tableInfo, dataSet.getData()));
+                }
+                for(Map<String, Object> row : dataSet.getData()){
+                    row.put(WRITER_ERROR_TAG, "ok");
+                }
+            } catch (SQLException e) {
+                logger.error(e.getLocalizedMessage());
+                for(Map<String, Object> row : dataSet.getData()){
+                    row.put(WRITER_ERROR_TAG, e.getMessage());
+                }
+            }
+        } else {
+            boolean createConn = false;
+            if (connection == null) {
+                try {
+                    connection = DbcpConnectPools.getDbcpConnect(dataSource);
+                } catch (SQLException e) {
+                    throw new ObjectException(ObjectException.DATABASE_OPERATE_EXCEPTION, e);
+                }
+                createConn = true;
+            }
+
+            for(Map<String, Object> row : dataSet.getData()){
+                try {
+                    TransactionHandler.executeInTransaction(connection,
+                        (conn) ->{
+                            try {
+                                return GeneralJsonObjectDao.createJsonObjectDao(connection, tableInfo)
+                                    .mergeObject(row);
+                            } catch (IOException e) {
+                                throw new ObjectException(ObjectException.DATABASE_OPERATE_EXCEPTION, e);
+                            }
+                        });
+                    row.put(WRITER_ERROR_TAG, "ok");
+                } catch (SQLException | ObjectException e) {
+                    row.put(WRITER_ERROR_TAG, e.getMessage());
+                }
+            }
+
+            if(createConn){
+                DbcpConnectPools.closeConnect(connection);
+            }
+        }
     }
 
     public void setDataSource(DataSourceDescription dataSource) {
@@ -86,5 +169,9 @@ public class SQLDataSetWriter implements DataSetWriter {
 
     public void setConnection(Connection connection) {
         this.connection = connection;
+    }
+
+    public void setSaveAsWhole(boolean saveAsWhole) {
+        this.saveAsWhole = saveAsWhole;
     }
 }
