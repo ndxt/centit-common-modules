@@ -10,7 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>centit-quartz-extend</artifactId>
-
     <packaging>jar</packaging>
 
     <dependencies>
@@ -27,8 +26,12 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <scope>compile</scope>
-            <version>3.1.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
     </dependencies>
 </project>

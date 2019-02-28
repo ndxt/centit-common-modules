@@ -3,6 +3,7 @@ package com.centit.support.quartz;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.impl.TextOperationLogWriterImpl;
 import com.centit.support.algorithm.CollectionsOpt;
+import org.junit.Test;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
@@ -10,9 +11,11 @@ import org.quartz.impl.StdSchedulerFactory;
 
 import java.util.concurrent.TimeUnit;
 
+
 public class TestQuartz {
 
-    public static void main(String[] args) throws SchedulerException, InterruptedException {
+    @Test
+    public void testQuartz() throws SchedulerException, InterruptedException {
         /**
          * 创建框架日志记中心，在框架中的程序不需要这个实现
          */

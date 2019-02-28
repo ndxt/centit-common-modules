@@ -31,14 +31,12 @@ public abstract class AbstractQuartzJob implements Job {
      * 通过 context 构建任务的实例，job的参数内容在 context.getMergedJobDataMap() 中。
      * 一般这些信息是写在数据库中的，这个函数就是通过这些参数来初始化任务的内容
      * @param context job运行环境变量
-     * @throws JobExecutionException 执行异常
      */
     protected abstract void loadExecutionContext(JobExecutionContext context);
 
     /**
      * 在任务开始之前记录日志
      * @param context job运行环境变量
-     * @throws JobExecutionException 执行异常
      */
     protected void beforeRun(JobExecutionContext context){
         logger.info("beforeRun");
@@ -49,7 +47,6 @@ public abstract class AbstractQuartzJob implements Job {
     /**
      * 在任务成功执行之后记录日志
      * @param context job运行环境变量
-     * @throws JobExecutionException 执行异常
      */
     protected void onSuccess(JobExecutionContext context){
         logger.info("onSuccess");
@@ -60,7 +57,6 @@ public abstract class AbstractQuartzJob implements Job {
     /**
      * 在任务运行失败时记录日志
      * @param context job运行环境变量
-     * @throws JobExecutionException 执行异常
      */
     protected void onError(JobExecutionContext context){
         logger.error("onError");
