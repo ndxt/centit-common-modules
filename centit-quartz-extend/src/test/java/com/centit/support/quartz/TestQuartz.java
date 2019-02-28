@@ -52,6 +52,12 @@ public class TestQuartz {
         QuartzJobUtils.createOrReplaceSimpleJob(scheduler, "print",
             "test", "msg", 1,
             CollectionsOpt.createHashMap("message", "hello quartz"));
+
+        QuartzJobUtils.createOrReplaceSimpleJob(scheduler, "app",
+            "test", "exec", 6,
+            CollectionsOpt.createHashMap("command", "java -jar /D/Projects/execute/TestApplication.jar",
+                "envp", CollectionsOpt.createHashMap("say","hello","to","app")));
+
         System.out.println("--------scheduler start ! ------------");
         scheduler.start();
         TimeUnit.SECONDS.sleep(10);
