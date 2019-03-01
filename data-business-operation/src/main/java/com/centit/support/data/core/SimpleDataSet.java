@@ -17,7 +17,13 @@ public class SimpleDataSet implements DataSet {
 
     public SimpleDataSet(String dataSetName){
         this.dataSetName = dataSetName;
-        sorted = false;
+        this.sorted = false;
+    }
+
+    public SimpleDataSet(List<Map<String, Object>> data) {
+        this.data = data;
+        this.dataSetName = DataSet.SINGLE_DATA_SET_DEFALUT_NAME;;
+        this.sorted = false;
     }
     /**
      * 返回 DataSet 的名称

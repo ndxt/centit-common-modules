@@ -1,9 +1,8 @@
 package com.centit.support.data.utils;
 
-import com.alibaba.fastjson.JSON;
 import com.centit.support.algorithm.GeneralAlgorithm;
-import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.StringBaseOpt;
+import com.centit.support.compiler.VariableFormula;
 import com.centit.support.data.core.DataSet;
 import com.centit.support.data.core.SimpleDataSet;
 import org.apache.commons.collections4.ListUtils;
@@ -13,6 +12,46 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 
 public abstract class DataSetOptUtil {
+    /**
+     * 数据集 映射
+     * @param inData 原始数据集
+     * @param fieldMap 字段映射关系
+     * @return 新的数据集
+     */
+    public static DataSet mapDateSet(DataSet inData, Map<String, String> fieldMap) {
+        List<Map<String, Object>> data = inData.getData();
+        List<Map<String, Object>> newData = new ArrayList<>(data.size());
+        Set<Map.Entry<String, String>> mapSet = fieldMap.entrySet();
+        for(Map<String, Object> obj : data ){
+            Map<String, Object> newRow = new HashMap<>(mapSet.size());
+            for(Map.Entry<String, String> ent : mapSet){
+                newRow.put(ent.getKey(), obj.get(ent.getValue()));
+            }
+            newData.add(newRow);
+        }
+        return new SimpleDataSet(newData);
+    }
+
+    /**
+     * 数据集 映射
+     * @param inData 原始数据集
+     * @param formulaMap 字段映射关系， value为计算表达式
+     * @return 新的数据集
+     */
+    public static DataSet mapDateSetByFormula(DataSet inData, Map<String, String> formulaMap) {
+        List<Map<String, Object>> data = inData.getData();
+        List<Map<String, Object>> newData = new ArrayList<>(data.size());
+        Set<Map.Entry<String, String>> mapSet = formulaMap.entrySet();
+        for(Map<String, Object> obj : data ){
+            Map<String, Object> newRow = new HashMap<>(mapSet.size());
+            for(Map.Entry<String, String> ent : mapSet){
+                newRow.put(ent.getKey(),
+                    VariableFormula.calculate(ent.getValue(), obj));
+            }
+            newData.add(newRow);
+        }
+        return new SimpleDataSet(newData);
+    }
 
     public static DataSet groupbyStat(DataSet inData, List<String> groupbyFields) {
         if (inData == null) {
@@ -26,7 +65,7 @@ public abstract class DataSetOptUtil {
         sortByFields(data, groupbyFields);
 
         List<Map<String, Object>> newData = new ArrayList<>();
-        Map<String, Object> newRow = new LinkedHashMap<>();
+        Map<String, Object> newRow = new HashMap<>();
 
         Object[] groupByData = new Object[groupbyFields.size()];
         Object[] groupByDataCompare = null;
@@ -73,9 +112,9 @@ public abstract class DataSetOptUtil {
         }
         newData.add(newRow);
 
-        inData.getData().clear();
-        inData.getData().addAll(newData);
-        return inData;
+        //inData.getData().clear();
+        //inData.getData().addAll(newData);
+        return new SimpleDataSet(newData);
     }
 
     /***
