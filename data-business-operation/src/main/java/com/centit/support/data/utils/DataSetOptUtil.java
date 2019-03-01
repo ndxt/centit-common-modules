@@ -8,6 +8,8 @@ import com.centit.support.data.core.SimpleDataSet;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;
 
@@ -53,7 +55,16 @@ public abstract class DataSetOptUtil {
         return new SimpleDataSet(newData);
     }
 
-    public static DataSet groupbyStat(DataSet inData, List<String> groupbyFields) {
+    /**
+     * 分组统计 , 如果 List<String> groupbyFields 为null 或者 空 就是统计所有的（仅返回一行）
+     * @param inData 输入数据集
+     * @param groupbyFields 分组（排序）字段
+     * @param statDesc  统计字段; 新字段名， 源字段名， 统计方式 （求和，最大，最小，平均，方差）
+     * @return 返回数据集
+     */
+    public static DataSet statDataset(DataSet inData,
+                                      List<String> groupbyFields,
+                                      List<Triple<String, String,String>> statDesc) {
         if (inData == null) {
             return null;
         }
@@ -112,11 +123,23 @@ public abstract class DataSetOptUtil {
         }
         newData.add(newRow);
 
-        //inData.getData().clear();
-        //inData.getData().addAll(newData);
         return new SimpleDataSet(newData);
     }
 
+    /**
+     * 分组统计 , 如果 List<String> groupbyFields 为null 或者 空 就是统计所有的（仅返回一行）
+     * @param inData 输入数据集
+     * @param groupbyFields 分组字段
+     * @param orderbyFields 排序字段
+     * @param refDesc  引用说明; 新字段名， 引用表达式
+     * @return 返回数据集
+     */
+    public static DataSet analyseDataset(DataSet inData,
+                                      List<String> groupbyFields,
+                                      List<String> orderbyFields,
+                                      List<Pair<String, String>> refDesc) {
+        return inData;
+    }
     /***
      * 交叉制表 数据处理
      * @param inData 输入数据集
@@ -132,7 +155,7 @@ public abstract class DataSetOptUtil {
         if (data == null || data.size() == 0) {
             return inData;
         }
-        if (rowHeaderFields.size() + colHeaderFields.size() + 1 != data.get(0).size()) {
+        if (rowHeaderFields.size() + colHeaderFields.size() >= data.get(0).size()) {
             throw new RuntimeException("数据不合法");
         }
         //根据维度进行排序 行头、列头
@@ -199,9 +222,7 @@ public abstract class DataSetOptUtil {
         }
         newData.add(newRow);
 
-        inData.getData().clear();
-        inData.getData().addAll(newData);
-        return inData;
+        return new SimpleDataSet(newData);
     }
 
     /**
@@ -248,19 +269,18 @@ public abstract class DataSetOptUtil {
         return currDataSet;
     }
 
+    private static int compileTwoRow(Map<String, Object> data1,Map<String, Object> data2, List<String> fields) {
+        for (String field : fields) {
+            int cr = GeneralAlgorithm.compareTwoObject(
+                data1.get(field), data2.get(field));
+            if (cr != 0) {
+                return cr;
+            }
+        }
+        return 0;
+    }
+
     private static void sortByFields(List<Map<String, Object>> data, List<String> fields) {
-        Collections.sort(data, (o1, o2) -> {
-            int[] sort = new int[fields.size()];
-            int i = 0;
-            for(String field : fields){
-                sort[i++] = StringUtils.compare(StringBaseOpt.castObjectToString(o1.get(field)), StringBaseOpt.castObjectToString(o2.get(field)));
-            }
-            for(int j = 0; j < sort.length; j++){
-                if(sort[j] != 0){
-                    return sort[j];
-                }
-            }
-            return 0;
-        });
+        data.sort( (o1, o2) -> compileTwoRow(o1, o2, fields));
     }
 }
