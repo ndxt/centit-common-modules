@@ -76,31 +76,31 @@ public abstract class DataSetOptUtil {
             Double db = null;
             switch (tr.getRight()){
                 case "min":
-                    db = StatUtils.min(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    db = StatUtils.min(listDoubleToArray(tempData.get(tr.getLeft())));
                     break;
                 case "max":
-                    db = StatUtils.max(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    db = StatUtils.max(listDoubleToArray(tempData.get(tr.getLeft())));
                     break;
                 case "mean":
-                    db = StatUtils.mean(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    db = StatUtils.mean(listDoubleToArray(tempData.get(tr.getLeft())));
                     break;
                 case "sum":
-                    db = StatUtils.sum(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    db = StatUtils.sum(listDoubleToArray(tempData.get(tr.getLeft())));
                     break;
                 case "sumSq":
-                    db = StatUtils.sumSq(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    db = StatUtils.sumSq(listDoubleToArray(tempData.get(tr.getLeft())));
                     break;
                 case "prod":
-                    db = StatUtils.product(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    db = StatUtils.product(listDoubleToArray(tempData.get(tr.getLeft())));
                     break;
                 case "sumLog":
-                    db = StatUtils.sumLog(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    db = StatUtils.sumLog(listDoubleToArray(tempData.get(tr.getLeft())));
                     break;
                 case "geometricMean":
-                    db = StatUtils.geometricMean(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    db = StatUtils.geometricMean(listDoubleToArray(tempData.get(tr.getLeft())));
                     break;
                 case "variance":
-                    db = StatUtils.variance(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    db = StatUtils.variance(listDoubleToArray(tempData.get(tr.getLeft())));
                     break;
                 /* percentile 这个没有实现*/
             }
