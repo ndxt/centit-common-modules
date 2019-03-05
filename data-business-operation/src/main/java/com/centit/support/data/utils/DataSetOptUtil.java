@@ -6,6 +6,7 @@ import com.centit.support.compiler.VariableFormula;
 import com.centit.support.data.core.DataSet;
 import com.centit.support.data.core.SimpleDataSet;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.tuple.MutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.commons.math3.stat.StatUtils;
@@ -107,6 +108,16 @@ public abstract class DataSetOptUtil {
             newRow.put(tr.getLeft(), db);
         }
         return newRow;
+    }
+
+    public static DataSet statDataset2(DataSet inData,
+                                      List<String> groupbyFields,
+                                      List<Pair<String, String>> statDesc) {
+        List<Triple<String, String,String>> sd = new ArrayList<>(statDesc.size());
+        for (Pair<String, String> s: statDesc){
+            sd.add(new MutableTriple<>(s.getLeft()+':'+s.getRight(),s.getLeft(),s.getRight()));
+        }
+        return statDataset(inData,groupbyFields,sd);
     }
     /**
      * 分组统计 , 如果 List<String> groupbyFields 为null 或者 空 就是统计所有的（仅返回一行）
