@@ -5,9 +5,12 @@ import com.centit.support.algorithm.ReflectionOpt;
 import com.centit.support.compiler.VariableTranslate;
 import com.centit.support.data.core.DataSet;
 
+import java.util.List;
+import java.util.Map;
+
 public class DatasetVariableTranslate implements VariableTranslate {
 
-    private DataSet dataSet;
+    private List<Map<String, Object>> dataSet;
     private int offset;
     private int length;
     private int currentPos;
@@ -15,7 +18,7 @@ public class DatasetVariableTranslate implements VariableTranslate {
     public DatasetVariableTranslate(){
         dataSet = null;
     }
-    public DatasetVariableTranslate(DataSet dataSet) {
+    public DatasetVariableTranslate(List<Map<String, Object>> dataSet) {
         this.dataSet = dataSet;
     }
 
@@ -40,14 +43,14 @@ public class DatasetVariableTranslate implements VariableTranslate {
                 if (indexStr.charAt(0) == '_'){
                     int pos = NumberBaseOpt.castObjectToInteger(indexStr.substring(1),0);
                     if(currentPos + pos < offset + length){
-                        return dataSet.getData().get(currentPos + pos).get(fieldName);
+                        return dataSet.get(currentPos + pos).get(fieldName);
                     }else{
                         return null;
                     }
                 }else{
                     int pos = NumberBaseOpt.castObjectToInteger(indexStr,0);
                     if(currentPos - pos >= offset){
-                        return dataSet.getData().get(currentPos - pos).get(fieldName);
+                        return dataSet.get(currentPos - pos).get(fieldName);
                     }else{
                         return null;
                     }
@@ -55,7 +58,7 @@ public class DatasetVariableTranslate implements VariableTranslate {
             }
         }
 
-        return dataSet.getData().get(currentPos).get(varName);
+        return dataSet.get(currentPos).get(varName);
     }
 
     @Override
@@ -63,7 +66,7 @@ public class DatasetVariableTranslate implements VariableTranslate {
         return getVarValue(labelName);
     }
 
-    public void setDataSet(DataSet varObj) {
+    public void setDataSet(List<Map<String, Object>> varObj) {
         this.dataSet = varObj;
     }
 

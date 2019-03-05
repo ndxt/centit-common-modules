@@ -1,14 +1,11 @@
 package com.centit.support.data.utils;
 
-import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.GeneralAlgorithm;
 import com.centit.support.algorithm.NumberBaseOpt;
-import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.support.data.core.DataSet;
 import com.centit.support.data.core.SimpleDataSet;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.commons.math3.stat.StatUtils;
@@ -22,14 +19,14 @@ public abstract class DataSetOptUtil {
      * @param fieldMap 字段映射关系
      * @return 新的数据集
      */
-    public static DataSet mapDateSet(DataSet inData, Map<String, String> fieldMap) {
+    public static DataSet mapDateSet(DataSet inData, List<Pair<String, String>> fieldMap) {
         List<Map<String, Object>> data = inData.getData();
         List<Map<String, Object>> newData = new ArrayList<>(data.size());
-        Set<Map.Entry<String, String>> mapSet = fieldMap.entrySet();
+
         for(Map<String, Object> obj : data ){
-            Map<String, Object> newRow = new HashMap<>(mapSet.size());
-            for(Map.Entry<String, String> ent : mapSet){
-                newRow.put(ent.getKey(), obj.get(ent.getValue()));
+            Map<String, Object> newRow = new HashMap<>(fieldMap.size());
+            for(Pair<String, String> ent : fieldMap){
+                newRow.put(ent.getLeft(), obj.get(ent.getRight()));
             }
             newData.add(newRow);
         }
@@ -42,15 +39,14 @@ public abstract class DataSetOptUtil {
      * @param formulaMap 字段映射关系， value为计算表达式
      * @return 新的数据集
      */
-    public static DataSet mapDateSetByFormula(DataSet inData, Map<String, String> formulaMap) {
+    public static DataSet mapDateSetByFormula(DataSet inData,List<Pair<String, String>> formulaMap) {
         List<Map<String, Object>> data = inData.getData();
         List<Map<String, Object>> newData = new ArrayList<>(data.size());
-        Set<Map.Entry<String, String>> mapSet = formulaMap.entrySet();
         for(Map<String, Object> obj : data ){
-            Map<String, Object> newRow = new HashMap<>(mapSet.size());
-            for(Map.Entry<String, String> ent : mapSet){
-                newRow.put(ent.getKey(),
-                    VariableFormula.calculate(ent.getValue(), obj));
+            Map<String, Object> newRow = new HashMap<>(formulaMap.size());
+            for(Pair<String, String> ent : formulaMap){
+                newRow.put(ent.getLeft(),
+                    VariableFormula.calculate(ent.getRight(), obj));
             }
             newData.add(newRow);
         }
@@ -157,7 +153,21 @@ public abstract class DataSetOptUtil {
         }
         return new SimpleDataSet(newData);
     }
-
+    public static void analyseDatasetGroup( List<Map<String, Object>> data,
+                                            int offset, int endPos,
+                                            DatasetVariableTranslate dvt,
+                                            List<Pair<String, String>> refDesc) {
+        dvt.setOffset(offset);
+        dvt.setLength(endPos-offset);
+        for(int j = offset; j<endPos; j++) {
+            Map<String, Object> newRow = data.get(j);
+            dvt.setCurrentPos(j);
+            for (Pair<String, String> ref : refDesc) {
+                newRow.put(ref.getLeft(),
+                    VariableFormula.calculate(ref.getRight(), dvt));
+            }
+        }
+    }
     /**
      * 分组统计 , 如果 List<String> groupbyFields 为null 或者 空 就是统计所有的（仅返回一行）
      * @param inData 输入数据集
@@ -174,10 +184,22 @@ public abstract class DataSetOptUtil {
         List<String> keyRows = ListUtils.union(groupbyFields, orderbyFields);
         //根据维度进行排序 行头、列头
         sortByFields(data, keyRows);
+        Map<String, Object> preRow = null;
         int n = data.size();
+        int prePos = 0;
+        DatasetVariableTranslate dvt = new DatasetVariableTranslate(data);
+        //int endPos = 0;
         for(int i=0; i<n; i++){
-
+            Map<String, Object> row = data.get(i);
+            if(compareTwoRow(preRow,row, groupbyFields) !=0 ){
+                if(preRow != null){
+                    analyseDatasetGroup(data,prePos,i,dvt,refDesc);
+                }
+                prePos = i;
+            }
+            preRow = row;
         }
+        analyseDatasetGroup(data,prePos,n,dvt,refDesc);
         return inData;
     }
     /***
