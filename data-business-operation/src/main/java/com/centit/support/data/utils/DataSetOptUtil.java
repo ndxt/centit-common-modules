@@ -87,9 +87,22 @@ public abstract class DataSetOptUtil {
                 case "sum":
                     db = StatUtils.sum(listDoubleToArray(tempData.get(tr.getMiddle())));
                     break;
+                case "sumSq":
+                    db = StatUtils.sumSq(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    break;
+                case "prod":
+                    db = StatUtils.product(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    break;
+                case "sumLog":
+                    db = StatUtils.sumLog(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    break;
+                case "geometricMean":
+                    db = StatUtils.geometricMean(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    break;
                 case "variance":
                     db = StatUtils.variance(listDoubleToArray(tempData.get(tr.getMiddle())));
                     break;
+                /* percentile 这个没有实现*/
             }
             newRow.put(tr.getLeft(), db);
         }
