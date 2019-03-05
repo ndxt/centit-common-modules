@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.centit.support.data.core.DataSet;
 import com.centit.support.data.core.SimpleDataSet;
 import com.centit.support.data.utils.DataSetOptUtil;
+import org.apache.commons.lang3.tuple.MutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;
 
@@ -80,9 +82,11 @@ public class TestDataSetOptUtils {
         groupByFields.add("season");
         SimpleDataSet dataSet1 = new SimpleDataSet();
         dataSet1.setData(list1);
+        List<Triple<String, String,String>> statDesc = new ArrayList<>();
         System.out.println("===================group by========================");
         System.out.println(JSON.toJSONString(dataSet1.getData()));
-        DataSet result1 = DataSetOptUtil.groupbyStat(dataSet1, groupByFields);
+        statDesc.add( new MutableTriple<>("incomeSum","income","sum"));
+        DataSet result1 = DataSetOptUtil.statDataset(dataSet1, groupByFields, statDesc);
         System.out.println(JSON.toJSONString(result1.getData()));
     }
 }
