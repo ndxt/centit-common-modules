@@ -1,15 +1,17 @@
 package com.centit.support.data.utils;
 
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.GeneralAlgorithm;
+import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.support.data.core.DataSet;
 import com.centit.support.data.core.SimpleDataSet;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.apache.commons.math3.stat.StatUtils;
 
 import java.util.*;
 
@@ -55,11 +57,53 @@ public abstract class DataSetOptUtil {
         return new SimpleDataSet(newData);
     }
 
+    private static double[] listDoubleToArray(List<Double> dblist){
+        double[] dbs = new double[dblist.size()];
+        int i=0;
+        for(Double db : dblist){
+            dbs[i++] = db!=null? db : 0.0;
+        }
+        return dbs;
+    }
+
+    private static Map<String, Object> makeNewStatRow(List<String> groupbyFields,
+                                                      List<Triple<String, String,String>> statDesc,
+                                                      Map<String, Object> preRow,
+                                                      Map<String, List<Double>> tempData){
+        Map<String, Object> newRow = new HashMap<>();
+        if(groupbyFields != null && groupbyFields.size()>0) {
+            for (String field : groupbyFields) {
+                newRow.put(field, preRow.get(field));
+            }
+        }
+        for(Triple<String, String,String> tr :  statDesc){
+            Double db = null;
+            switch (tr.getRight()){
+                case "min":
+                    db = StatUtils.min(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    break;
+                case "max":
+                    db = StatUtils.max(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    break;
+                case "mean":
+                    db = StatUtils.mean(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    break;
+                case "sum":
+                    db = StatUtils.sum(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    break;
+                case "variance":
+                    db = StatUtils.variance(listDoubleToArray(tempData.get(tr.getMiddle())));
+                    break;
+            }
+            newRow.put(tr.getLeft(), db);
+        }
+        return newRow;
+    }
     /**
      * 分组统计 , 如果 List<String> groupbyFields 为null 或者 空 就是统计所有的（仅返回一行）
      * @param inData 输入数据集
      * @param groupbyFields 分组（排序）字段
-     * @param statDesc  统计字段; 新字段名， 源字段名， 统计方式 （求和，最大，最小，平均，方差）
+     * @param statDesc  统计字段; 新字段名， 源字段名， 统计方式 （求和，最大，最小，平均，方差，标准差）
      * @return 返回数据集
      */
     public static DataSet statDataset(DataSet inData,
@@ -73,56 +117,44 @@ public abstract class DataSetOptUtil {
             return inData;
         }
         //按group by字段排序
-        sortByFields(data, groupbyFields);
+        if(groupbyFields != null && groupbyFields.size()>0) {
+            sortByFields(data, groupbyFields);
+        }
 
         List<Map<String, Object>> newData = new ArrayList<>();
-        Map<String, Object> newRow = new HashMap<>();
+        Map<String, Object> preRow = null;
 
-        Object[] groupByData = new Object[groupbyFields.size()];
-        Object[] groupByDataCompare = null;
-
-        Map<String, List<Object>> statDatas = new HashMap<>();//(data.get(0).size()-groupbyFields.size())/0.75
-
-        for (Map<String, Object> row : data) {
-            int i = 0;
-            Map<String, Object> statData = new HashMap<>();
-            for (Map.Entry<String, Object> entry : row.entrySet()) {
-                String key = entry.getKey();
-                Object value = entry.getValue();
-                if(groupbyFields.contains(key)){
-                    groupByData[i++] = value;
-                    continue;
-                }
-
-                statData.put(key, value);
-            }
-            if(groupByDataCompare != null && !Arrays.equals(groupByData, groupByDataCompare)){
-                for(Map.Entry<String, List<Object>> statEntry : statDatas.entrySet()){
-                    newRow.replace(statEntry.getKey(), GeneralAlgorithm.sumObjects(statEntry.getValue()));
-                }
-                Map<String, Object> map = new LinkedHashMap<>();//data.size()/0.75
-                map.putAll(newRow);
-                newData.add(map);
-                newRow.clear();
-                statDatas.clear();
-            }
-            for(Map.Entry<String, Object> stat : statData.entrySet()) {
-                if (statDatas.get(stat.getKey()) != null) {
-                    statDatas.get(stat.getKey()).add(stat.getValue());
-                } else {
-                    List<Object> list = new ArrayList<>();
-                    list.add(stat.getValue());
-                    statDatas.put(stat.getKey(), list);
-                }
-            }
-            newRow.putAll(row);
-            groupByDataCompare = ArrayUtils.clone(groupByData);
+        Map<String, List<Double>> tempData = new HashMap<>();
+        for(Triple<String, String,String> tr :  statDesc){
+            tempData.put(tr.getLeft(), new ArrayList<>());
         }
-        for(Map.Entry<String, List<Object>> statEntry : statDatas.entrySet()){
-            newRow.replace(statEntry.getKey(), GeneralAlgorithm.sumObjects(statEntry.getValue()));
-        }
-        newData.add(newRow);
 
+        for(Map<String, Object> row : data){
+            if(compareTwoRow(preRow,row,groupbyFields) !=0 ){
+                if(preRow!=null){
+                    //保存newRow
+                    Map<String, Object> newRow =makeNewStatRow(groupbyFields,
+                         statDesc,preRow, tempData);
+                    newData.add(newRow);
+                }
+                // 新建数据临时数据空间
+                for(Triple<String, String,String> tr :  statDesc){
+                    tempData.get(tr.getLeft()).clear();
+                }
+            }
+            for(Triple<String, String,String> tr :  statDesc){
+                tempData.get(tr.getLeft()).add(
+                    NumberBaseOpt.castObjectToDouble(row.get(tr.getMiddle())));
+            }
+            preRow = row;
+        }
+
+        if(preRow!=null){
+            //保存newRow
+            Map<String, Object> newRow =makeNewStatRow(groupbyFields,
+                statDesc,preRow, tempData);
+            newData.add(newRow);
+        }
         return new SimpleDataSet(newData);
     }
 
@@ -138,6 +170,14 @@ public abstract class DataSetOptUtil {
                                       List<String> groupbyFields,
                                       List<String> orderbyFields,
                                       List<Pair<String, String>> refDesc) {
+        List<Map<String, Object>> data = inData.getData();
+        List<String> keyRows = ListUtils.union(groupbyFields, orderbyFields);
+        //根据维度进行排序 行头、列头
+        sortByFields(data, keyRows);
+        int n = data.size();
+        for(int i=0; i<n; i++){
+
+        }
         return inData;
     }
     /***
@@ -158,73 +198,59 @@ public abstract class DataSetOptUtil {
         if (rowHeaderFields.size() + colHeaderFields.size() >= data.get(0).size()) {
             throw new RuntimeException("数据不合法");
         }
+        List<String> keyRows = ListUtils.union(rowHeaderFields, colHeaderFields);
         //根据维度进行排序 行头、列头
-        sortByFields(data, ListUtils.union(rowHeaderFields, colHeaderFields));
-
+        sortByFields(data, keyRows);
         List<Map<String, Object>> newData = new ArrayList<>();
-
-        Map<String, Object> newRow = new LinkedHashMap<>();//data.size()/0.75
-
-        String[] rowDataCompare = null;
-        for (Map<String, Object> row : data) {
-            StringBuilder key = new StringBuilder();
-            Object value = null;
-
-            String[] rowData = new String[rowHeaderFields.size()];
-            String[] colData = new String[colHeaderFields.size()];
-
-            for (Map.Entry<String, Object> entry : row.entrySet()) {
-                String oldKey = entry.getKey();
-
-                if (rowHeaderFields.contains(oldKey)) {
-                    int rowIndex = 0;
-                    for (String rowHeader : rowHeaderFields) {
-                        if (Objects.equals(oldKey, rowHeader)) {
-                            rowData[rowIndex++] = StringBaseOpt.castObjectToString(entry.getValue());
-                            break;
-                        }
-                        rowIndex++;
-                    }
-                    continue;
+        Map<String, Object> preRow = null;
+        Map<String, Object> newRow = null;
+        for(Map<String, Object> row : data){
+            if(compareTwoRow(preRow,row, rowHeaderFields) !=0 ){
+                if(preRow!=null && newRow!=null){
+                    newData.add(newRow);
                 }
-                if (colHeaderFields.contains(oldKey)) {
-                    int colIndex = 0;
-                    for (String colHeader : colHeaderFields) {
-                        if (Objects.equals(oldKey, colHeader)) {
-                            colData[colIndex++] = StringBaseOpt.castObjectToString(entry.getValue());
-                            break;
-                        }
-                        colIndex++;
-                    }
-                    continue;
-                }
-                value = entry.getValue();
-            }
-            key.append(colData[0]);
-            for (int i = 1; i < colData.length; i++) {
-                key.append(":");
-                key.append(colData[i]);
-            }
-
-            if (rowDataCompare != null && !Arrays.equals(rowData, rowDataCompare)) {
-                Map<String, Object> map = new LinkedHashMap<>();//data.size()/0.75
-                map.putAll(newRow);
-                newRow.clear();
-                newData.add(map);
-            }
-            if (rowDataCompare == null || !Arrays.equals(rowData, rowDataCompare)) {//行头
-                for (int i = 0; i < rowData.length; i++) {
-                    newRow.put(rowHeaderFields.get(i), rowData[i]);
+                // 新建数据临时数据空间
+                newRow = new HashMap<>();
+                for(String key :rowHeaderFields){
+                    newRow.put(key, row.get(key));
                 }
             }
-            rowDataCompare = ArrayUtils.clone(rowData);
-            newRow.put(key.toString(), value);
+
+            StringBuilder colprefix = new StringBuilder();
+            for(String key : colHeaderFields){
+                colprefix.append(key).append(":").append(row.get(key)).append(":");
+            }
+
+            String prefix = colprefix.toString();
+            for(Map.Entry<String, Object> entry : row.entrySet()){
+                String key = entry.getKey();
+                if(!keyRows.contains(key)){
+                    newRow.put(prefix + key, entry.getValue());
+                }
+            }
+            preRow = row;
         }
-        newData.add(newRow);
 
+        if(preRow!=null && newRow!=null){
+            newData.add(newRow);
+        }
         return new SimpleDataSet(newData);
     }
 
+    private static void appendData(Map<String, Object> newRow, Map<String, Object> oldData,
+                                   List<String> primaryFields, String suffix, boolean appendKey ){
+
+        for(Map.Entry<String, Object> entry : oldData.entrySet()){
+            String key = entry.getKey();
+            if(primaryFields.contains(key)){
+                if(appendKey) {
+                    newRow.put(key, entry.getValue());
+                }
+            }else{
+                newRow.put(key + suffix, entry.getValue());
+            }
+        }
+    }
     /**
      * 同环比转换
      * @param currDataSet 本期数据集
@@ -237,39 +263,63 @@ public abstract class DataSetOptUtil {
         }
         List<Map<String, Object>> currData = currDataSet.getData();
         List<Map<String, Object>> lastData = lastDataSet.getData();
-        if (currData == null || currData.size() == 0 || lastData == null || lastData.size() == 0) {
+        if (currData == null || lastData == null ) {
             throw new RuntimeException("数据不合法");
         }
-        if(currData.size() != lastData.size()){
-            throw new RuntimeException("数据不合法");
-        }
+
         List<Map<String, Object>> newData = new ArrayList<>();
         // 根据主键排序
         sortByFields(currData, primaryFields);
         sortByFields(lastData, primaryFields);
-        for(int i = 0; i < currData.size(); i++){
-            Map<String, Object> currentRow = currData.get(i);
-            Map<String, Object> lastRow = lastData.get(i);
-
+        int i=0;
+        int j=0;
+        while(i < currData.size() && j< lastData.size()){
+            int nc = compareTwoRow(currData.get(i), lastData.get(j), primaryFields);
+            //匹配
             Map<String, Object> newRow = new LinkedHashMap<>();
-            for(String primaryField : primaryFields){
-                newRow.put(primaryField, currentRow.get(primaryField));
-                currentRow.remove(primaryField);
-            }
-            for(Map.Entry<String, Object> entry : currentRow.entrySet()){
-                String key = entry.getKey();
-                Object value = entry.getValue();
-                newRow.put(key+":上期", lastRow.get(key));
-                newRow.put(key+":本期", value);
+            if(nc == 0){
+                appendData(newRow, currData.get(i), primaryFields,":current",true);
+                appendData(newRow, lastData.get(j), primaryFields,":last",false);
+                i++; j++;
+            } else if(nc < 0){
+                appendData(newRow, currData.get(i), primaryFields,":current",true);
+                i++;
+            } else {
+                appendData(newRow, lastData.get(j), primaryFields,":last",true);
+                j++;
             }
             newData.add(newRow);
         }
-        currDataSet.getData().clear();
-        currDataSet.getData().addAll(newData);
-        return currDataSet;
+
+        while(i < currData.size()){
+            Map<String, Object> newRow = new LinkedHashMap<>();
+            appendData(newRow, currData.get(i), primaryFields,":current",true);
+            newData.add(newRow);
+            i++;
+        }
+
+        while(j< lastData.size()){
+            Map<String, Object> newRow = new LinkedHashMap<>();
+            appendData(newRow, lastData.get(j), primaryFields,":last",true);
+            newData.add(newRow);
+            i++;
+        }
+        return new SimpleDataSet(newData);
     }
 
-    private static int compileTwoRow(Map<String, Object> data1,Map<String, Object> data2, List<String> fields) {
+    private static int compareTwoRow(Map<String, Object> data1, Map<String, Object> data2, List<String> fields) {
+        if(data1 == null && data2 == null){
+            return 0;
+        }
+        if(data1 == null){
+            return -1;
+        }
+        if(data2 == null){
+            return 1;
+        }
+        if(fields == null){
+            return 0;
+        }
         for (String field : fields) {
             int cr = GeneralAlgorithm.compareTwoObject(
                 data1.get(field), data2.get(field));
@@ -281,6 +331,6 @@ public abstract class DataSetOptUtil {
     }
 
     private static void sortByFields(List<Map<String, Object>> data, List<String> fields) {
-        data.sort( (o1, o2) -> compileTwoRow(o1, o2, fields));
+        data.sort( (o1, o2) -> compareTwoRow(o1, o2, fields));
     }
 }
