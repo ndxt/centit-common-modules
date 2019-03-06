@@ -44,6 +44,13 @@ public interface DataSet {
      * @return 是否为空的数据集
      */
     default boolean isEmpty(){
-        return  getData()==null ||  getData().size()==0;
+        return getData()==null ||  getData().size()==0;
+    }
+
+    default Map<String, Object> getFirstRow() {
+        if (!isEmpty()) {
+            return getData().get(0);
+        }
+        return null;
     }
 }
