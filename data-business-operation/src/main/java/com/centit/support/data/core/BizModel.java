@@ -60,6 +60,13 @@ public class BizModel {
         return bizData;
     }
 
+    public DataSet getFirstDataSet(){
+        if(!isEmpty()){
+            return bizData.get(0);
+        }
+        return null;
+    }
+
     public void setBizData(List<DataSet> bizData) {
         this.bizData = bizData;
     }
