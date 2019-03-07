@@ -20,13 +20,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class ReadCrossTabulation {
     //测试excel存放路径
-     private  final String path = Class.class.getClass().getResource("/").getPath()+"TestCrossTabulation.xlsx";
+     private  final String path = Class.class.getClass().getResource("/").getPath()+"com\\centit\\support\\test\\TestCrossTabulation.xlsx";
 
     //excel
     private XSSFWorkbook workbook = null;
 
     public ReadCrossTabulation() {
-        System.out.println(Class.class.getClass().getResource("/").getPath() );
         try {
             File excelFile = new File(path);
             FileInputStream in = new FileInputStream(excelFile); // 文件流

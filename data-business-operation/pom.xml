@@ -72,4 +72,15 @@
             <version>2.6.12</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/java</directory>
+                <includes>
+                    <include>**/*.xlsx</include>
+                </includes>
+            </testResource>
+        </testResources>
+    </build>
 </project>
