@@ -31,7 +31,7 @@ public class TestCrossTabulation extends TestCase{
     private SimpleDataSet resultSetExpected = null;
 
     //测试excel存放路径
-    private  final String path = Class.class.getClass().getResource("/").getPath()+"com\\centit\\support\\test\\TestCrossTabulation.xlsx";
+    private  final String path = Class.class.getClass().getResource("/").getPath()+"com/centit/support/test/TestCrossTabulation.xlsx";
 
 
     @Before

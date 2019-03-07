@@ -13,6 +13,7 @@ public class BizModel {
     private String modelName;
     /**
      * 模型的标识， 就是对应的主键
+     * 或者对应关系数据库查询的参数（数据源参数）
      */
     private Map<String, Object> modeTag;
     /**
