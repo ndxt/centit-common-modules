@@ -19,13 +19,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @date 2019/3/6
  */
 public class ReadCrossTabulation {
-    //测试excel存放路径
-     private  final String path = Class.class.getClass().getResource("/").getPath()+"com\\centit\\support\\test\\TestCrossTabulation.xlsx";
-
     //excel
     private XSSFWorkbook workbook = null;
 
-    public ReadCrossTabulation() {
+    public ReadCrossTabulation(String path) {
         try {
             File excelFile = new File(path);
             FileInputStream in = new FileInputStream(excelFile); // 文件流

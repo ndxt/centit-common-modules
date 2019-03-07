@@ -30,11 +30,14 @@ public class TestCrossTabulation extends TestCase{
     //预期结果数据集
     private SimpleDataSet resultSetExpected = null;
 
+    //测试excel存放路径
+    private  final String path = Class.class.getClass().getResource("/").getPath()+"com\\centit\\support\\test\\TestCrossTabulation.xlsx";
+
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        ReadCrossTabulation readCrossTabulation = new ReadCrossTabulation();
+        ReadCrossTabulation readCrossTabulation = new ReadCrossTabulation(path);
         //获取预置数据集
         initdataSet = readCrossTabulation.getInitDataSet();
         //获取预置行头、列头
