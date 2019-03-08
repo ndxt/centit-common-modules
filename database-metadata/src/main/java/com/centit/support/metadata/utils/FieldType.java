@@ -127,7 +127,7 @@ public abstract class FieldType {
      *
      * @param dt 数据库类别
      * @param ft 字段类别
-     * @return
+     * @return String
      */
     public static String mapToDBColumnType(DBType dt, String ft){
         if(dt==null)

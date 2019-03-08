@@ -112,24 +112,43 @@ public class MetaColumn implements TableField,java.io.Serializable {
     private String  columnState;
 
     /**
-     * 约束关系 专指程序约束类别
+     * 引用类型 0：没有：1： 数据字典 2：JSON表达式 3：sql语句  Y：年份 M：月份
      */
-    @Column(name = "CONSTRAINT_DESC")
-    private String constraintDesc;
+    @Column(name = "REFERENCE_TYPE")
+    @Length(message = "字段长度不能大于{max}")
+    private String  referenceType;
+    /**
+     * 引用数据 根据paramReferenceType类型（1,2,3）填写对应值
+     */
+    @Column(name = "REFERENCE_DATA")
+    @Length(max = 1000, message = "字段长度不能大于{max}")
+    private String  referenceData;
+    /**
+     * 约束表达式 regex表达式
+     */
+    @Column(name = "VALIDATE_REGEX")
+    @Length(max = 200, message = "字段长度不能大于{max}")
+    private String  validateRegex;
+    /**
+     * 约束提示 约束不通过提示信息
+     */
+    @Column(name = "VALIDATE_INFO")
+    @Length(max = 200, message = "字段长度不能大于{max}")
+    private String  validateInfo;
 
     /**
-     * 参考字典
+     * 自动生成规则   C 常量  U uuid S sequence
      */
-    @ApiModelProperty(value = "参考字典")
-    @Column(name = "REF_DATA_CATALOG")
-    private String refDataCatalog;
+    @Column(name = "AUTO_CREATE_RULE")
+    @Length(max = 200, message = "字段长度不能大于{max}")
+    private String  autoCreateRule;
 
     /**
-     * 参考SQL语句
+     * 自动生成参数
      */
-    @ApiModelProperty(value = "参考SQL")
-    @Column(name = "REF_DATA_SQL")
-    private String refDataSql;
+    @Column(name = "AUTO_CREATE_PARAM")
+    @Length(max = 200, message = "字段长度不能大于{max}")
+    private String  autoCreateParam;
 
     /**
      * 更改时间
