@@ -4,6 +4,7 @@ import com.centit.support.serialno.po.OptFlowNoPool;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.database.utils.PageDesc;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,11 @@ import java.util.List;
  */
 public interface OptFlowNoInfoManager{
     final static String DefaultOwnerCode = "noowner";
-    final static Date DefaultCodeDate = DatetimeOpt.createUtilDate(2000, 1, 1);
+
+    final SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+    final String year = sdf.format(new Date());
+    final static Date DefaultCodeDate = DatetimeOpt.createUtilDate(Integer.valueOf(year), 1, 1);
+    //final static Date DefaultCodeDate = DatetimeOpt.createUtilDate(2000, 1, 1);
 
     /**
     * 获取下一个流水号，流水好是根据 拥有者、类别代码、编码的基准时间
