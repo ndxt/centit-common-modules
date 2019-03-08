@@ -158,4 +158,36 @@ public abstract class FieldType {
         fts.put("file","file");
         return fts;
     }
+
+    public static String mapToFieldType(String columnType,int scale)
+    {
+        if("NUMBER".equalsIgnoreCase(columnType) ||
+            "INTEGER".equalsIgnoreCase(columnType)||
+            "DECIMAL".equalsIgnoreCase(columnType) ){
+            if( scale > 0 )
+                return FieldType.FLOAT;
+            else
+                return FieldType.INTEGER;
+        }else if("FLOAT".equalsIgnoreCase(columnType)){
+            return FieldType.FLOAT;
+        }else if("CHAR".equalsIgnoreCase(columnType) ||
+            "VARCHAR".equalsIgnoreCase(columnType)||
+            "VARCHAR2".equalsIgnoreCase(columnType)||
+            "STRING".equalsIgnoreCase(columnType) ){
+            return FieldType.STRING;
+        }else if("DATE".equalsIgnoreCase(columnType) ||
+            "TIME".equalsIgnoreCase(columnType) ){
+            return FieldType.DATE;
+        }else if("TIMESTAMP".equalsIgnoreCase(columnType)||
+            "DATETIME".equalsIgnoreCase(columnType) ){
+            return FieldType.DATETIME;
+        }else if("CLOB".equalsIgnoreCase(columnType) /*||
+                   "LOB".equalsIgnoreCase(sDBType)||
+                   "BLOB".equalsIgnoreCase(sDBType)*/ ){
+            return FieldType.TEXT;
+        }else if("BOOLEAN".equalsIgnoreCase(columnType) ){
+            return FieldType.BOOLEAN;
+        }else
+            return columnType;
+    }
 }
