@@ -67,7 +67,7 @@ public class SQLDataSetWriter implements DataSetWriter {
                     row.put(WRITER_ERROR_TAG,e.getMessage());
                 }
             }
-        } else {
+        } else { // 这部分也可以 直接运行sql语句 而不是用 GeneralJsonObjectDao 方式来提高效率
             boolean createConn = false;
             if (connection == null) {
                 try {
