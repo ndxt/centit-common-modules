@@ -33,6 +33,7 @@ import java.util.List;
 public class MetaTable implements TableInfo, java.io.Serializable {
 
     private static final long serialVersionUID = -6882747282877249264L;
+    public static final String OBJECT_AS_CLOB_FIELD = "JSON_OBJECT_FIELD";
 
     /**
      * 主键前缀
@@ -60,7 +61,7 @@ public class MetaTable implements TableInfo, java.io.Serializable {
      */
     @Column(name = "TABLE_TYPE")
     @NotBlank(message = "字段不能为空")
-    @Pattern(regexp = "[TV]")
+    @Pattern(regexp = "[TVC]")
     @Length(max = 1, message = "字段长度不能大于{max}")
     @ApiModelProperty(value = "表类别（T-表；V-视图；C-大字段）")
     @DictionaryMap(fieldName = "tableTypeText", value = "TableType")
