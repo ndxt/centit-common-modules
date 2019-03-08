@@ -114,24 +114,28 @@ public class MetaColumn implements TableField,java.io.Serializable {
     /**
      * 引用类型 0：没有：1： 数据字典 2：JSON表达式 3：sql语句  Y：年份 M：月份
      */
+    @ApiModelProperty(value = "引用类型 0：没有：1： 数据字典 2：JSON表达式 3：sql语句  Y：年份 M：月份")
     @Column(name = "REFERENCE_TYPE")
     @Length(message = "字段长度不能大于{max}")
     private String  referenceType;
     /**
      * 引用数据 根据paramReferenceType类型（1,2,3）填写对应值
      */
+    @ApiModelProperty(value = "引用数据 根据paramReferenceType类型（1,2,3）填写对应值")
     @Column(name = "REFERENCE_DATA")
     @Length(max = 1000, message = "字段长度不能大于{max}")
     private String  referenceData;
     /**
      * 约束表达式 regex表达式
      */
+    @ApiModelProperty(value = "约束表达式 regex表达式")
     @Column(name = "VALIDATE_REGEX")
     @Length(max = 200, message = "字段长度不能大于{max}")
     private String  validateRegex;
     /**
      * 约束提示 约束不通过提示信息
      */
+    @ApiModelProperty(value = "约束提示 约束不通过提示信息")
     @Column(name = "VALIDATE_INFO")
     @Length(max = 200, message = "字段长度不能大于{max}")
     private String  validateInfo;
@@ -139,6 +143,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
     /**
      * 自动生成规则   C 常量  U uuid S sequence
      */
+    @ApiModelProperty(value = "自动生成规则   C 常量  U uuid S sequence F 函数")
     @Column(name = "AUTO_CREATE_RULE")
     @Length(max = 200, message = "字段长度不能大于{max}")
     private String  autoCreateRule;
@@ -146,17 +151,22 @@ public class MetaColumn implements TableField,java.io.Serializable {
     /**
      * 自动生成参数
      */
+    @ApiModelProperty(value = "自动生成参数")
     @Column(name = "AUTO_CREATE_PARAM")
     @Length(max = 200, message = "字段长度不能大于{max}")
     private String  autoCreateParam;
 
+    @ApiModelProperty(value = "Y/N 更新时是否校验时间戳 添加 Last_modify_time datetime")
+    @Column(name = "UPDATE_CHECK_TIMESTAMP")
+    @Length(max = 1, message = "字段长度不能大于{max}")
+    private String updateCheckTimeStamp;
     /**
      * 更改时间
      */
     @ApiModelProperty(hidden = true)
-    @Column(name = "RECORD_DATE")
     @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.NEW_UPDATE, condition = GeneratorCondition.ALWAYS, value = "today()")
-    private Date  recordDate;
+    @Column(name = "LAST_MODIFY_DATE")
+    private Date lastModifyDate;
     /**
      * 更改人员 null
      */
