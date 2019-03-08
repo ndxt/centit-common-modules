@@ -2,7 +2,7 @@ package com.centit.support.data.core;
 
 import java.util.ArrayList;
 
-public class SingleDataSetModel extends BizModel {
+public class SingleDataSetModel extends SimpleBizModel {
 
     public SingleDataSetModel(){
         super();

@@ -22,7 +22,7 @@ public class DataLoadSupplier implements BizSupplier {
         if(dataReaders == null || dataReaders.isEmpty()){
             return null;
         }
-        BizModel bizModel = new BizModel();
+        SimpleBizModel bizModel = new SimpleBizModel();
         for(Map.Entry<String, DataSetReader> ent : dataReaders.entrySet()) {
             DataSet ds = ent.getValue().load(modeTag);
             if(ds != null && !ds.isEmpty()) {
