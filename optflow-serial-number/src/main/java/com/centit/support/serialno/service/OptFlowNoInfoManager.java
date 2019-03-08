@@ -20,7 +20,6 @@ public interface OptFlowNoInfoManager{
     final SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
     final String year = sdf.format(new Date());
     final static Date DefaultCodeDate = DatetimeOpt.createUtilDate(Integer.valueOf(year), 1, 1);
-    //final static Date DefaultCodeDate = DatetimeOpt.createUtilDate(2000, 1, 1);
 
     /**
     * 获取下一个流水号，流水好是根据 拥有者、类别代码、编码的基准时间
