@@ -9,6 +9,7 @@
         <module>database-metadata</module>
         <module>data-business-operation</module>
         <module>centit-quartz-extend</module>
+        <module>data-source-define</module>
     </modules>
     <parent>
         <artifactId>framework-snapshot-dependencies</artifactId>
@@ -49,7 +50,6 @@
         <url>https://github.com/ndxt/centit-common-modules</url>
         <tag>v1.12</tag>
     </scm>
-
 
     <build>
         <plugins>
