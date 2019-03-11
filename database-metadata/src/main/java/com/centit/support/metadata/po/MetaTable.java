@@ -70,20 +70,20 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     /**
      * 表代码/表名
      */
-    @Column(name = "TABLE_CODE")
+    @Column(name = "TABLE_NAME")
     @NotBlank(message = "字段不能为空")
     @Length(max = 64, message = "字段长度不能大于{max}")
     @ApiModelProperty(value = "表名")
-    private String tableCode;
+    private String tableName;
 
     /**
      * 表中文名称
      */
-    @Column(name = "TABLE_NAME")
+    @Column(name = "TABLE_LABEL_NAME")
     @NotBlank(message = "字段不能为空")
     @Length(max = 100, message = "字段长度不能大于{max}")
     @ApiModelProperty(value = "表中文名")
-    private String tableName;
+    private String tableLabelName;
 
     /**
      * 控制表是否可以被修改，不是控制数据
@@ -195,9 +195,9 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     //将数据库表同步到元数据表
     public MetaTable convertFromDbTable(SimpleTableInfo tableInfo){
 
-        this.tableCode = tableInfo.getTableName();
+        this.tableName = tableInfo.getTableName();
         if(StringUtils.isNotBlank(tableInfo.getTableLabelName())) {
-            this.tableName = tableInfo.getTableLabelName();
+            this.tableLabelName = tableInfo.getTableLabelName();
         }
         if(StringUtils.isNotBlank(tableInfo.getTableComment())){
             this.tableComment = tableInfo.getTableComment();
@@ -212,7 +212,7 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     @ApiModelProperty(hidden = true)
     @JSONField(serialize = false)
     public String getPkName() {
-        return PRIMARY_KEY_PREFIX + this.tableName;
+        return PRIMARY_KEY_PREFIX + this.tableLabelName;
     }
 
     @Override
@@ -238,6 +238,10 @@ public class MetaTable implements TableInfo, java.io.Serializable {
             if (c.getPropertyName().equals(name))
                 return c;
         }
+        for (MetaColumn c : mdColumns) {
+            if (c.getFieldLabelName().equals(name))
+                return c;
+        }
         return null;
     }
 
@@ -246,7 +250,11 @@ public class MetaTable implements TableInfo, java.io.Serializable {
         if (mdColumns == null)
             return null;
         for (MetaColumn c : mdColumns) {
-            if (c.getColumnName().equals(name))
+            if (c.getFieldLabelName().equals(name))
+                return c;
+        }
+        for (MetaColumn c : mdColumns) {
+            if (c.getPropertyName().equals(name))
                 return c;
         }
         return null;
@@ -257,7 +265,7 @@ public class MetaTable implements TableInfo, java.io.Serializable {
         if (mdColumns == null)
             return false;
         for (MetaColumn c : mdColumns) {
-            if (c.getColumnName().equals(colName)) {
+            if (c.getFieldLabelName().equals(colName)) {
                 return c.isPrimaryKey();
             }
         }
@@ -279,7 +287,7 @@ public class MetaTable implements TableInfo, java.io.Serializable {
         List<String> pks = new ArrayList<>();
         for (MetaColumn c : mdColumns) {
             if (c.isPrimaryKey()) {
-                pks.add(c.getColumnName());
+                pks.add(c.getFieldLabelName());
             }
         }
         return pks;
@@ -295,6 +303,6 @@ public class MetaTable implements TableInfo, java.io.Serializable {
     @ApiModelProperty(hidden = true)
     @JSONField(serialize = false)
     public String getTableLabelName() {
-        return this.getTableName();
+        return this.tableLabelName;
     }
 }

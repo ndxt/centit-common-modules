@@ -9,7 +9,7 @@ import com.centit.support.database.orm.GeneratorTime;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
 import com.centit.support.database.utils.DBType;
-import com.centit.support.metadata.utils.FieldType;
+import com.centit.support.database.utils.FieldType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -41,15 +41,15 @@ public class MetaColumn implements TableField,java.io.Serializable {
 
     @ApiModelProperty(value = "字段名", hidden = true)
     @Id
-    @Column(name = "COLUMN_CODE")
-    @NotBlank(message = "字段不能为空")
-    private String  columnCode;
-
-    @ApiModelProperty(value = "字段显示名（可编辑）")
     @Column(name = "COLUMN_NAME")
     @NotBlank(message = "字段不能为空")
-    @Length(max = 64, message = "字段长度不能大于{max}")
     private String columnName;
+
+    @ApiModelProperty(value = "字段显示名（可编辑）")
+    @Column(name = "FIELD_LABEL_NAME")
+    @NotBlank(message = "字段不能为空")
+    @Length(max = 64, message = "字段长度不能大于{max}")
+    private String fieldLabelName;
 
     @ApiModelProperty(value = "字段描述（可编辑）")
     @Column(name = "COLUMN_COMMENT")
@@ -182,14 +182,14 @@ public class MetaColumn implements TableField,java.io.Serializable {
 
     public MetaColumn(@NotBlank(message = "字段不能为空") String tableId, @NotBlank(message = "字段不能为空") String columnName) {
         this.tableId = tableId;
-        this.columnCode = columnName;
+        this.columnName = columnName;
     }
 
     public MetaColumn convertFromTableField(SimpleTableField tableField){
-        this.columnCode = tableField.getColumnName();
+        this.columnName = tableField.getColumnName();
         this.columnType = tableField.getColumnType();
         if(StringUtils.isNotBlank(tableField.getFieldLabelName())){
-            this.columnName = tableField.getFieldLabelName();
+            this.fieldLabelName = tableField.getFieldLabelName();
         }
         if(StringUtils.isNotBlank(tableField.getColumnComment()) && StringUtils.isBlank(this.columnComment)){
             this.columnComment = tableField.getColumnComment();
@@ -215,7 +215,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
     @ApiModelProperty(hidden = true)
     @Override
     public String getPropertyName() {
-        return SimpleTableField.mapPropName(getColumnCode());
+        return FieldType.mapPropName(this.columnName);
     }
 
 
@@ -264,15 +264,9 @@ public class MetaColumn implements TableField,java.io.Serializable {
 
     @Override
     public String getColumnType() {
-        return FieldType.mapToDBColumnType(this.databaseType, this.columnType);
+        return FieldType.mapToDatabaseType(this.columnType,this.databaseType);
     }
 
-    @Override
-    @ApiModelProperty(hidden = true)
-    @JSONField(serialize = false)
-    public String getFieldLabelName() {
-        return this.columnName;
-    }
 
     @Override
     @ApiModelProperty(hidden = true)

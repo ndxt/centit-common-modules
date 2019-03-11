@@ -40,8 +40,8 @@ public class MetaTableCascade {
             this.tableList = new ArrayList<>();
         }
         Table table = new Table();
-        table.setTable(metaTable.getTableCode());
-        table.setTitle(metaTable.getTableName());
+        table.setTable(metaTable.getTableName());
+        table.setTitle(metaTable.getTableLabelName());
         this.tableList.add(table);
     }
 
@@ -50,8 +50,8 @@ public class MetaTableCascade {
             this.tableList = new ArrayList<>();
         }
         Table table = new Table();
-        table.setTable(metaTable.getTableCode());
-        table.setTitle(metaTable.getTableName());
+        table.setTable(metaTable.getTableName());
+        table.setTitle(metaTable.getTableLabelName());
         if(table.getJoinColumns() == null){
             table.setJoinColumns(new ArrayList<>());
         }
@@ -67,8 +67,8 @@ public class MetaTableCascade {
             this.tableFields = new ArrayList<>();
         }
         Table table1 = new Table();
-        table1.setTitle(metaTable.getTableName());
-        table1.setTable(metaTable.getTableCode());
+        table1.setTitle(metaTable.getTableLabelName());
+        table1.setTable(metaTable.getTableName());
         tableFields.add(table1);
     }
 
@@ -78,8 +78,8 @@ public class MetaTableCascade {
         }
         for (MetaColumn metaColumn : columns) {
             Column column = new Column();
-            column.setColumn(metaColumn.getColumnCode());
-            column.setTitle(metaColumn.getColumnName());
+            column.setColumn(metaColumn.getColumnName());
+            column.setTitle(metaColumn.getFieldLabelName());
             tableFields.add(column);
         }
     }

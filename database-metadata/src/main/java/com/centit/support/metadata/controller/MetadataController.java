@@ -89,7 +89,7 @@ public class MetadataController {
     @ApiOperation(value = "查询单个列元数据")
     @ApiImplicitParams(value = {
         @ApiImplicitParam(name = "tableId", value = "表元数据ID"),
-        @ApiImplicitParam(name = "columnName", value = "列名")
+        @ApiImplicitParam(name = "fieldLabelName", value = "列名")
     })
     @GetMapping(value = "/{tableId}/{columnName}")
     @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
@@ -116,13 +116,13 @@ public class MetadataController {
     @ApiOperation(value = "修改列元数据")
     @ApiImplicitParams(value = {
         @ApiImplicitParam(name = "tableId", value = "表ID"),
-        @ApiImplicitParam(name = "columnName", value = "列名")
+        @ApiImplicitParam(name = "fieldLabelName", value = "列名")
     })
     @PutMapping(value = "/column/{tableId}/{columnCode}")
     @WrapUpResponseBody
     public void updateMetaColumns(@PathVariable String tableId, @PathVariable String columnCode, MetaColumn metaColumn){
         metaColumn.setTableId(tableId);
-        metaColumn.setColumnCode(columnCode);
+        metaColumn.setColumnName(columnCode);
         metaDataService.updateMetaColumn(metaColumn);
     }
 

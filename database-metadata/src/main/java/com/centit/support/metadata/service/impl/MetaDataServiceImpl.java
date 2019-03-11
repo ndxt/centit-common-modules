@@ -1,7 +1,5 @@
 package com.centit.support.metadata.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.ObjectException;
 import com.centit.framework.ip.po.DatabaseInfo;
 import com.centit.framework.ip.service.IntegrationEnvironment;
@@ -13,7 +11,6 @@ import com.centit.support.metadata.dao.MetaColumnDao;
 import com.centit.support.metadata.dao.MetaRelationDao;
 import com.centit.support.metadata.dao.MetaTableDao;
 import com.centit.support.metadata.po.MetaColumn;
-import com.centit.support.metadata.po.MetaRelDetail;
 import com.centit.support.metadata.po.MetaRelation;
 import com.centit.support.metadata.po.MetaTable;
 import com.centit.support.metadata.service.MetaDataService;
@@ -198,7 +195,7 @@ public class MetaDataServiceImpl implements MetaDataService {
     public void updateMetaTable(String tableId, String tableName, String tableComment, String tableState, String recorder) {
         MetaTable metaTable = metaTableDao.getObjectById(tableId);
         metaTable.setTableComment(tableComment);
-        metaTable.setTableName(tableName);
+        metaTable.setTableLabelName(tableName);
         metaTable.setTableState(tableState);
         metaTable.setRecorder(recorder);
         metaTableDao.updateObject(metaTable);
@@ -289,7 +286,7 @@ public class MetaDataServiceImpl implements MetaDataService {
         DBType dbType = DBType.mapDBType(dbInfo.getDatabaseUrl());
         tableCascade.setDatabaseType(dbType.toString());
         MetaTable metaTable = metaTableDao.getObjectByProperties(
-            CollectionsOpt.createHashMap("databaseCode", databaseCode, "tableCode", tableCode));
+            CollectionsOpt.createHashMap("databaseCode", databaseCode, "tableName", tableCode));
         tableCascade.addTable(metaTable);
         metaTableDao.fetchObjectReferences(metaTable);
         for(MetaRelation relation :metaTable.getMdRelations()){

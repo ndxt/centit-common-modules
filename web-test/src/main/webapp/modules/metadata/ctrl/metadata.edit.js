@@ -30,7 +30,7 @@
       /*var value=form.form('value');
             $.extend(data,value,{_method:'put',contentType:'application/json'});
             if (isValid) {
-                Core.ajax(Config.ContextPath + 'service/metadata/' + data.tableName, {
+                Core.ajax(Config.ContextPath + 'service/metadata/' + data.tableLabelName, {
                     type: 'json',
                     method:'PUT',
                     data:data

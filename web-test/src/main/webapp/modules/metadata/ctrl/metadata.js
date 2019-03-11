@@ -25,7 +25,7 @@
           /*$('#ta').cdatagrid({
             url: Mustache.render(metaTableUrl, param),
             columns:[[
-              {field:'tableName',title:'表名',width:100},
+              {field:'tableLabelName',title:'表名',width:100},
               {field:'tableLabelName',title:'中文名',width:100},
               {field:'tableType',title:'表类型',width:100,align:'right'},
               {field:'tableComment',title:'描述',width:100,align:'right'},
@@ -47,7 +47,7 @@
      /* $('#ta').cdatagrid({
         url: 'service/metadata/framework/tables',
         columns:[[
-          {field:'tableName',title:'表名',width:100},
+          {field:'tableLabelName',title:'表名',width:100},
           {field:'tableLabelName',title:'中文名',width:100},
           {field:'tableType',title:'表类型',width:100,align:'right'},
           {field:'tableComment',title:'描述',width:100,align:'right'},
