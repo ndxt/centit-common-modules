@@ -1,8 +1,8 @@
 package com.centit.support.test;
 
-import com.centit.support.data.core.DataSet;
-import com.centit.support.data.core.SimpleDataSet;
-import com.centit.support.data.utils.DataSetOptUtil;
+import com.centit.support.dataopt.core.DataSet;
+import com.centit.support.dataopt.core.SimpleDataSet;
+import com.centit.support.dataopt.utils.DataSetOptUtil;
 import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Assert;
