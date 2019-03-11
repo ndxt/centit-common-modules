@@ -3,7 +3,6 @@ package com.centit.support.datapacket.po;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Entity;
@@ -12,7 +11,6 @@ import java.util.Map;
 
 @ApiModel
 @Data
-@NoArgsConstructor
 @Entity
 public class DataPacket {
 
@@ -24,16 +22,10 @@ public class DataPacket {
      */
     private String packetType;
 
-    public void setPacketParamsJSON(String packetParamsJSON) {
-        this.packetParamsJSON = packetParamsJSON;
-        this.packetParams = null;
-    }
-
     /**
-     * 数据包参数： 数据库ID  或者文件路径
+     * 数据包参数： 查询参数描述
      */
     private String packetParamsJSON;
-
     /**
      * 详细描述
      */
@@ -41,7 +33,14 @@ public class DataPacket {
 
     private Map<String, Object> packetParams;
 
+    public DataPacket(){
+        packetType = "D";
+    }
+
     public List<RmdbDataQuery> getDBQueries(){
+        if("D".equals(packetType)){
+
+        }
         return null;
     }
 
@@ -50,5 +49,10 @@ public class DataPacket {
             packetParams = JSONObject.parseObject(packetParamsJSON);
         }
         return packetParams;
+    }
+
+    public void setPacketParamsJSON(String packetParamsJSON) {
+        this.packetParamsJSON = packetParamsJSON;
+        this.packetParams = null;
     }
 }

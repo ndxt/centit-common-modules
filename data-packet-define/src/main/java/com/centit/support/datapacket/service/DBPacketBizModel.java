@@ -18,6 +18,7 @@ public class DBPacketBizModel implements BizModel {
 
     private DataPacket dbPacket;
     private IntegrationEnvironment integrationEnvironment;
+    private Map<String, Object> queryParams;
 
     public DBPacketBizModel(){
 
@@ -62,7 +63,7 @@ public class DBPacketBizModel implements BizModel {
             sqlDSR.setDataSource( mapDataSource(
                 integrationEnvironment.getDatabaseInfo(rdd.getDatabaseId())));
             sqlDSR.setSqlSen(rdd.getQuerySQL());
-            dataSets.add(sqlDSR.load(this.dbPacket.getPacketParams()));
+            dataSets.add(sqlDSR.load(this.queryParams));
         }
         return dataSets;
     }
@@ -73,5 +74,9 @@ public class DBPacketBizModel implements BizModel {
 
     public void setIntegrationEnvironment(IntegrationEnvironment integrationEnvironment) {
         this.integrationEnvironment = integrationEnvironment;
+    }
+
+    public void setQueryParams(Map<String, Object> queryParams) {
+        this.queryParams = queryParams;
     }
 }
