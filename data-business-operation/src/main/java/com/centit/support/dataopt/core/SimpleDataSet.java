@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * 数据集 虚拟类
  */
-public class SimpleDataSet implements DataSet {
+public class SimpleDataSet implements DataSet, DataSetReader{
 
     public SimpleDataSet(){
         dataSetName = DataSet.SINGLE_DATA_SET_DEFALUT_NAME;
@@ -100,5 +100,15 @@ public class SimpleDataSet implements DataSet {
         SimpleDataSet dataSet = new SimpleDataSet();
         dataSet.setData((List)ja);
         return dataSet;
+    }
+
+    /**
+     * 读取 dataSet 数据集
+     * @param params 模块的自定义参数
+     * @return dataSet 数据集
+     */
+    @Override
+    public DataSet load(Map<String, Object> params) {
+        return this;
     }
 }

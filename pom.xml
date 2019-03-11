@@ -9,7 +9,7 @@
         <module>database-metadata</module>
         <module>data-business-operation</module>
         <module>centit-quartz-extend</module>
-        <module>data-source-define</module>
+        <module>data-packet-define</module>
     </modules>
     <parent>
         <artifactId>framework-snapshot-dependencies</artifactId>
