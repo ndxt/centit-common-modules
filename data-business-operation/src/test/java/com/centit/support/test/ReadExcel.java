@@ -107,7 +107,7 @@ public class ReadExcel {
                 break;
             default: //其它类型，取空串
 //                cellValue = "";
-                cellText ="";
+                cellText = "";
                 break;
         }
 //        System.out.println(cellType + ":" + cellValue);
@@ -117,7 +117,7 @@ public class ReadExcel {
     /**
      * 转换待处理或预期结果数据
      *
-     * @param dataList 原格式的数据 举例：[[cell0-0，cell0-1，cell0-2...],[cell1-0，cell1-1，cell1-2...]...]
+     * @param dataList  原格式的数据 举例：[[cell0-0，cell0-1，cell0-2...],[cell1-0，cell1-1，cell1-2...]...]
      * @param isSetNull 是否存入空值
      * @return dataMapList 新格式的数据 举例：[{cell0-0：cell1-0，cell0-1：cell1-1，cell0-2：cell1-2...},{cell0-0：cell2-0，cell0-1：cell2-1，cell0-2：cell2-2...}...]
      */
