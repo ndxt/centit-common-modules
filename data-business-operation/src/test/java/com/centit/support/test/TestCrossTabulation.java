@@ -4,8 +4,11 @@ import com.centit.support.dataopt.core.DataSet;
 import com.centit.support.dataopt.core.SimpleDataSet;
 import com.centit.support.dataopt.utils.DataSetOptUtil;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Assert;
@@ -20,38 +23,52 @@ import org.slf4j.LoggerFactory;
  * @author chen_l
  * @date 2019/3/7
  */
-public class TestCrossTabulation extends TestCase{
+public class TestCrossTabulation extends TestCase {
     //打印日志
     Logger logger = LoggerFactory.getLogger(TestCrossTabulation.class);
-    //预置数据集
-    private SimpleDataSet initdataSet = null;
-    //预置行头、列头
-    private Map<String, List<String>> headerFieldsMap = null;
-    //预期结果数据集
-    private SimpleDataSet resultSetExpected = null;
-
     //测试excel存放路径
-    private  final String path = Class.class.getClass().getResource("/").getPath()+"com/centit/support/test/TestCrossTabulation.xlsx";
+    private final String path = Class.class.getClass().getResource("/").getPath() + "com/centit/support/test/TestCrossTabulation.xlsx";
+    //输入数据集的数据存放sheet页名称
+    private final String initDataSheetName = "initData";
+    //行头、列头信息的数据存放sheet页名称
+    private final String HeaderFieldsSheetName = "HeaderFields";
+    // 预期结果数据集的数据存放sheet页名称
+    private final String resultSheetName = "result";
+    //行头数据的行头名称
+    private final String rowHeaderFieldsName = "rowHeaderFields";
+    //列头数据的行头名称
+    private final String colHeaderFieldsName = "colHeaderFields";
+    //输入数据集的数据集合
+    private List<Map<String, Object>> initDataMapList = new ArrayList<Map<String, Object>>();
+    //行头数据的数据集合
+    private List<String> rowHeaderFields = new ArrayList<String>();
+    //列头数据的数据集合
+    private List<String> colHeaderFields = new ArrayList<String>();
+    //预期结果数据集的数据集合
+    private List<Map<String, Object>> resultMapList = new ArrayList<Map<String, Object>>();
 
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        ReadCrossTabulation readCrossTabulation = new ReadCrossTabulation(path);
-        //获取预置数据集
-        initdataSet = readCrossTabulation.getInitDataSet();
-        //获取预置行头、列头
-        headerFieldsMap = readCrossTabulation.getHeaderFields();
-        //获取预期结果数据集
-        resultSetExpected = readCrossTabulation.getResultSet();
+        Map<String, List<List<Object>>> dataMap = new HashMap<String, List<List<Object>>>();
+        ReadExcel readExcel = new ReadExcel();
+        dataMap = readExcel.getDataMap(path);
+        initDataMapList = readExcel.getDataMapList(dataMap.get(initDataSheetName), true);
+        Map<String, ArrayList<String>> fieldsMap = readExcel.getFieldsMap(dataMap.get(HeaderFieldsSheetName));
+        rowHeaderFields = fieldsMap.get(rowHeaderFieldsName);
+        colHeaderFields = fieldsMap.get(colHeaderFieldsName);
+        resultMapList = readExcel.getDataMapList(dataMap.get(resultSheetName), false);
     }
 
     @Test
     public void testCrossTabulation() {
-        DataSet resultSetActual = DataSetOptUtil.crossTabulation(initdataSet, headerFieldsMap.get("rowHeaderFields"), headerFieldsMap.get("colHeaderFields"));
-        Assert.assertEquals(resultSetExpected.getData(),resultSetActual.getData());
-        System.out.println("crossTabulation方法测试通过！");
-        logger.info("crossTabulation方法测试通过！");
+        DataSet resultSetActual = DataSetOptUtil.crossTabulation(new SimpleDataSet(initDataMapList), rowHeaderFields, colHeaderFields);
+        System.out.println("预期结果：" + resultMapList);
+        System.out.println("实际结果：" + resultSetActual.getData());
+        Assert.assertEquals(resultMapList, resultSetActual.getData());
+        System.out.println("方法crossTabulation测试通过！");
+        logger.info("方法crossTabulation测试通过！");
     }
 
     @After

@@ -222,7 +222,7 @@ public class MetaColumn implements TableField,java.io.Serializable {
 
     @Override
     public String getJavaType() {
-        return FieldType.mapToFieldType(this.columnType,this.columnPrecision);
+        return FieldType.mapToJavaType(this.columnType,this.columnPrecision);
     }
 
     @Override
