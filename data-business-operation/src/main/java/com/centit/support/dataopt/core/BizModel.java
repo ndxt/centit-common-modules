@@ -7,16 +7,16 @@ public interface BizModel {
     SimpleBizModel EMPTY_BIZ_MODEL
         = new SimpleBizModel("EMPTY_BIZ_MODEL");
     /**
-     * 模型名称
+     * @return 模型名称
      */
     String getModelName();
     /**
      * 模型的标识， 就是对应的主键
-     * 或者对应关系数据库查询的参数（数据源参数）
+     * @return  或者对应关系数据库查询的参数（数据源参数）
      */
     Map<String, Object> getModeTag();
     /**
-     * 模型数据
+     * @return  模型数据
      */
     List<DataSet> getBizData();
 

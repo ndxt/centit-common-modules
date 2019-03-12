@@ -23,7 +23,7 @@ public class BizOptFlow {
     public List<BizOperation> operations;
 
     /**
-     * @return 返回真正运行的次数, 如果<0 表示報錯
+     * @return 返回真正运行的次数, 如果小于 0 表示報錯
      */
     public int run(){
         int n = 0;

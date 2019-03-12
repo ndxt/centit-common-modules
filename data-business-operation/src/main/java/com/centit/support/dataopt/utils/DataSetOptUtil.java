@@ -120,7 +120,7 @@ public abstract class DataSetOptUtil {
         return statDataset(inData,groupbyFields,sd);
     }
     /**
-     * 分组统计 , 如果 List<String> groupbyFields 为null 或者 空 就是统计所有的（仅返回一行）
+     * 分组统计 , 如果 List&gt;String&lt; groupbyFields 为null 或者 空 就是统计所有的（仅返回一行）
      * @param inData 输入数据集
      * @param groupbyFields 分组（排序）字段
      * @param statDesc  统计字段; 新字段名， 源字段名， 统计方式 （求和，最大，最小，平均，方差，标准差）
@@ -177,6 +177,7 @@ public abstract class DataSetOptUtil {
         }
         return new SimpleDataSet(newData);
     }
+
     public static void analyseDatasetGroup( List<Map<String, Object>> data,
                                             int offset, int endPos,
                                             DatasetVariableTranslate dvt,
@@ -193,7 +194,7 @@ public abstract class DataSetOptUtil {
         }
     }
     /**
-     * 分组统计 , 如果 List<String> groupbyFields 为null 或者 空 就是统计所有的（仅返回一行）
+     * 分组统计 , 如果 List&gt;String&lt; groupbyFields 为null 或者 空 就是统计所有的（仅返回一行）
      * @param inData 输入数据集
      * @param groupbyFields 分组字段
      * @param orderbyFields 排序字段
@@ -302,6 +303,7 @@ public abstract class DataSetOptUtil {
      * @param currDataSet 本期数据集
      * @param lastDataSet 上期数据集
      * @param primaryFields 主键列
+     * @return DataSet
      */
     public static DataSet compareTabulation(DataSet currDataSet, DataSet lastDataSet, List<String> primaryFields) {
         if (currDataSet == null || lastDataSet == null) {

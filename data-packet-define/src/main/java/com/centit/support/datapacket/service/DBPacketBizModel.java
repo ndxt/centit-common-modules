@@ -32,7 +32,10 @@ public class DBPacketBizModel implements BizModel {
      */
     @Override
     public String getModelName() {
-        return this.dbPacket.getPacketName();
+        // 这个需要根据参数转换
+        /* return Pretreatment.mapTemplateString( this.dbPacket.getPacketNameFormat(),
+            this.dbPacket.getPacketParams() );*/
+        return this.dbPacket.getPacketNameFormat();
     }
 
     /**
@@ -61,7 +64,7 @@ public class DBPacketBizModel implements BizModel {
         for(RmdbDataQuery rdd : this.dbPacket.getDBQueries()) {
             SQLDataSetReader sqlDSR = new SQLDataSetReader();
             sqlDSR.setDataSource( mapDataSource(
-                integrationEnvironment.getDatabaseInfo(rdd.getDatabaseId())));
+                integrationEnvironment.getDatabaseInfo(rdd.getDatabaseCode())));
             sqlDSR.setSqlSen(rdd.getQuerySQL());
             dataSets.add(sqlDSR.load(this.queryParams));
         }
