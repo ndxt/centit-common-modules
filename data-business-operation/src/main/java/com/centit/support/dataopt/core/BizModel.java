@@ -1,5 +1,7 @@
 package com.centit.support.dataopt.core;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +31,20 @@ public interface BizModel {
     default DataSet getFirstDataSet(){
         if(!isEmpty()){
             return getBizData().get(0);
+        }
+        return null;
+    }
+
+    default DataSet fetchDataSetByName(String dataSetName){
+        List<DataSet>  dss = getBizData();
+        if(dss == null) {
+            return null;
+        }
+
+        for(DataSet ds : dss){
+            if(StringUtils.equals(ds.getDataSetName(),dataSetName)) {
+                return ds;
+            }
         }
         return null;
     }
