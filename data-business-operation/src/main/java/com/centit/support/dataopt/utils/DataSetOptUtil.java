@@ -1,5 +1,6 @@
 package com.centit.support.dataopt.utils;
 
+import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.algorithm.GeneralAlgorithm;
 import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.compiler.VariableFormula;
@@ -52,6 +53,37 @@ public abstract class DataSetOptUtil {
             newData.add(newRow);
         }
         return new SimpleDataSet(newData);
+    }
+
+    /**
+     * 数据集 映射
+     * @param inData 原始数据集
+     * @param formula 逻辑表达式
+     * @return 新的数据集
+     */
+    public static DataSet filterDateSet(DataSet inData,String formula) {
+        List<Map<String, Object>> data = inData.getData();
+        List<Map<String, Object>> newData = new ArrayList<>(data.size());
+        for(Map<String, Object> obj : data ){
+           if(BooleanBaseOpt.castObjectToBoolean(
+                    VariableFormula.calculate(formula, obj),false)){
+               newData.add(obj);
+            }
+        }
+        SimpleDataSet outDataSet = new SimpleDataSet(newData);
+        outDataSet.setDataSetType(inData.getDataSetName());
+        return outDataSet;
+    }
+
+    /**
+     * 对数据集进行排序
+     * @param inData 原始数据集
+     * @param fields 排序字段
+     * @return 排序后的数据集，修改了原始数据集的数据顺序
+     */
+    public static DataSet sortDataSetByFields(DataSet inData, List<String> fields) {
+        sortByFields(inData.getData(),fields);
+        return inData;
     }
 
     private static double[] listDoubleToArray(List<Double> dblist){
@@ -369,10 +401,19 @@ public abstract class DataSetOptUtil {
             return 0;
         }
         for (String field : fields) {
-            int cr = GeneralAlgorithm.compareTwoObject(
-                data1.get(field), data2.get(field));
-            if (cr != 0) {
-                return cr;
+            if(field.endsWith(" desc")){
+                String dataField = field.substring(0,field.length()-5).trim();
+                int cr = GeneralAlgorithm.compareTwoObject(
+                    data1.get(dataField), data2.get(dataField));
+                if (cr != 0) {
+                    return 0 - cr;
+                }
+            } else {
+                int cr = GeneralAlgorithm.compareTwoObject(
+                    data1.get(field), data2.get(field));
+                if (cr != 0) {
+                    return cr;
+                }
             }
         }
         return 0;
