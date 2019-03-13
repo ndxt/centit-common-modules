@@ -7,7 +7,7 @@ import com.centit.support.dataopt.core.BizModel;
 import com.centit.support.dataopt.core.DataSet;
 import com.centit.support.dataopt.dataset.SQLDataSetReader;
 import com.centit.support.datapacket.po.DataPacket;
-import com.centit.support.datapacket.po.RmdbDataQuery;
+import com.centit.support.datapacket.po.RmdbQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,7 @@ public class DBPacketBizModel implements BizModel {
     @Override
     public List<DataSet> getBizData() {
         List<DataSet> dataSets = new ArrayList<>();
-        for(RmdbDataQuery rdd : this.dbPacket.getDBQueries()) {
+        for(RmdbQuery rdd : this.dbPacket.getDBQueries()) {
             SQLDataSetReader sqlDSR = new SQLDataSetReader();
             sqlDSR.setDataSource( mapDataSource(
                 integrationEnvironment.getDatabaseInfo(rdd.getDatabaseCode())));

@@ -24,6 +24,7 @@ import java.util.Map;
 @ApiModel
 @Data
 @Entity
+@Table(name = "Q_DATA_PACKET")
 public class DataPacket {
 
     @ApiModelProperty(value = "数据包ID", hidden = true)
@@ -44,12 +45,12 @@ public class DataPacket {
     @NotBlank(message = "字段不能为空")
     private String packetType;
 
-    /**
+    /*
      * 数据包参数： 查询参数描述
      */
-    @ApiModelProperty(value = "数据包参数： 查询参数描述")
+    /*@ApiModelProperty(value = "数据包参数： 查询参数描述")
     @Column(name = "PACKET_PARAMS_JSON")
-    private String packetParamsJSON;
+    private String packetParamsJSON;*/
     /**
      * 详细描述
      */
@@ -76,21 +77,26 @@ public class DataPacket {
     @JSONField(serialize = false)
     private Date recordDate;
 
-    @Transient
-    private Map<String, Object> packetParams;
+
+    @OneToMany(targetEntity = DataResourceParam.class)
+    @JoinColumn(name = "packetId", referencedColumnName = "packetId")
+    private List<DataPacketParam> params;
+
+/*    @Transient
+    private Map<String, Object> packetParams;*/
 
     public DataPacket(){
         packetType = "D";
     }
 
-    public List<RmdbDataQuery> getDBQueries(){
+    public List<RmdbQuery> getDBQueries(){
         if("D".equals(packetType)){
 
         }
         return null;
     }
 
-    public Map<String, Object> getPacketParams(){
+    /*public Map<String, Object> getPacketParams(){
         if(packetParams == null && StringUtils.isNotBlank(packetParamsJSON)){
             packetParams = JSONObject.parseObject(packetParamsJSON);
         }
@@ -100,5 +106,5 @@ public class DataPacket {
     public void setPacketParamsJSON(String packetParamsJSON) {
         this.packetParamsJSON = packetParamsJSON;
         this.packetParams = null;
-    }
+    }*/
 }

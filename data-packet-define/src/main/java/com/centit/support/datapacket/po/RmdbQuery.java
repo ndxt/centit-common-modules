@@ -10,13 +10,15 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.Map;
 
 @ApiModel
 @Data
 @NoArgsConstructor
 @Entity
-public class RmdbDataQuery {
+@Table(name = "Q_RMDB_QUERY")
+public class RmdbQuery {
 
     @ApiModelProperty(value = "数据包ID", hidden = true)
     @Id
@@ -49,12 +51,16 @@ public class RmdbDataQuery {
     /**
      * 字段名 描述
      */
-    @ApiModelProperty(value = "sql语句字段名定义信息，是一个json格式的字符串")
+    /*@ApiModelProperty(value = "sql语句字段名定义信息，是一个json格式的字符串")
     @Column(name = "FIELD_NAMES_JSON")
     private String fieldNamesJSON;
 
 
     @Transient
-    private Map<String, String> fieldNames;
+    private Map<String, String> fieldNames;*/
+    @OneToMany(targetEntity = DataResourceColumn.class)
+    @JoinColumn(name = "queryId", referencedColumnName = "queryId")
+    private List<RmdbQueryColumn> columns;
+
 
 }
