@@ -75,6 +75,20 @@ public class MetaRelation implements TableReference, java.io.Serializable {
     @Length(max = 256, message = "字段长度不能大于{max}")
     private String relationComment;
 
+    @ApiModelProperty(value = "更改人员", hidden = true)
+    @Column(name = "RECORDER")
+    @Length(max = 8, message = "字段长度不能大于{max}")
+    @DictionaryMap(fieldName = "recorderName", value = "userCode")
+    private String  recorder;
+
+    /**
+     * 更改时间
+     */
+    @ApiModelProperty(hidden = true)
+    @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.NEW_UPDATE, condition = GeneratorCondition.ALWAYS, value = "today()")
+    @Column(name = "LAST_MODIFY_DATE")
+    private Date lastModifyDate;
+
     @ApiModelProperty(value = "关联明细")
     @OneToMany(targetEntity = MetaRelDetail.class)
     @JoinColumn(name = "relationId", referencedColumnName = "relationId")
