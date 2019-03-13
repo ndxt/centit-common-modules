@@ -10,6 +10,7 @@ import com.centit.support.datapacket.dao.RmdbQueryDao;
 import com.centit.support.datapacket.po.DataPacket;
 import com.centit.support.datapacket.po.RmdbQuery;
 import com.centit.support.datapacket.service.DataPacketService;
+import com.centit.support.datapacket.service.RmdbQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,9 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class DataPacketServiceImpl implements DataPacketService {
+public class RmdbQueryServiceImpl implements RmdbQueryService {
 
-    private final Logger logger = LoggerFactory.getLogger(DataPacketServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(RmdbQueryServiceImpl.class);
 
     @Autowired
     private DataPacketDao dataPacketDao;

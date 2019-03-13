@@ -1,7 +1,6 @@
 package com.centit.support.datapacket.dao;
 
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
-import com.centit.stat.resource.po.DataResource;
 import com.centit.support.datapacket.po.DataPacket;
 import org.springframework.stereotype.Repository;
 

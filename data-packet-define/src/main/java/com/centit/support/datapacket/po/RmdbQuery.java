@@ -5,11 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +16,8 @@ import java.util.Map;
 @NoArgsConstructor
 @Entity
 @Table(name = "Q_RMDB_QUERY")
-public class RmdbQuery {
+public class RmdbQuery implements Serializable {
+    private static final long serialVersionUID = 1;
 
     @ApiModelProperty(value = "数据包ID", hidden = true)
     @Id
@@ -58,7 +57,7 @@ public class RmdbQuery {
 
     @Transient
     private Map<String, String> fieldNames;*/
-    @OneToMany(targetEntity = DataResourceColumn.class)
+    @OneToMany(targetEntity = RmdbQueryColumn.class)
     @JoinColumn(name = "queryId", referencedColumnName = "queryId")
     private List<RmdbQueryColumn> columns;
 

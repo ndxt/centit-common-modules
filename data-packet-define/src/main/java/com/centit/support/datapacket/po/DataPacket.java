@@ -1,6 +1,5 @@
 package com.centit.support.datapacket.po;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.database.orm.GeneratorCondition;
@@ -10,22 +9,19 @@ import com.centit.support.database.orm.ValueGenerator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @ApiModel
 @Data
 @Entity
 @Table(name = "Q_DATA_PACKET")
-public class DataPacket {
+public class DataPacket implements Serializable {
+    private static final long serialVersionUID = 1;
 
     @ApiModelProperty(value = "数据包ID", hidden = true)
     @Id
@@ -78,9 +74,13 @@ public class DataPacket {
     private Date recordDate;
 
 
-    @OneToMany(targetEntity = DataResourceParam.class)
+    @OneToMany(targetEntity = DataPacketParam.class)
     @JoinColumn(name = "packetId", referencedColumnName = "packetId")
     private List<DataPacketParam> params;
+
+    @OneToMany(targetEntity = RmdbQuery.class)
+    @JoinColumn(name = "packetId", referencedColumnName = "packetId")
+    private List<DataPacketParam> rmdbQueries;
 
 /*    @Transient
     private Map<String, Object> packetParams;*/

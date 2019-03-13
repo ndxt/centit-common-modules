@@ -1,39 +1,25 @@
 package com.centit.support.datapacket.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.core.controller.BaseController;
-import com.centit.framework.core.controller.WrapUpResponseBody;
-import com.centit.framework.core.dao.PageQueryResult;
-import com.centit.support.database.utils.PageDesc;
-import com.centit.support.datapacket.po.DataPacket;
-import com.centit.support.datapacket.service.DataPacketService;
+import com.centit.support.datapacket.service.RmdbQueryService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.HtmlUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Api(value = "数据包", tags = "数据包")
 @RestController
 @RequestMapping(value = "data_resource")
-public class DataPacketController extends BaseController {
+public class RmdbQueryController extends BaseController {
 
     @Autowired
-    private DataPacketService dataResourceService;
+    private RmdbQueryService rmdbQueryService;
 
-    @ApiOperation(value = "新增数据包")
+    /*@ApiOperation(value = "新增数据包")
     @PostMapping
     @WrapUpResponseBody
     public void createDataResource(DataPacket dataResource){
-        //dataResource.setQuerySql(HtmlUtils.htmlUnescape(dataResource.getQuerySql()));
+        dataResource.setQuerySql(HtmlUtils.htmlUnescape(dataResource.getQuerySql()));
         dataResourceService.createDataResource(dataResource);
     }
 
@@ -42,7 +28,7 @@ public class DataPacketController extends BaseController {
     @WrapUpResponseBody
     public void updateDataResource(@PathVariable String resourceId, DataPacket dataResource){
         dataResource.setPacketId(resourceId);
-        //dataResource.setQuerySql(HtmlUtils.htmlUnescape(dataResource.getQuerySql()));
+        dataResource.setQuerySql(HtmlUtils.htmlUnescape(dataResource.getQuerySql()));
         dataResourceService.updateDataResource(dataResource);
     }
 
@@ -78,7 +64,7 @@ public class DataPacketController extends BaseController {
     public JSONObject generateTable(String databaseCode, String sql, HttpServletRequest request){
         Map<String, Object> params = collectRequestParameters(request);
         JSONObject table = new JSONObject();
-        //table.put("column", dataResourceService.generateColumn(databaseCode, HtmlUtils.htmlUnescape(sql)));
+        table.put("column", dataResourceService.generateColumn(databaseCode, HtmlUtils.htmlUnescape(sql)));
         table.put("objList", dataResourceService.queryData(databaseCode, HtmlUtils.htmlUnescape(sql), params));
         return table;
     }
@@ -91,4 +77,38 @@ public class DataPacketController extends BaseController {
         return dataResourceService.generateParam(sql);
     }
 
+    @ApiOperation(value = "统计数据")
+    @ApiImplicitParam(name = "resourceId", value = "数据包ID", required = true)
+    @GetMapping(value = "/stat/{resourceId}")
+    @WrapUpResponseBody
+    public JSONObject stat(HttpServletRequest request, @PathVariable String resourceId){
+        JSONObject table = new JSONObject();
+        DataPacket resource = dataResourceService.getDataResource(resourceId);
+        Map<String, Object> params = collectRequestParameters(request);
+        if(resource.getParams() != null) {
+            for (DataResourceParam param : resource.getParams()) {
+                if (!params.containsKey(param.getParamName())) {
+                    params.put(param.getParamName(), param.getParamDefaultValue());
+                }
+            }
+        }
+        table.put("column", resource.getColumns());
+        table.put("param", resource.getParams());
+        table.put("objList", dataResourceService.queryData(resource.getDatabaseCode(), HtmlUtils.htmlUnescape(resource.getQuerySql()), params));
+        return table;
+    }
+
+    @ApiOperation(value = "修改数据包列")
+    @ApiImplicitParams(value = {
+        @ApiImplicitParam(name = "resourceId", value = "数据包ID", required = true),
+        @ApiImplicitParam(name = "columnCode", value = "列代码", required = true)
+    })
+    @PutMapping(value = "/{resourceId}/{columnCode}")
+    @WrapUpResponseBody
+    public void updateResourceColumn(@PathVariable String resourceId, @PathVariable String columnCode, DataResourceColumn column){
+        column.setResourceId(resourceId);
+        column.setColumnCode(columnCode);
+        dataResourceService.updateResourceColumn(column);
+    }
+*/
   }

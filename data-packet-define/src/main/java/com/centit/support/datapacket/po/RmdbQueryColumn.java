@@ -1,7 +1,5 @@
 package com.centit.support.datapacket.po;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.centit.support.database.metadata.SimpleTableField;
 import com.centit.support.database.utils.FieldType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
