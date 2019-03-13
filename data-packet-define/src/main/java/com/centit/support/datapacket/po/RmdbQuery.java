@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,17 @@ public class RmdbQuery implements Serializable {
     @ApiModelProperty(value = "带命名参数的sql语句")
     @Column(name = "QUERY_SQL")
     private String querySQL;
+
+    @Column(name = "RECORDER")
+    @ApiModelProperty(value = "修改人", hidden = true)
+    @DictionaryMap(fieldName = "recorderName", value = "userCode")
+    private String recorder;
+
+    @Column(name = "RECORD_DATE")
+    @ApiModelProperty(value = "修改时间", hidden = true)
+    @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.NEW_UPDATE, condition = GeneratorCondition.ALWAYS, value = "today()")
+    @JSONField(serialize = false)
+    private Date recordDate;
 
     /**
      * 字段名 描述
