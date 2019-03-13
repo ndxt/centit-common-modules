@@ -35,7 +35,7 @@ public class DBPacketBizModel implements BizModel {
         // 这个需要根据参数转换
         /* return Pretreatment.mapTemplateString( this.dbPacket.getPacketNameFormat(),
             this.dbPacket.getPacketParams() );*/
-        return this.dbPacket.getPacketNameFormat();
+        return this.dbPacket.getPacketName();
     }
 
     /**
@@ -44,7 +44,7 @@ public class DBPacketBizModel implements BizModel {
      */
     @Override
     public Map<String, Object> getModeTag() {
-        return this.dbPacket.getPacketParams();
+        return this.queryParams;
     }
 
 

@@ -30,9 +30,9 @@ public class DataPacket implements Serializable {
     private String packetId;
 
     @ApiModelProperty(value = "数据包名称模板")
-    @Column(name = "PACKET_NAME_FORMAT")
+    @Column(name = "PACKET_NAME")
     @NotBlank(message = "字段不能为空")
-    private String packetNameFormat;
+    private String packetName;
     /**
      * 数据包类别，主要有 D database， F file ， P directory 文件夹 , 默认值为D
      */
@@ -76,7 +76,7 @@ public class DataPacket implements Serializable {
 
     @OneToMany(targetEntity = DataPacketParam.class)
     @JoinColumn(name = "packetId", referencedColumnName = "packetId")
-    private List<DataPacketParam> params;
+    private List<DataPacketParam> packetParams;
 
     @OneToMany(targetEntity = RmdbQuery.class)
     @JoinColumn(name = "packetId", referencedColumnName = "packetId")
