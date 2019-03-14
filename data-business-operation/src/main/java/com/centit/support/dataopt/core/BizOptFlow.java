@@ -16,13 +16,13 @@ public class BizOptFlow {
     /**
      * 业务数据 生产者
      */
-    public BizSupplier supplier;
+    private BizSupplier supplier;
     /**
      * 业务数据的 处理流程
      */
-    public List<BizOperation> operations;
+    private List<BizOperation> operations;
 
-    public BizModel lastResult;
+    private BizModel lastResult;
 
     /**
      * @return 返回真正运行的次数, 如果小于 0 表示報錯
@@ -30,10 +30,11 @@ public class BizOptFlow {
     public int run(){
         int n = 0;
         do{
-            lastResult= supplier.get();
-            if(lastResult == null /*|| bm.isEmpty()*/){
+            BizModel tempBM = supplier.get();
+            if(tempBM == null /*|| tempBM.isEmpty()*/){
                 break;
             }
+            lastResult = tempBM;
             n ++;
             if(this.operations != null) {
                 for (BizOperation opt : operations) {
