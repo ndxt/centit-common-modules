@@ -207,6 +207,11 @@ public class MetaDataServiceImpl implements MetaDataService {
     }
 
     @Override
+    public MetaTable getMetaTable(String databaseCode, String tableName){
+        return metaTableDao.getMetaTable(databaseCode,tableName);
+    }
+
+    @Override
     public List<MetaRelation> listMetaRelation(String tableId, PageDesc pageDesc) {
         List<MetaRelation> list = metaRelationDao.listObjectsByProperty("parentTableId", tableId);
         for(MetaRelation relation : list){

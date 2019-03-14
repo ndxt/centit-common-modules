@@ -26,9 +26,10 @@ import java.util.Map;
 public class SQLDataSetWriter implements DataSetWriter {
     public static String WRITER_ERROR_TAG = "rmdb_dataset_writer_result";
     private static final Logger logger = LoggerFactory.getLogger(SQLDataSetWriter.class);
-    private DataSourceDescription dataSource;
 
+    private DataSourceDescription dataSource;
     private TableInfo tableInfo;
+
     private Connection connection;
     /** true 数据集整体作为一个事务写入
      * false 数据集每一条作为一个事物写入

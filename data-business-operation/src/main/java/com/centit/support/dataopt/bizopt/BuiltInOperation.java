@@ -9,7 +9,6 @@ import com.centit.support.dataopt.core.DataSet;
 import com.centit.support.dataopt.utils.DataSetOptUtil;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,10 +27,10 @@ public class BuiltInOperation implements BizOperation {
     /**
      * 操作描述
      */
-    private JSONObject bizOptJson;
+    protected JSONObject bizOptJson;
 
 
-    private String fetchDataSetName(JSONObject bizOptJson, String fieldName, String defalutValue ){
+    protected String getJsonFieldString(JSONObject bizOptJson, String fieldName, String defalutValue ){
         String targetDSName = bizOptJson.getString(fieldName);
         if(StringUtils.isBlank(targetDSName)){
             return defalutValue;
@@ -39,10 +38,9 @@ public class BuiltInOperation implements BizOperation {
         return targetDSName;
     }
 
-
-    private BizModel runMap(BizModel bizModel, JSONObject bizOptJson) {
-        String sourDSName = fetchDataSetName(bizOptJson,"source", bizModel.getModelName());
-        String targetDSName = fetchDataSetName(bizOptJson, "target", sourDSName);
+    protected BizModel runMap(BizModel bizModel, JSONObject bizOptJson) {
+        String sourDSName = getJsonFieldString(bizOptJson,"source", bizModel.getModelName());
+        String targetDSName = getJsonFieldString(bizOptJson, "target", sourDSName);
         Object mapInfo = bizOptJson.get("map");
         if(mapInfo instanceof Map){
             DataSet dataSet = bizModel.fetchDataSetByName(sourDSName);
@@ -56,9 +54,9 @@ public class BuiltInOperation implements BizOperation {
         return bizModel;
     }
 
-    private BizModel runFilter(BizModel bizModel, JSONObject bizOptJson) {
-        String sourDSName = fetchDataSetName(bizOptJson,"source", bizModel.getModelName());
-        String targetDSName = fetchDataSetName(bizOptJson, "target", sourDSName);
+    protected BizModel runFilter(BizModel bizModel, JSONObject bizOptJson) {
+        String sourDSName = getJsonFieldString(bizOptJson,"source", bizModel.getModelName());
+        String targetDSName = getJsonFieldString(bizOptJson, "target", sourDSName);
         String formula = bizOptJson.getString("filter");
         if(StringUtils.isNotBlank(formula)){
             DataSet dataSet = bizModel.fetchDataSetByName(sourDSName);
@@ -70,9 +68,9 @@ public class BuiltInOperation implements BizOperation {
         return bizModel;
     }
 
-    private BizModel runStat(BizModel bizModel, JSONObject bizOptJson) {
-        String sourDSName = fetchDataSetName(bizOptJson,"source", bizModel.getModelName());
-        String targetDSName = fetchDataSetName(bizOptJson, "target", sourDSName);
+    protected BizModel runStat(BizModel bizModel, JSONObject bizOptJson) {
+        String sourDSName = getJsonFieldString(bizOptJson,"source", bizModel.getModelName());
+        String targetDSName = getJsonFieldString(bizOptJson, "target", sourDSName);
         Object groupBy = bizOptJson.get("groupBy");
         List<String> groupFields = StringBaseOpt.objectToStringList(groupBy);
         Object stat = bizOptJson.get("stat");
@@ -86,9 +84,9 @@ public class BuiltInOperation implements BizOperation {
         return bizModel;
     }
 
-    private BizModel runAnalyse(BizModel bizModel, JSONObject bizOptJson) {
-        String sourDSName = fetchDataSetName(bizOptJson,"source", bizModel.getModelName());
-        String targetDSName = fetchDataSetName(bizOptJson, "target", sourDSName);
+    protected BizModel runAnalyse(BizModel bizModel, JSONObject bizOptJson) {
+        String sourDSName = getJsonFieldString(bizOptJson,"source", bizModel.getModelName());
+        String targetDSName = getJsonFieldString(bizOptJson, "target", sourDSName);
 
         Object orderBy = bizOptJson.get("orderBy");
         List<String> orderFields = StringBaseOpt.objectToStringList(orderBy);
@@ -107,9 +105,9 @@ public class BuiltInOperation implements BizOperation {
         return bizModel;
     }
 
-    private BizModel runCross(BizModel bizModel, JSONObject bizOptJson) {
-        String sourDSName = fetchDataSetName(bizOptJson,"source", bizModel.getModelName());
-        String targetDSName = fetchDataSetName(bizOptJson, "target", sourDSName);
+    protected BizModel runCross(BizModel bizModel, JSONObject bizOptJson) {
+        String sourDSName = getJsonFieldString(bizOptJson,"source", bizModel.getModelName());
+        String targetDSName = getJsonFieldString(bizOptJson, "target", sourDSName);
         Object rowHeader = bizOptJson.get("rowHeader");
         List<String> rows = StringBaseOpt.objectToStringList(rowHeader);
         Object colHeader = bizOptJson.get("colHeader");
@@ -123,14 +121,14 @@ public class BuiltInOperation implements BizOperation {
         return bizModel;
     }
 
-    private BizModel runCompare(BizModel bizModel, JSONObject bizOptJson) {
-        String sour1DSName = fetchDataSetName(bizOptJson,"source", null);
-        String sour2DSName = fetchDataSetName(bizOptJson,"source2", null);
+    protected BizModel runCompare(BizModel bizModel, JSONObject bizOptJson) {
+        String sour1DSName = getJsonFieldString(bizOptJson,"source", null);
+        String sour2DSName = getJsonFieldString(bizOptJson,"source2", null);
         if(sour1DSName == null || sour2DSName ==null ){
             return bizModel;
         }
 
-        String targetDSName = fetchDataSetName(bizOptJson, "target", bizModel.getModelName());
+        String targetDSName = getJsonFieldString(bizOptJson, "target", bizModel.getModelName());
         Object primaryKey = bizOptJson.get("primaryKey");
         List<String> pks = StringBaseOpt.objectToStringList(primaryKey);
         DataSet dataSet = bizModel.fetchDataSetByName(sour1DSName);
@@ -142,12 +140,15 @@ public class BuiltInOperation implements BizOperation {
         return bizModel;
     }
 
-    private BizModel runPersistence(BizModel bizModel, JSONObject bizOptJson) {
-
+    /*private BizModel runPersistence(BizModel bizModel, JSONObject bizOptJson) {
+        String sourDSName = getJsonFieldString(bizOptJson,"source", bizModel.getModelName());
+        String databaseCode = getJsonFieldString(bizOptJson,"databaseCode", null);
+        String tableName = getJsonFieldString(bizOptJson,"tableName", null);
+        String writerType = getJsonFieldString(bizOptJson,"writerType", "merge");
         return bizModel;
-    }
+    }*/
 
-    private BizModel runOneStep(BizModel bizModel, JSONObject bizOptJson) {
+    protected BizModel runOneStep(BizModel bizModel, JSONObject bizOptJson) {
         String sOptType = bizOptJson.getString("operation");
         if(StringUtils.isBlank(sOptType)) {
             return bizModel;
@@ -165,8 +166,8 @@ public class BuiltInOperation implements BizOperation {
                 return runCross(bizModel, bizOptJson);
             case "compare":
                 return runCompare(bizModel, bizOptJson);
-            case "persistence":
-                return runPersistence(bizModel, bizOptJson);
+            /*case "persistence":
+                return runPersistence(bizModel, bizOptJson);*/
             default:
                 return bizModel;
         }

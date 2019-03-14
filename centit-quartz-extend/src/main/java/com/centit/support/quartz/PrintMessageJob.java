@@ -19,5 +19,4 @@ public class PrintMessageJob extends AbstractQuartzJob {
         return true;
     }
 
-
 }

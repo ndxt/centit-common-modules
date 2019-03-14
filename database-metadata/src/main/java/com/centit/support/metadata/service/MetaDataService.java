@@ -1,7 +1,5 @@
 package com.centit.support.metadata.service;
 
-import com.alibaba.fastjson.JSONObject;
-import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.ip.po.DatabaseInfo;
 import com.centit.support.database.metadata.SimpleTableInfo;
 import com.centit.support.database.utils.PageDesc;
@@ -10,7 +8,6 @@ import com.centit.support.metadata.po.MetaRelation;
 import com.centit.support.metadata.po.MetaTable;
 import com.centit.support.metadata.vo.MetaTableCascade;
 
-import javax.persistence.Column;
 import java.util.List;
 
 public interface MetaDataService {
@@ -26,6 +23,8 @@ public interface MetaDataService {
     void updateMetaTable(String tableId, String tableName, String tableComment, String tableState, String recorder);
 
     MetaTable getMetaTable(String tableId);
+
+    MetaTable getMetaTable(String databaseCode, String tableName);
 
     List<MetaRelation> listMetaRelation(String tableId, PageDesc pageDesc);
 
