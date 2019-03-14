@@ -16,7 +16,7 @@ public class PersistenceOperation implements BizOperation {
     public static final String WRITER_INDICATE_SAVE = "save";
     public static final String WRITER_INDICATE_APPEND = "append";
     public static final String WRITER_INDICATE_MERGE = "merge";
-    public static final String WRITER_INDICATE_UPDATE = "merge";
+    public static final String WRITER_INDICATE_UPDATE = "update";
 
     /**
      * 给 dataWriters 边个名字， 一般这个名字和 dataSet名字对应
@@ -37,18 +37,19 @@ public class PersistenceOperation implements BizOperation {
         /**
          * 保证写入顺序和 bizModel 的 DataSet的顺序一致
          */
-        for(DataSet ent : bizModel.getBizData()){
-            DataSetWriter dataSetWriter = dataWriters.get(ent.getDataSetName());
+        for(Map.Entry<String, DataSet> ent : bizModel.getBizData().entrySet()){
+            DataSetWriter dataSetWriter = dataWriters.get(ent.getKey());
             if(dataSetWriter!=null){
-                switch (getWriterIndicate(ent.getDataSetName())) {
+                switch (getWriterIndicate(ent.getKey())) {
                 case WRITER_INDICATE_APPEND:
-                    dataSetWriter.append(ent);
+                    dataSetWriter.append(ent.getValue());
                     break;
                 case WRITER_INDICATE_MERGE:
-                    dataSetWriter.merge(ent);
+                case WRITER_INDICATE_UPDATE:
+                    dataSetWriter.merge(ent.getValue());
                     break;
                 default:
-                    dataSetWriter.save(ent);
+                    dataSetWriter.save(ent.getValue());
                     break;
                 }
             }

@@ -22,19 +22,23 @@ public class BizOptFlow {
      */
     public List<BizOperation> operations;
 
+    public BizModel lastResult;
+
     /**
      * @return 返回真正运行的次数, 如果小于 0 表示報錯
      */
     public int run(){
         int n = 0;
         do{
-            BizModel bm = supplier.get();
-            if(bm == null/*|| bm.isEmpty()*/){
+            lastResult= supplier.get();
+            if(lastResult == null /*|| bm.isEmpty()*/){
                 break;
             }
             n ++;
-            for(BizOperation opt : operations){
-                bm = opt.apply(bm);
+            if(this.operations != null) {
+                for (BizOperation opt : operations) {
+                    lastResult = opt.apply(lastResult);
+                }
             }
         }while(supplier.isBatchWise());
         return n;
@@ -69,5 +73,9 @@ public class BizOptFlow {
         BizOptFlow optFlow = new BizOptFlow();
         return optFlow.setSupplier(SimpleBizSupplier.DUMMY_BIZ_SUPPLIER)
                       .addOperation(operation);
+    }
+
+    public BizModel getLastResult() {
+        return lastResult;
     }
 }

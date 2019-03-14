@@ -21,14 +21,14 @@ public abstract class DataSetOptUtil {
      * @param fieldMap 字段映射关系
      * @return 新的数据集
      */
-    public static DataSet mapDateSet(DataSet inData, List<Pair<String, String>> fieldMap) {
+    public static DataSet mapDateSet(DataSet inData, Collection<Map.Entry<String, String>> fieldMap) {
         List<Map<String, Object>> data = inData.getData();
         List<Map<String, Object>> newData = new ArrayList<>(data.size());
 
         for(Map<String, Object> obj : data ){
             Map<String, Object> newRow = new HashMap<>(fieldMap.size());
-            for(Pair<String, String> ent : fieldMap){
-                newRow.put(ent.getLeft(), obj.get(ent.getRight()));
+            for(Map.Entry<String, String> ent : fieldMap){
+                newRow.put(ent.getKey(), obj.get(ent.getValue()));
             }
             newData.add(newRow);
         }
@@ -41,14 +41,14 @@ public abstract class DataSetOptUtil {
      * @param formulaMap 字段映射关系， value为计算表达式
      * @return 新的数据集
      */
-    public static DataSet mapDateSetByFormula(DataSet inData,List<Pair<String, String>> formulaMap) {
+    public static DataSet mapDateSetByFormula(DataSet inData,Collection<Map.Entry<String, String>> formulaMap) {
         List<Map<String, Object>> data = inData.getData();
         List<Map<String, Object>> newData = new ArrayList<>(data.size());
         for(Map<String, Object> obj : data ){
             Map<String, Object> newRow = new HashMap<>(formulaMap.size());
-            for(Pair<String, String> ent : formulaMap){
-                newRow.put(ent.getLeft(),
-                    VariableFormula.calculate(ent.getRight(), obj));
+            for(Map.Entry<String, String> ent : formulaMap){
+                newRow.put(ent.getKey(),
+                    VariableFormula.calculate(ent.getValue(), obj));
             }
             newData.add(newRow);
         }
@@ -144,10 +144,10 @@ public abstract class DataSetOptUtil {
 
     public static DataSet statDataset2(DataSet inData,
                                       List<String> groupbyFields,
-                                      List<Pair<String, String>> statDesc) {
+                                      Collection<Map.Entry<String, String>> statDesc) {
         List<Triple<String, String,String>> sd = new ArrayList<>(statDesc.size());
-        for (Pair<String, String> s: statDesc){
-            sd.add(new MutableTriple<>(s.getLeft()+':'+s.getRight(),s.getLeft(),s.getRight()));
+        for (Map.Entry<String, String> s: statDesc){
+            sd.add(new MutableTriple<>(s.getKey()+':'+s.getValue(),s.getKey(),s.getValue()));
         }
         return statDataset(inData,groupbyFields,sd);
     }
@@ -155,12 +155,12 @@ public abstract class DataSetOptUtil {
      * 分组统计 , 如果 List&gt;String&lt; groupbyFields 为null 或者 空 就是统计所有的（仅返回一行）
      * @param inData 输入数据集
      * @param groupbyFields 分组（排序）字段
-     * @param statDesc  统计字段; 新字段名， 源字段名， 统计方式 （求和，最大，最小，平均，方差，标准差）
+     * @param statDesc  统计描述; 新字段名， 源字段名， 统计方式 （求和，最大，最小，平均，方差，标准差）
      * @return 返回数据集
      */
     public static DataSet statDataset(DataSet inData,
                                       List<String> groupbyFields,
-                                      List<Triple<String, String,String>> statDesc) {
+                                      List<Triple<String, String, String>> statDesc) {
         if (inData == null) {
             return null;
         }
@@ -213,15 +213,15 @@ public abstract class DataSetOptUtil {
     public static void analyseDatasetGroup( List<Map<String, Object>> data,
                                             int offset, int endPos,
                                             DatasetVariableTranslate dvt,
-                                            List<Pair<String, String>> refDesc) {
+                                            Collection<Map.Entry<String, String>> refDesc) {
         dvt.setOffset(offset);
         dvt.setLength(endPos-offset);
         for(int j = offset; j<endPos; j++) {
             Map<String, Object> newRow = data.get(j);
             dvt.setCurrentPos(j);
-            for (Pair<String, String> ref : refDesc) {
-                newRow.put(ref.getLeft(),
-                    VariableFormula.calculate(ref.getRight(), dvt));
+            for (Map.Entry<String, String> ref : refDesc) {
+                newRow.put(ref.getKey(),
+                    VariableFormula.calculate(ref.getValue(), dvt));
             }
         }
     }
@@ -234,9 +234,9 @@ public abstract class DataSetOptUtil {
      * @return 返回数据集
      */
     public static DataSet analyseDataset(DataSet inData,
-                                      List<String> groupbyFields,
-                                      List<String> orderbyFields,
-                                      List<Pair<String, String>> refDesc) {
+                                        List<String> groupbyFields,
+                                        List<String> orderbyFields,
+                                        Collection<Map.Entry<String, String>> refDesc) {
         List<Map<String, Object>> data = inData.getData();
         List<String> keyRows = ListUtils.union(groupbyFields, orderbyFields);
         //根据维度进行排序 行头、列头

@@ -1,15 +1,15 @@
 package com.centit.support.dataopt.core;
 
-import org.apache.commons.lang3.StringUtils;
+import com.alibaba.fastjson.annotation.JSONField;
 
-import java.util.List;
 import java.util.Map;
 
 public interface BizModel {
     SimpleBizModel EMPTY_BIZ_MODEL
         = new SimpleBizModel("EMPTY_BIZ_MODEL");
+    String DEFAULT_MODEL_NAME = "bizModel";
     /**
-     * @return 模型名称
+     * @return 模型名称; 可以作为主DataSet的名称
      */
     String getModelName();
     /**
@@ -20,7 +20,7 @@ public interface BizModel {
     /**
      * @return  模型数据
      */
-    List<DataSet> getBizData();
+    Map<String, DataSet> getBizData();
 
 
     default boolean isEmpty(){
@@ -28,24 +28,26 @@ public interface BizModel {
             getBizData().isEmpty();
     }
 
-    default DataSet getFirstDataSet(){
+    @JSONField(deserialize = false, serialize = false)
+    default DataSet getMainDataSet(){
         if(!isEmpty()){
-            return getBizData().get(0);
+            return getBizData().get(getModelName());
         }
         return null;
     }
 
+    void checkBizDataSpace();
+
+    default void addDataSet(String dataSetName, DataSet dataSet) {
+        checkBizDataSpace();
+        getBizData().put(dataSetName, dataSet);
+    }
+
     default DataSet fetchDataSetByName(String dataSetName){
-        List<DataSet>  dss = getBizData();
+        Map<String, DataSet> dss = getBizData();
         if(dss == null) {
             return null;
         }
-
-        for(DataSet ds : dss){
-            if(StringUtils.equals(ds.getDataSetName(),dataSetName)) {
-                return ds;
-            }
-        }
-        return null;
+        return dss.get(dataSetName);
     }
 }

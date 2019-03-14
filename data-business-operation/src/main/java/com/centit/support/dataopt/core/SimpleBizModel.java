@@ -1,7 +1,8 @@
 package com.centit.support.dataopt.core;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.alibaba.fastjson.annotation.JSONField;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleBizModel implements BizModel{
@@ -17,7 +18,7 @@ public class SimpleBizModel implements BizModel{
     /**
      * 模型数据
      */
-    protected List<DataSet> bizData;
+    protected Map<String, DataSet> bizData;
 
     public SimpleBizModel(){
 
@@ -27,11 +28,29 @@ public class SimpleBizModel implements BizModel{
         this.modelName = modelName;
     }
 
-    public void addDataSet(DataSet dataSet) {
+    public void checkBizDataSpace(){
         if(this.bizData == null){
-            this.bizData = new ArrayList<>(5);
+            this.bizData = new HashMap<>(6);
         }
-        this.bizData.add(dataSet);
+    }
+
+    public void addDataSet(DataSet dataSet) {
+        checkBizDataSpace();
+        this.bizData.put(dataSet.getDataSetName(), dataSet);
+    }
+
+    @JSONField(deserialize = false, serialize = false)
+    public void setMainDataSet(DataSet dataSet) {
+        checkBizDataSpace();
+        this.modelName = dataSet.getDataSetName();
+        this.bizData.put(this.modelName , dataSet);
+    }
+
+    @JSONField(deserialize = false, serialize = false)
+    public void setMainDataSet(String modelName, DataSet dataSet) {
+        checkBizDataSpace();
+        this.modelName = modelName;
+        this.bizData.put(this.modelName , dataSet);
     }
 
     public String getModelName() {
@@ -50,11 +69,11 @@ public class SimpleBizModel implements BizModel{
         this.modeTag = modeTag;
     }
 
-    public List<DataSet> getBizData() {
+    public Map<String, DataSet> getBizData() {
         return bizData;
     }
 
-    public void setBizData(List<DataSet> bizData) {
+    public void setBizData(Map<String, DataSet> bizData) {
         this.bizData = bizData;
     }
 }

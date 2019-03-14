@@ -1,10 +1,13 @@
 package com.centit.support.dataopt.utils;
 
+import com.alibaba.fastjson.JSONObject;
+import com.centit.support.dataopt.bizopt.BuiltInOperation;
 import com.centit.support.dataopt.bizopt.DataLoadSupplier;
 import com.centit.support.dataopt.bizopt.PersistenceOperation;
 import com.centit.support.dataopt.core.BizOperation;
 import com.centit.support.dataopt.core.BizOptFlow;
 import com.centit.support.dataopt.core.BizSupplier;
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class BizOptFlowUtil {
 
@@ -23,8 +26,14 @@ public abstract class BizOptFlowUtil {
     }
 
     public static BizOptFlow createOptFlow(BizSupplier bizSupplier, String optDescJson){
-        BizOptFlow bof = new BizOptFlow().setSupplier(bizSupplier);
-        //TODO 解析json 目前支持 map filter
-        return bof;
+        if(StringUtils.isBlank(optDescJson)){
+            return new BizOptFlow().setSupplier(bizSupplier);
+        }
+        return createOptFlow(bizSupplier, JSONObject.parseObject(optDescJson));
+    }
+
+    public static BizOptFlow createOptFlow(BizSupplier bizSupplier, JSONObject optJson){
+        return new BizOptFlow().setSupplier(bizSupplier)
+            .addOperation(new BuiltInOperation(optJson));
     }
 }

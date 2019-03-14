@@ -1,47 +1,44 @@
 package com.centit.support.dataopt.core;
 
-import java.util.ArrayList;
+import com.alibaba.fastjson.annotation.JSONField;
+
+import java.util.HashMap;
 
 public class SingleDataSetModel extends SimpleBizModel {
 
     public SingleDataSetModel(){
         super();
-        bizData = new ArrayList<>(1);
+        bizData = new HashMap<>(1);
     }
 
     public SingleDataSetModel(String modelName){
         super(modelName);
-        bizData = new ArrayList<>(1);
+        bizData = new HashMap<>(1);
+    }
+
+    @Override
+    protected void checkBizDataSpace(){
+        if(this.bizData == null){
+            this.bizData = new HashMap<>(1);
+        }
     }
 
     public SingleDataSetModel(DataSet dataSet){
-        super();
-        bizData = new ArrayList<>(1);
-        bizData.add(dataSet);
+        setMainDataSet(dataSet);
     }
 
     public SingleDataSetModel(String modelName, DataSet dataSet){
-        super(modelName);
-        bizData = new ArrayList<>(1);
-        bizData.add(dataSet);
+        setMainDataSet(modelName, dataSet);
     }
 
+    @JSONField(deserialize = false, serialize = false)
     public void setDataSet(DataSet dataSet){
-        if(bizData == null){
-            bizData = new ArrayList<>(1);
-            bizData.add(dataSet);
-        } else if(bizData.size() == 0){
-            bizData.add(dataSet);
-        } else {
-            bizData.set(0, dataSet);
-        }
+        setMainDataSet(dataSet);
     }
 
+    @JSONField(deserialize = false, serialize = false)
     public DataSet getDataSet(){
-        if(bizData == null || bizData.size() == 0){
-            return null;
-        } else {
-            return bizData.get(0);
-        }
+        return getMainDataSet();
     }
 }
+
