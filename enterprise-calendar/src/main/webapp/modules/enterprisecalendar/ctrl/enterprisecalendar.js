@@ -72,7 +72,7 @@ layui.config({
    */
   function findMarkDay(curDate) {
     $.ajax({
-      url: basepath + "/service/enterpriseCalendar/findMarkDay",
+      url: basepath + "/workflow/enterpriseCalendar/findMarkDay",
       type: "GET",
       data: {
         "curDate": curDate

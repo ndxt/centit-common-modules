@@ -54,4 +54,16 @@
             <artifactId>hibernate-validator</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+    <resources>
+        <resource>
+            <directory>src/main/webapp</directory>
+            <excludes>
+                <exclude>WEB-INF/*</exclude>
+            </excludes>
+            <targetPath>META-INF/resources/</targetPath>
+        </resource>
+    </resources>
+    </build>
 </project>
