@@ -11,7 +11,7 @@ layui.config({
 
   form.on("submit(submitBtn)", function (data) {
     $.ajax({
-      url: basepath + "/service/enterpriseCalendar/saveData",
+      url: basepath + "/workflow/enterpriseCalendar/saveData",
       type: "POST",
       data: data.field,
       success: function (result) {
