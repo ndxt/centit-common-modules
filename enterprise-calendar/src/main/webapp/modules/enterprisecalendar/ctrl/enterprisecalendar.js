@@ -62,7 +62,7 @@ layui.config({
       anim: 3, //动画类型
       maxmin: true, //开启最大化最小化按钮
       area: ["500px", "400px"],
-      content: basepath + "/modules/enterprisecalendar/enterprisecalendar-edit.jsp?checkDate=" + value
+      content: basepath + "/workflow/enterpriseCalendar/getCurrData?curDate=" + value
     });
   }
 

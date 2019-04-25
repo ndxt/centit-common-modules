@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Date;
@@ -76,5 +77,29 @@ public class EnterpriseCalendarController extends BaseController {
             }
         }
         JsonResultUtils.writeSingleDataJson(DatetimeOpt.convertDateToString(workDay.getWorkDay()), response);
+    }
+
+    @RequestMapping(value = "/getCurrData", method = RequestMethod.GET)
+    public void getCurrData(@Valid Date curDate, HttpServletResponse response,HttpServletRequest request) {
+        curDate = curDate == null ? new Date() : curDate;
+        Date startDate = DatetimeOpt.truncateToMonth(curDate);
+        Date endDate = DatetimeOpt.seekEndOfMonth(curDate);
+        Map<String, Object> paramsMap = new HashMap<String, Object>();
+        paramsMap.put("startDate", startDate);
+        paramsMap.put("endDate", endDate);
+        List<WorkDay> workDays = this.workDayMag.listObjects(paramsMap);
+        WorkDay day = new WorkDay();
+        if(workDays!=null && workDays.size()>0){
+            day = workDays.get(0);
+        }else{
+            day.setWorkDay(curDate);
+        }
+        request.setAttribute("day",day);
+        try {
+            request.getRequestDispatcher("/modules/enterprisecalendar/enterprisecalendar-edit.jsp").forward(request, response);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        JsonResultUtils.writeSingleDataJson(day, response);
     }
 }
