@@ -38,7 +38,7 @@
             <label class = "layui-form-label" >日期类型</label >
             <div class = "layui-input-block" >
                 <input type = "radio" name = "dayType" value = "A" title = "放假" <c:if test="${day.dayType eq 'A'}">checked</c:if>/>
-                <input type = "radio" name = "dayType" value = "B" title = "上班" <c:if test="${day.dayType eq 'A'}">checked</c:if>>
+                <input type = "radio" name = "dayType" value = "B" title = "上班" <c:if test="${day.dayType eq 'B'}">checked</c:if>>
                 <input type = "radio" name = "dayType" value = "0" title = "默认" <c:if test="${day.dayType eq '0' or empty day.dayType}">checked</c:if> >
             </div >
         </div >
