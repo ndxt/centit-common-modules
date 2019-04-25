@@ -82,11 +82,9 @@ public class EnterpriseCalendarController extends BaseController {
     @RequestMapping(value = "/getCurrData", method = RequestMethod.GET)
     public void getCurrData(@Valid Date curDate, HttpServletResponse response,HttpServletRequest request) {
         curDate = curDate == null ? new Date() : curDate;
-        Date startDate = DatetimeOpt.truncateToMonth(curDate);
-        Date endDate = DatetimeOpt.seekEndOfMonth(curDate);
         Map<String, Object> paramsMap = new HashMap<String, Object>();
-        paramsMap.put("startDate", startDate);
-        paramsMap.put("endDate", endDate);
+        paramsMap.put("startDate", curDate);
+        paramsMap.put("endDate", curDate);
         List<WorkDay> workDays = this.workDayMag.listObjects(paramsMap);
         WorkDay day = new WorkDay();
         if(workDays!=null && workDays.size()>0){
