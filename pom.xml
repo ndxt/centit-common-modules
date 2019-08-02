@@ -44,6 +44,7 @@
         <tag>v1.12</tag>
     </scm>
     <modules>
+        <module>centit-office-utils</module>
         <module>centit-report-utils</module>
         <module>optflow-serial-number</module>
         <module>enterprise-calendar</module>

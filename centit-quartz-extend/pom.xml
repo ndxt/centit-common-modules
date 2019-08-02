@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>centit-quartz-extend</artifactId>
+    <name>com.centit.support:centit-quartz-extend</name>
     <packaging>jar</packaging>
 
     <dependencies>
