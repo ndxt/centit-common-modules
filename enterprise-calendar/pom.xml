@@ -8,10 +8,8 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>enterprise-calendar</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <name>com.centit.support:enterprise-calendar</name>
 
     <dependencies>
         <dependency>

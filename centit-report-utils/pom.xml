@@ -10,7 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>centit-report-utils</artifactId>
     <name>com.centit.support:centit-report-utils</name>
-    <packaging>jar</packaging>
     <description>导出数据到excel 或者 word、pdf 文档</description>
 
     <dependencies>
