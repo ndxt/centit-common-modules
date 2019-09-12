@@ -179,7 +179,151 @@ public abstract class ExcelExportUtil {
         generateExcelSheet(sheet, objLists, objType);
         wb.write(outputStream);
     }
+//--------------------------------------------------------------------
+    /**
+     * 生成Excel字节流
+     *
+     * @return InputStream 输出文件流
+     * @param sheetName    pageName 页面名称
+     * @param objLists     对象集合
+     * @param header       Excel页头
+     * @param property     需要显示的属性
+     * @throws IOException 文件操作异常
+     */
+    public static InputStream generateExcelStream(String sheetName,
+                                     List<? extends Object> objLists, String[] header, String[] property) throws IOException {
+        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            generateExcel(bout, sheetName, objLists, header, property);
+            return new ByteArrayInputStream(bout.toByteArray());
+        }
+    }
 
+    public static InputStream generateExcelStream(List<? extends Object> objLists, String[] header, String[] property) throws IOException {
+        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            generateExcel(bout,  objLists, header, property);
+            return new ByteArrayInputStream(bout.toByteArray());
+        }
+    }
+
+    /**
+     * 生成Excel字节流
+     *
+     * @return InputStream 输出文件流
+     * @param sheetName    pageName 页面名称
+     * @param objLists     对象集合
+     * @param header       Excel页头
+     * @throws IOException 文件操作异常
+     */
+    public static InputStream generateExcelStream(String sheetName,
+                                     List<Object[]> objLists, String[] header) throws IOException {
+        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            generateExcel(bout, sheetName, objLists, header);
+            return new ByteArrayInputStream(bout.toByteArray());
+        }
+    }
+
+    public static InputStream generateExcelStream(List<Object[]> objLists, String[] header) throws IOException {
+        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            generateExcel(bout, objLists, header);
+            return new ByteArrayInputStream(bout.toByteArray());
+        }
+    }
+
+    /**
+     * 生成Excel字节流
+     * @return InputStream  输出文件流
+     * @param sheetName    pageName 页面名称
+     * @param objLists     对象集合
+     * @param objType      对象类型
+     * @throws IOException 文件操作异常
+     **/
+    public static InputStream generateExcelStream(String sheetName,
+                                     List<? extends Object> objLists, Class<?> objType) throws IOException {
+        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            generateExcel(bout, sheetName, objLists, objType);
+            return new ByteArrayInputStream(bout.toByteArray());
+        }
+    }
+
+    public static InputStream generateExcelStream(List<? extends Object> objLists, Class<?> objType) throws IOException {
+        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            generateExcel(bout, objLists, objType);
+            return new ByteArrayInputStream(bout.toByteArray());
+        }
+    }
+
+    /**
+     * 生成Excel 2003字节流
+     *
+     * @return InputStream  输出文件流
+     * @param sheetName    pageName 页面名称
+     * @param objLists     对象集合
+     * @param header       Excel页头
+     * @param property     需要显示的属性
+     * @throws IOException 文件操作异常
+     **/
+    public static InputStream generateExcel2003Stream(String sheetName, List<? extends Object> objLists, String[] header, String[] property) throws IOException {
+        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            generateExcel2003(bout, sheetName, objLists, header, property);
+            return new ByteArrayInputStream(bout.toByteArray());
+        }
+    }
+
+    public static InputStream generateExcel2003Stream(List<? extends Object> objLists,
+                                         String[] header, String[] property) throws IOException {
+        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            generateExcel2003(bout, objLists, header, property);
+            return new ByteArrayInputStream(bout.toByteArray());
+        }
+    }
+
+    /**
+     * 生成Excel 2003字节流
+     *
+     * @return InputStream  输出文件流
+     * @param sheetName    pageName 页面名称
+     * @param objLists     对象集合
+     * @param header       Excel页头
+     * @throws IOException 文件操作异常
+     **/
+    public static InputStream generateExcel2003Stream(String sheetName,
+                                         List<Object[]> objLists, String[] header) throws IOException {
+        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            generateExcel2003(bout, sheetName, objLists, header);
+            return new ByteArrayInputStream(bout.toByteArray());
+        }
+    }
+
+    public static InputStream generateExcel2003Stream(List<Object[]> objLists, String[] header) throws IOException {
+        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            generateExcel2003(bout, objLists, header);
+            return new ByteArrayInputStream(bout.toByteArray());
+        }
+    }
+
+    /**
+     * 生成Excel 2003 字节流
+     * @return InputStream  输出文件流
+     * @param sheetName    pageName 页面名称
+     * @param objLists     对象集合
+     * @param objType      对象类型
+     * @throws IOException 文件操作异常
+     **/
+    public static InputStream generateExcel2003Stream(String sheetName,
+                                         List<? extends Object> objLists, Class<?> objType) throws IOException {
+        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            generateExcel2003(bout, sheetName, objLists, objType);
+            return new ByteArrayInputStream(bout.toByteArray());
+        }
+    }
+
+    public static InputStream generateExcel2003Stream(List<? extends Object> objLists, Class<?> objType) throws IOException {
+        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            generateExcel2003(bout, objLists, objType);
+            return new ByteArrayInputStream(bout.toByteArray());
+        }
+    }
+//---------------------------------------------------------------------
     public static void generateExcelSheet(Sheet sheet, List<? extends Object> objLists, Class<?> objType) {
         JavaBeanMetaData metaData = JavaBeanMetaData.createBeanMetaDataFromType(objType);
 
