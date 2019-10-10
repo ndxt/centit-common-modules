@@ -20,7 +20,7 @@ public abstract class AbstractQuartzJob implements Job {
     protected static final Logger logger = LoggerFactory.getLogger(AbstractQuartzJob.class);
 
     /**
-     * 正则运行任务的地方
+     * 正式运行任务的地方
      * @param context job运行环境变量
      * @return 是否成功执行
      * @throws JobExecutionException 执行异常

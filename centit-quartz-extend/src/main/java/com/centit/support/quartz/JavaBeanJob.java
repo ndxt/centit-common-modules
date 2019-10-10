@@ -16,6 +16,7 @@ import java.util.Map;
 
 public class JavaBeanJob extends AbstractQuartzJob {
 
+    private Object bean;
     private String beanName;
     private String methodName;// get put post delete
     private Map<String,Object> params;
@@ -23,6 +24,7 @@ public class JavaBeanJob extends AbstractQuartzJob {
     @Override
     protected void loadExecutionContext(JobExecutionContext context){
         JobDataMap paramMap = context.getMergedJobDataMap();
+        bean = paramMap.get("bean");
         beanName = paramMap.getString("beanName");
         methodName = paramMap.getString("methodName");
         Object obj = paramMap.get("params");
@@ -35,17 +37,18 @@ public class JavaBeanJob extends AbstractQuartzJob {
 
     @Override
     protected boolean runRealJob(JobExecutionContext context) throws JobExecutionException {
-
-        WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
-        Object object = webApplicationContext.getBean(beanName);
-        LeftRightPair<Method, Object[]> mp = ReflectionOpt.getMatchBestMethod(object.getClass(), methodName, params);
+        if(bean == null) {
+            WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
+            bean = webApplicationContext.getBean(beanName);
+        }
+        LeftRightPair<Method, Object[]> mp = ReflectionOpt.getMatchBestMethod(bean.getClass(), methodName, params);
         boolean ret = true;
         if(/*mp !=null &&*/ mp.getLeft() != null){
             try {
                 if(mp.getRight() == null) {
-                    mp.getLeft().invoke(object);
+                    mp.getLeft().invoke(bean);
                 }else{
-                    mp.getLeft().invoke(object, mp.getRight());
+                    mp.getLeft().invoke(bean, mp.getRight());
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {
                 logger.error(e.getLocalizedMessage(),e);
@@ -53,6 +56,10 @@ public class JavaBeanJob extends AbstractQuartzJob {
             }
         }
         return ret;
+    }
+
+    public void setBean(Object bean) {
+        this.bean = bean;
     }
 
     public void setBeanName(String beanName) {
