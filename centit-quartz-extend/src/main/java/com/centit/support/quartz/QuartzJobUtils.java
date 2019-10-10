@@ -29,7 +29,6 @@ public abstract class QuartzJobUtils {
     public static void registerJobType(String jobType, Class<? extends AbstractQuartzJob> type){
         jobTypeMap.put(jobType, type);
     }
-
     /**
      * 定时任务
      * @param scheduler 主API
@@ -44,6 +43,24 @@ public abstract class QuartzJobUtils {
                                               String jobName, String jobGroup,
                                               String jobType, String cronExpress,
                                               Map<String, Object> param) throws SchedulerException {
+        createOrReplaceCronJob( scheduler, jobName, jobGroup,
+            jobTypeMap.get(jobType), cronExpress, param);
+    }
+    /**
+     * 定时任务
+     * @param scheduler 主API
+     * @param jobName 和 triggerName 一致，
+     * @param jobGroup 和 triggerGroupName 一致
+     * @param jobClass 任务类
+     * @param cronExpress 定时器描述
+     * @param param 数据
+     * @throws SchedulerException 执行异常
+     */
+
+    public static void createOrReplaceCronJob(Scheduler scheduler,
+                                              String jobName, String jobGroup,
+                                              Class<? extends Job> jobClass, String cronExpress,
+                                              Map<String, Object> param) throws SchedulerException {
         /*WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
         SchedulerFactoryBean schedulerFactoryBean = webApplicationContext.getBean(SchedulerFactoryBean.class);
         Scheduler scheduler = schedulerFactoryBean.getScheduler();*/
@@ -51,7 +68,7 @@ public abstract class QuartzJobUtils {
         Trigger trigger = scheduler.getTrigger(triggerKey);
         // 新建一个任务
         if(trigger == null){
-            JobDetail jobDetail = JobBuilder.newJob(jobTypeMap.get(jobType))
+            JobDetail jobDetail = JobBuilder.newJob(jobClass)
                 .withIdentity(jobName, jobGroup)
                 .usingJobData(new JobDataMap(param)).build();
 
@@ -71,7 +88,6 @@ public abstract class QuartzJobUtils {
             scheduler.rescheduleJob(triggerKey, trigger);
         }
     }
-
     /**
      * 定时间隔任务
      * @param scheduler 主API
@@ -83,15 +99,32 @@ public abstract class QuartzJobUtils {
      * @throws SchedulerException 执行异常
      */
     public static void createOrReplaceSimpleJob(Scheduler scheduler,
+                                                String jobName, String jobGroup,
+                                                String jobType, int intervalInSeconds,
+                                                Map<String, Object> param) throws SchedulerException {
+        createOrReplaceSimpleJob(scheduler, jobName, jobGroup,
+            jobTypeMap.get(jobType), intervalInSeconds, param);
+    }
+    /**
+     * 定时间隔任务
+     * @param scheduler 主API
+     * @param jobName 和 triggerName 一致
+     * @param jobGroup 和 triggerGroupName 一致
+     * @param jobClass 任务类
+     * @param intervalInSeconds 定时器描述
+     * @param param 数据
+     * @throws SchedulerException 执行异常
+     */
+    public static void createOrReplaceSimpleJob(Scheduler scheduler,
                                               String jobName, String jobGroup,
-                                              String jobType, int intervalInSeconds,
+                                                Class<? extends Job> jobClass, int intervalInSeconds,
                                               Map<String, Object> param) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
         Trigger trigger = scheduler.getTrigger(triggerKey);
 
         // 新建一个任务
         if(trigger == null){
-            JobDetail jobDetail = JobBuilder.newJob(jobTypeMap.get(jobType))
+            JobDetail jobDetail = JobBuilder.newJob(jobClass)
                 .withIdentity(jobName, jobGroup)
                 .usingJobData(new JobDataMap(param))
                 .build();
