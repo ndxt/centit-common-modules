@@ -29,17 +29,11 @@ public interface OptFlowNoPoolDao {
      */
     void deleteObjectById(OptFlowNoPoolId cid);
 
-
     /**
      * 新增
      * @param optFlowNoPool  流水号池中的流水号
      */
     void saveNewOptFlowNoPool(OptFlowNoPool optFlowNoPool);
-
-    int  pageCount(Map<String, Object> filterDescMap);
-
-    List<OptFlowNoPool>  pageQuery(Map<String, Object> pageQureyMap);
-
 
     /**
      *  "select min(CurNo) as MinNo from F_OptFlowNoPool" +
@@ -55,6 +49,6 @@ public interface OptFlowNoPoolDao {
      */
     long fetchFirstLsh(String ownerCode, String codeCode, Date codeBaseDate);
 
-    public List<OptFlowNoPool> listLshInPool(Map<String, Object> filterMap, PageDesc pageDesc);
+    List<OptFlowNoPool> listLshInPool(Map<String, Object> filterMap, PageDesc pageDesc);
 
 }
