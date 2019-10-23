@@ -4,7 +4,6 @@ import com.centit.support.serialno.po.OptFlowNoPool;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.database.utils.PageDesc;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -15,13 +14,12 @@ import java.util.List;
  * 2012-6-11
  */
 public interface OptFlowNoInfoManager{
-    final static String DefaultOwnerCode = "noowner";
 
-    final SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-    final String year = sdf.format(new Date());
-    final static Date DefaultCodeDate = DatetimeOpt.createUtilDate(Integer.valueOf(year), 1, 1);
+    String DefaultOwnerCode = "noOwner";
+    //取一个固定的时间，表示这个编号不会从头再来
+    Date DefaultCodeDate = DatetimeOpt.createUtilDate(2000,1,1);
 
-    /**
+     /**
     * 获取下一个流水号，流水好是根据 拥有者、类别代码、编码的基准时间
     *
     * @param ownerCode    根据 拥有者，如果设置为  DefaultOwnerCode 则这个编码则依赖于编码
@@ -72,6 +70,15 @@ public interface OptFlowNoInfoManager{
     long newNextLshBaseYear(String ownerCode, String codeCode, Date codeBaseDate);
 
     /**
+     * 获取下一个流水号，流水好是根据 拥有者、类别代码、编码的基准时间这个时间是按照周来编制的就是同一周中顺序编号
+     *
+     * @param ownerCode    根据 拥有者
+     * @param codeCode     类别代码
+     * @param codeBaseDate 编码的基准时间
+     * @return 返回流水号
+     */
+    long newNextLshBaseWeek(String ownerCode, String codeCode, Date codeBaseDate);
+    /**
     * 这个只根据 类别代码来编号，他类似于序列，sql server中没有序列可以用这个来模拟
     *
     * @param ownerCode 根据 拥有者
@@ -106,6 +113,8 @@ public interface OptFlowNoInfoManager{
 
     long viewNextLshBaseYear(String ownerCode, String codeCode, Date codeBaseDate);
 
+    long viewNextLshBaseWeek(String ownerCode, String codeCode, Date codeBaseDate);
+
     long viewNextLsh(String ownerCode, String codeCode);
 
     long viewNextLsh(String codeCode);
@@ -126,6 +135,8 @@ public interface OptFlowNoInfoManager{
 
     void recordNextLshBaseYear(String ownerCode, String codeCode, Date codeBaseDate, long currCode);
 
+    void recordNextLshBaseWeek(String ownerCode, String codeCode, Date codeBaseDate, long currCode);
+
     void recordNextLsh(String ownerCode, String codeCode, long currCode);
 
     void recordNextLsh(String codeCode, long currCode);
@@ -145,6 +156,8 @@ public interface OptFlowNoInfoManager{
     void releaseLshBaseMonth(String ownerCode, String codeCode, Date codeBaseDate, long currCode);
 
     void releaseLshBaseYear(String ownerCode, String codeCode, Date codeBaseDate, long currCode);
+
+    void releaseLshBaseWeek(String ownerCode, String codeCode, Date codeBaseDate, long currCode);
 
     void releaseLsh(String ownerCode, String codeCode, long currCode);
 
@@ -167,6 +180,8 @@ public interface OptFlowNoInfoManager{
 
     List<OptFlowNoPool> listLshBaseYearInPool(String ownerCode, String codeCode, Date codeBaseDate, PageDesc pageDesc);
 
+    List<OptFlowNoPool> listLshBaseWeekInPool(String ownerCode, String codeCode, Date codeBaseDate, PageDesc pageDesc);
+
     List<OptFlowNoPool> listLshInPool(String ownerCode, String codeCode, PageDesc pageDesc);
 
     List<OptFlowNoPool> listLshInPool(String codeCode, PageDesc pageDesc);
@@ -186,6 +201,8 @@ public interface OptFlowNoInfoManager{
     long assignNextLshBaseMonth(String ownerCode, String codeCode, Date codeBaseDate);
 
     long assignNextLshBaseYear(String ownerCode, String codeCode, Date codeBaseDate);
+
+    long assignNextLshBaseWeek(String ownerCode, String codeCode, Date codeBaseDate);
 
     long assignNextLsh(String ownerCode, String codeCode);
 

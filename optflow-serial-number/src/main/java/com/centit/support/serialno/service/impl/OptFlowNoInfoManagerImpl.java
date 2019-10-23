@@ -44,6 +44,7 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
      * 获取最新的流水号，并标记+1
      */
     @Override
+    @Transactional
     public synchronized long newNextLsh(String ownerCode, String codeCode, Date codeBaseDate) {
         java.sql.Date codeDate = DatetimeOpt.convertToSqlDate(codeBaseDate); // DatetimeOpt.convertSqlDate(codeBaseDate);
         OptFlowNoInfoId noId = new OptFlowNoInfoId(ownerCode, codeDate, codeCode);
@@ -114,6 +115,19 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
         return newNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToYear(codeBaseDate));
     }
 
+    /**
+     * 获取下一个流水号，流水好是根据 拥有者、类别代码、编码的基准时间这个时间是按照周来编制的就是同一周中顺序编号
+     *
+     * @param ownerCode    根据 拥有者
+     * @param codeCode     类别代码
+     * @param codeBaseDate 编码的基准时间
+     * @return 返回流水号
+     */
+    @Override
+    public long newNextLshBaseWeek(String ownerCode, String codeCode, Date codeBaseDate) {
+        return newNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToWeek(codeBaseDate));
+    }
+
     @Override
     public long newNextLsh(String codeCode) {
         return newNextLsh(DefaultOwnerCode, codeCode, DefaultCodeDate);
@@ -128,6 +142,7 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
      * 查看最新流水号
      */
     @Override
+    @Transactional
     public synchronized long viewNextLsh(String ownerCode, String codeCode, Date codeBaseDate) {
         java.sql.Date codeDate = DatetimeOpt.convertToSqlDate(codeBaseDate);
         OptFlowNoInfoId noId = new OptFlowNoInfoId(ownerCode, codeDate, codeCode);
@@ -139,31 +154,42 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
     }
 
     @Override
+    @Transactional
     public long viewNextLshBaseDay(String ownerCode, String codeCode, Date codeBaseDate) {
         return viewNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToDay(codeBaseDate));
     }
 
     @Override
+    @Transactional
     public long viewNextLshBaseMonth(String ownerCode, String codeCode, Date codeBaseDate) {
         return viewNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToMonth(codeBaseDate));
     }
 
     @Override
+    @Transactional
     public long viewNextLshBaseYear(String ownerCode, String codeCode, Date codeBaseDate) {
         return viewNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToYear(codeBaseDate));
     }
 
     @Override
+    public long viewNextLshBaseWeek(String ownerCode, String codeCode, Date codeBaseDate) {
+        return viewNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToWeek(codeBaseDate));
+    }
+
+    @Override
+    @Transactional
     public long viewNextLsh(String codeCode) {
         return viewNextLsh(DefaultOwnerCode, codeCode, DefaultCodeDate);
     }
 
     @Override
+    @Transactional
     public long viewNextLsh(String ownerCode, String codeCode) {
         return viewNextLsh(ownerCode, codeCode, DefaultCodeDate);
     }
 
     @Override
+    @Transactional
     public synchronized void recordNextLsh(String ownerCode, String codeCode,
                                            Date codeBaseDate, long currCode) {
         java.sql.Date codeDate = DatetimeOpt.convertToSqlDate(codeBaseDate);
@@ -202,31 +228,42 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
     }
 
     @Override
+    @Transactional
     public void recordNextLshBaseDay(String ownerCode, String codeCode, Date codeBaseDate, long currCode) {
         recordNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToDay(codeBaseDate), currCode);
     }
 
     @Override
+    @Transactional
     public void recordNextLshBaseMonth(String ownerCode, String codeCode, Date codeBaseDate, long currCode) {
         recordNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToMonth(codeBaseDate), currCode);
     }
 
     @Override
+    @Transactional
     public void recordNextLshBaseYear(String ownerCode, String codeCode, Date codeBaseDate, long currCode) {
         recordNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToYear(codeBaseDate), currCode);
     }
 
     @Override
+    public void recordNextLshBaseWeek(String ownerCode, String codeCode, Date codeBaseDate, long currCode) {
+        recordNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToWeek(codeBaseDate), currCode);
+    }
+
+    @Override
+    @Transactional
     public void recordNextLsh(String codeCode, long currCode) {
         recordNextLsh(DefaultOwnerCode, codeCode, DefaultCodeDate, currCode);
     }
 
     @Override
+    @Transactional
     public void recordNextLsh(String ownerCode, String codeCode, long currCode) {
         recordNextLsh(ownerCode, codeCode, DefaultCodeDate, currCode);
     }
 
     @Override
+    @Transactional
     public synchronized long assignNextLsh(String ownerCode, String codeCode, Date codeBaseDate) {
         /*Map map=new HashMap();
         map.put("ownerCode", ownerCode);
@@ -247,31 +284,42 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
     }
 
     @Override
+    @Transactional
     public long assignNextLshBaseDay(String ownerCode, String codeCode, Date codeBaseDate) {
         return assignNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToDay(codeBaseDate));
     }
 
     @Override
+    @Transactional
     public long assignNextLshBaseMonth(String ownerCode, String codeCode, Date codeBaseDate) {
         return assignNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToMonth(codeBaseDate));
     }
 
     @Override
+    @Transactional
     public long assignNextLshBaseYear(String ownerCode, String codeCode, Date codeBaseDate) {
         return assignNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToYear(codeBaseDate));
     }
 
     @Override
+    public long assignNextLshBaseWeek(String ownerCode, String codeCode, Date codeBaseDate) {
+        return assignNextLsh(ownerCode, codeCode, DatetimeOpt.truncateToWeek(codeBaseDate));
+    }
+
+    @Override
+    @Transactional
     public long assignNextLsh(String ownerCode, String codeCode) {
         return assignNextLsh(ownerCode, codeCode, DefaultCodeDate);
     }
 
     @Override
+    @Transactional
     public long assignNextLsh(String codeCode) {
         return assignNextLsh(DefaultOwnerCode, codeCode, DefaultCodeDate);
     }
 
     @Override
+    @Transactional
     public void releaseLsh(String ownerCode, String codeCode, Date codeBaseDate, long currCode) {
         OptFlowNoPool obj = new OptFlowNoPool();
         obj.setOwnerCode(ownerCode);
@@ -283,30 +331,42 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
     }
 
     @Override
+    @Transactional
     public void releaseLshBaseDay(String ownerCode, String codeCode, Date codeBaseDate, long currCode) {
         releaseLsh(ownerCode, codeCode, DatetimeOpt.truncateToDay(codeBaseDate), currCode);
     }
 
     @Override
+    @Transactional
     public void releaseLshBaseMonth(String ownerCode, String codeCode, Date codeBaseDate, long currCode) {
         releaseLsh(ownerCode, codeCode, DatetimeOpt.truncateToMonth(codeBaseDate), currCode);
     }
 
     @Override
+    @Transactional
     public void releaseLshBaseYear(String ownerCode, String codeCode, Date codeBaseDate, long currCode) {
         releaseLsh(ownerCode, codeCode, DatetimeOpt.truncateToYear(codeBaseDate), currCode);
     }
 
     @Override
+    public void releaseLshBaseWeek(String ownerCode, String codeCode, Date codeBaseDate, long currCode) {
+        releaseLsh(ownerCode, codeCode, DatetimeOpt.truncateToWeek(codeBaseDate), currCode);
+    }
+
+    @Override
+    @Transactional
     public void releaseLsh(String ownerCode, String codeCode, long currCode) {
         releaseLsh(ownerCode, codeCode, DefaultCodeDate, currCode);
     }
 
     @Override
+    @Transactional
     public void releaseLsh(String codeCode, long currCode) {
         releaseLsh(DefaultOwnerCode, codeCode, DefaultCodeDate, currCode);
     }
 
+    @Override
+    @Transactional
     public List<OptFlowNoPool> listLshInPool(String ownerCode, String codeCode,
                                              Date codeBaseDate, PageDesc pageDesc) {
         Map<String, Object> filterMap = new HashMap<>();
@@ -318,26 +378,41 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
         return optFlowNoPoolDao.listLshInPool(filterMap,pageDesc);
     }
 
+    @Override
+    @Transactional
     public List<OptFlowNoPool> listLshBaseDayInPool(String ownerCode,
                                                     String codeCode, Date codeBaseDate, PageDesc pageDesc) {
         return listLshInPool(ownerCode, codeCode, DatetimeOpt.truncateToDay(codeBaseDate), pageDesc);
     }
 
+    @Override
+    @Transactional
     public List<OptFlowNoPool> listLshBaseMonthInPool(String ownerCode,
                                                       String codeCode, Date codeBaseDate, PageDesc pageDesc) {
         return listLshInPool(ownerCode, codeCode, DatetimeOpt.truncateToMonth(codeBaseDate), pageDesc);
     }
 
+    @Override
+    @Transactional
     public List<OptFlowNoPool> listLshBaseYearInPool(String ownerCode,
                                                      String codeCode, Date codeBaseDate, PageDesc pageDesc) {
         return listLshInPool(ownerCode, codeCode, DatetimeOpt.truncateToYear(codeBaseDate), pageDesc);
     }
 
+    @Override
+    public List<OptFlowNoPool> listLshBaseWeekInPool(String ownerCode, String codeCode, Date codeBaseDate, PageDesc pageDesc) {
+        return listLshInPool(ownerCode, codeCode, DatetimeOpt.truncateToWeek(codeBaseDate), pageDesc);
+    }
+
+    @Override
+    @Transactional
     public List<OptFlowNoPool> listLshInPool(String ownerCode,
                                              String codeCode, PageDesc pageDesc) {
         return listLshInPool(ownerCode, codeCode, DefaultCodeDate, pageDesc);
     }
 
+    @Override
+    @Transactional
     public List<OptFlowNoPool> listLshInPool(String codeCode, PageDesc pageDesc) {
         return listLshInPool(DefaultOwnerCode, codeCode, DefaultCodeDate, pageDesc);
     }
