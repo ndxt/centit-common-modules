@@ -8,8 +8,8 @@ drop table if exists F_OptFlowNoPool;
 /*==============================================================*/
 create table F_OptFlowNoInfo
 (
-   Owner_Code            varchar(8) not null,
-   Code_Code             varchar(16) not null,
+   Owner_Code            varchar(32) not null,
+   Code_Code             varchar(32) not null,
    Code_Date             date not null,
    Cur_No                numeric(6,0) not null default 1,
    Last_Code_Date         date,
@@ -23,8 +23,8 @@ create table F_OptFlowNoInfo
 /*==============================================================*/
 create table F_OptFlowNoPool
 (
-   Owner_Code            varchar(8) not null,
-   Code_Code             varchar(16) not null,
+   Owner_Code            varchar(32) not null,
+   Code_Code             varchar(32) not null,
    Code_Date             date not null,
    Cur_No                numeric(6,0) not null default 1,
    Create_Date           date,
@@ -42,8 +42,8 @@ drop table F_OptFlowNoPool cascade constraints;
 /* Table: F_OptFlowNoInfo                                       */
 /*==============================================================*/
 create table F_OptFlowNoInfo  (
-   Owner_Code            VARCHAR2(8)                     not null,
-   Code_Code             VARCHAR2(16)                    not null,
+   Owner_Code            VARCHAR2(32)                     not null,
+   Code_Code             VARCHAR2(32)                    not null,
    Code_Date             DATE                           default sysdate not null,
    Cur_No                NUMBER(6,0)                    default 1 not null,
    Last_Code_Date         DATE,
@@ -58,8 +58,8 @@ alter table F_OptFlowNoInfo
 /* Table: F_OptFlowNoPool                                       */
 /*==============================================================*/
 create table F_OptFlowNoPool  (
-   Owner_Code            VARCHAR2(8)                     not null,
-   Code_Code             VARCHAR2(16)                    not null,
+   Owner_Code            VARCHAR2(32)                     not null,
+   Code_Code             VARCHAR2(32)                    not null,
    Code_Date             DATE                           default sysdate not null,
    Cur_No                NUMBER(6,0)                    default 1 not null,
    Create_Date           DATE
@@ -77,8 +77,8 @@ drop table F_OptFlowNoPool;
 /* Table: F_OptFlowNoInfo                                       */
 /*==============================================================*/
 create table F_OptFlowNoInfo  (
-   Owner_Code            VARCHAR(8)                     not null,
-   Code_Code             VARCHAR(16)                    not null,
+   Owner_Code            VARCHAR(32)                     not null,
+   Code_Code             VARCHAR(32)                    not null,
    Code_Date             TIMESTAMP                      default sysdate not null,
    Cur_No                decimal(6,0)                   default 1 not null,
    Last_Code_Date         TIMESTAMP,
@@ -93,8 +93,8 @@ alter table F_OptFlowNoInfo
 /* Table: F_OptFlowNoPool                                       */
 /*==============================================================*/
 create table F_OptFlowNoPool  (
-   Owner_Code            VARCHAR(8)                     not null,
-   Code_Code             VARCHAR(16)                    not null,
+   Owner_Code            VARCHAR(32)                     not null,
+   Code_Code             VARCHAR(32)                    not null,
    Code_Date             TIMESTAMP                      default sysdate not null,
    Cur_No                decimal(6,0)                   default 1 not null,
    Create_Date           TIMESTAMP
