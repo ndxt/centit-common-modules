@@ -9,6 +9,7 @@ import com.centit.support.serialno.po.OptFlowNoInfoId;
 import com.centit.support.serialno.po.OptFlowNoPool;
 import com.centit.support.serialno.po.OptFlowNoPoolId;
 import com.centit.support.serialno.service.OptFlowNoInfoManager;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,9 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
     @Override
     @Transactional
     public synchronized long newNextLsh(String ownerCode, String codeCode, Date codeBaseDate) {
+        if(StringUtils.isBlank(ownerCode)){
+            ownerCode = OptFlowNoInfoManager.DefaultOwnerCode;
+        }
         java.sql.Date codeDate = DatetimeOpt.convertToSqlDate(codeBaseDate); // DatetimeOpt.convertSqlDate(codeBaseDate);
         OptFlowNoInfoId noId = new OptFlowNoInfoId(ownerCode, codeDate, codeCode);
         OptFlowNoInfo noInfo = optFlowNoInfoDao.getObjectById(noId);
@@ -74,6 +78,9 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
     @Override
     @Transactional
     public boolean reserveLsh(String ownerCode, String codeCode, Date codeBaseDate, Long lsh){
+        if(StringUtils.isBlank(ownerCode)){
+            ownerCode = OptFlowNoInfoManager.DefaultOwnerCode;
+        }
         java.sql.Date codeDate = DatetimeOpt.convertToSqlDate(codeBaseDate);
         OptFlowNoInfoId noId = new OptFlowNoInfoId(ownerCode, codeDate, codeCode);
         OptFlowNoInfo noInfo = optFlowNoInfoDao.getObjectById(noId);
@@ -192,6 +199,9 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
     @Transactional
     public synchronized void recordNextLsh(String ownerCode, String codeCode,
                                            Date codeBaseDate, long currCode) {
+        if(StringUtils.isBlank(ownerCode)){
+            ownerCode = OptFlowNoInfoManager.DefaultOwnerCode;
+        }
         java.sql.Date codeDate = DatetimeOpt.convertToSqlDate(codeBaseDate);
         // 如果是从池中取出的，在池中删除
         OptFlowNoPoolId poolId = new OptFlowNoPoolId(ownerCode, codeDate, codeCode, currCode);
@@ -269,7 +279,9 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
         map.put("ownerCode", ownerCode);
         map.put("codeCode", codeCode);
         map.put("codeBaseDate", String.valueOf(codeBaseDate));*/
-
+        if(StringUtils.isBlank(ownerCode)){
+            ownerCode = OptFlowNoInfoManager.DefaultOwnerCode;
+        }
         long minPoolNo = optFlowNoPoolDao.fetchFirstLsh(ownerCode, codeCode, codeBaseDate);
         if (minPoolNo > 0) {
             OptFlowNoPoolId obj = new OptFlowNoPoolId();
@@ -321,6 +333,9 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
     @Override
     @Transactional
     public void releaseLsh(String ownerCode, String codeCode, Date codeBaseDate, long currCode) {
+        if(StringUtils.isBlank(ownerCode)){
+            ownerCode = OptFlowNoInfoManager.DefaultOwnerCode;
+        }
         OptFlowNoPool obj = new OptFlowNoPool();
         obj.setOwnerCode(ownerCode);
         obj.setCodeDate(DatetimeOpt.convertToSqlDate(codeBaseDate));
@@ -370,7 +385,9 @@ public class OptFlowNoInfoManagerImpl implements OptFlowNoInfoManager {
     public List<OptFlowNoPool> listLshInPool(String ownerCode, String codeCode,
                                              Date codeBaseDate, PageDesc pageDesc) {
         Map<String, Object> filterMap = new HashMap<>();
-
+        if(StringUtils.isBlank(ownerCode)){
+            ownerCode = OptFlowNoInfoManager.DefaultOwnerCode;
+        }
         filterMap.put("ownerCode", ownerCode);
         filterMap.put("codeDate", codeBaseDate);
         filterMap.put("codeCode", codeCode);
