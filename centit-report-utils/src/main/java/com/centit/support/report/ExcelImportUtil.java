@@ -732,7 +732,7 @@ public abstract class ExcelImportUtil {
             Row dataRow = sheet.getRow(row);
             if(dataRow != null){
                 Iterator<Cell> cellIter = dataRow.cellIterator();
-                Map<String, Object> rowData = new HashMap<>(lastCol+3);
+                Map<String, Object> rowData = new LinkedHashMap<>(lastCol+3);
                 while(cellIter.hasNext()){
                     Cell cell = cellIter.next();
                     int colInd = cell.getColumnIndex();
