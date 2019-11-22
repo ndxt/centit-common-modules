@@ -853,4 +853,95 @@ public abstract class ExcelImportUtil {
             return loadMapFromExcelSheet(sheet, headerRow, beginRow, endRow);
         }
     }
+    //------------------------------------------------------------
+    /**
+     * @param excelFile excel 文件名
+     * @param sheetName sheet 名称
+     * @return Map对象列表
+     * @throws IOException  异常
+     */
+    public static List<Map<String, Object>> loadMapFromExcelSheet(InputStream excelFile, String sheetName)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(excelFile);
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetName);
+        int firstRow = sheet.getFirstRowNum();
+        return loadMapFromExcelSheet(sheet, firstRow, firstRow+1, sheet.getLastRowNum()+1);
+    }
+
+    /**
+     * @param excelFile excel 文件名
+     * @param sheetIndex sheetIndex 0 base
+     * @return Map对象列表
+     * @throws IOException  异常
+     */
+    public static List<Map<String, Object>> loadMapFromExcelSheet(InputStream excelFile, int sheetIndex)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(excelFile);
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
+        int firstRow = sheet.getFirstRowNum();
+        return loadMapFromExcelSheet(sheet, firstRow, firstRow + 1, sheet.getLastRowNum()+1);
+    }
+
+    /**
+     * @param excelFile excel 文件名
+     * @param sheetName sheet 名称
+     * @param headerRow 属性名行 0 base
+     * @param beginRow 起始行 0 base 包含
+     * @return Map对象列表
+     * @throws IOException  异常
+     */
+    public static List<Map<String, Object>> loadMapFromExcelSheet(InputStream excelFile, String sheetName, int headerRow, int beginRow)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(excelFile);
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetName);
+        return loadMapFromExcelSheet(sheet, headerRow, beginRow, sheet.getLastRowNum()+1);
+    }
+
+    /**
+     * @param excelFile excel 文件名
+     * @param sheetIndex sheetIndex 0 base
+     * @param headerRow 属性名行 0 base
+     * @param beginRow 起始行 0 base 包含
+     * @return Map对象列表
+     * @throws IOException  异常
+     */
+    public static List<Map<String, Object>> loadMapFromExcelSheet(InputStream excelFile, int sheetIndex, int headerRow, int beginRow)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(excelFile);
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
+        return loadMapFromExcelSheet(sheet, headerRow, beginRow, sheet.getLastRowNum()+1);
+    }
+
+    /**
+     * @param excelFile excel 文件名
+     * @param sheetName sheet 名称
+     * @param headerRow 属性名行 0 base
+     * @param beginRow 起始行 0 base 包含
+     * @param endRow 结束行 0 base 不包含
+     * @return Map对象列表
+     * @throws IOException  异常
+     */
+    public static List<Map<String, Object>> loadMapFromExcelSheet(InputStream excelFile, String sheetName, int headerRow, int beginRow, int endRow)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(excelFile);
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetName);
+        return loadMapFromExcelSheet(sheet, headerRow, beginRow, endRow);
+    }
+
+    /**
+     * @param excelFile excel 文件名
+     * @param sheetIndex sheetIndex 0 base
+     * @param headerRow 属性名行 0 base
+     * @param beginRow 起始行 0 base 包含
+     * @param endRow 结束行 0 base 不包含
+     * @return Map对象列表
+     * @throws IOException  异常
+     */
+    public static List<Map<String, Object>> loadMapFromExcelSheet(InputStream excelFile, int sheetIndex, int headerRow, int beginRow, int endRow)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(excelFile);
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
+        return loadMapFromExcelSheet(sheet, headerRow, beginRow, endRow);
+    }
+
 }
