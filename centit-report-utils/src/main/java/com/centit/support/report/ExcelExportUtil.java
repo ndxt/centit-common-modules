@@ -52,6 +52,14 @@ public abstract class ExcelExportUtil {
         wb.write(outputStream);
     }
 
+    /**
+     * 生成Excel字节流
+     * @param outputStream 输出文件流
+     * @param objLists     对象集合
+     * @param header       Excel页头
+     * @param property     需要显示的属性
+     * @throws IOException 文件操作异常
+     */
     public static void generateExcel(OutputStream outputStream, List<? extends Object> objLists, String[] header, String[] property) throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet();
@@ -551,7 +559,6 @@ public abstract class ExcelExportUtil {
 
                     cell.setCellValue(StringBaseOpt.objectToString(ReflectionOpt.attainExpressionValue(rowObj, ent.getValue())));
                 }
-
             }
         }
         //return 0;
@@ -696,7 +703,6 @@ public abstract class ExcelExportUtil {
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
             Sheet sheet = wb.getSheetAt(sheetIndex);
             saveObjectsToExcelSheet(sheet, objects, beginCol, beginRow, createRow);
-
         }
 
         try (OutputStream newExcelFile = new FileOutputStream(new File(excelFilePath))) {

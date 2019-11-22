@@ -13,9 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -32,7 +30,7 @@ public abstract class ExcelImportUtil {
     protected static final Logger logger = LoggerFactory.getLogger(ExcelImportUtil.class);
 
     public static void setObjectFieldValue(Object object, JavaBeanField field , Cell cell){
-        switch (field.getFieldJavaType()) {
+        switch (field.getFieldJavaTypeShortName()) {
             case "int":
             case "Integer":
             case "long":
@@ -74,7 +72,6 @@ public abstract class ExcelImportUtil {
                 break;
         }
     }
-
 
     private static <T>  List<T> loadObjectFromExcelSheet(Sheet sheet, Class<T> beanType,
                                                          Map<Integer,String> fieldDesc, int beginRow, int endRow)
@@ -130,13 +127,8 @@ public abstract class ExcelImportUtil {
     public static <T>  List<T> loadObjectFromExcel(InputStream excelFile, ExcelTypeEnum excelType, String sheetName,
                     Class<T> beanType, Map<Integer,String > fieldDesc, int beginRow, int endRow)
             throws IllegalAccessException, InstantiationException, IOException {
-
-            Workbook wb = excelType ==ExcelTypeEnum.HSSF ?
-                    new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-            Sheet sheet = (StringUtils.isBlank(sheetName))?
-                    wb.getSheetAt(0) : wb.getSheet(sheetName);
-
-            return loadObjectFromExcelSheet(sheet,beanType,fieldDesc,  beginRow,  endRow);
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetName);
+        return loadObjectFromExcelSheet(sheet, beanType, fieldDesc, beginRow, endRow);
     }
 
     /**
@@ -156,9 +148,7 @@ public abstract class ExcelImportUtil {
     public static <T>  List<T> loadObjectFromExcel(String filePath, String sheetName,
                                                    Class<T> beanType, Map<Integer,String > fieldDesc, int beginRow, int endRow)
             throws IllegalAccessException, InstantiationException, IOException {
-
         ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(filePath);
-
         try(InputStream excelFile = new FileInputStream(new File(filePath))) {
             return loadObjectFromExcel(excelFile, excelType, sheetName,
                     beanType, fieldDesc, beginRow, endRow);
@@ -183,11 +173,7 @@ public abstract class ExcelImportUtil {
                   Class<T> beanType, Map<Integer,String > fieldDesc, int beginRow)
             throws IllegalAccessException, InstantiationException, IOException {
 
-        Workbook wb = excelType ==ExcelTypeEnum.HSSF ?
-                new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-        Sheet sheet = (StringUtils.isBlank(sheetName))?
-                wb.getSheetAt(0) : wb.getSheet(sheetName);
-
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetName);
         return loadObjectFromExcelSheet(sheet,beanType,fieldDesc, beginRow, sheet.getLastRowNum()+1);
     }
 
@@ -207,9 +193,7 @@ public abstract class ExcelImportUtil {
     public static <T>  List<T> loadObjectFromExcel(String filePath, String sheetName,
                                                    Class<T> beanType, Map<Integer,String > fieldDesc, int beginRow)
             throws IllegalAccessException, InstantiationException, IOException {
-
         ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(filePath);
-
         try(InputStream excelFile = new FileInputStream(new File(filePath))) {
             return loadObjectFromExcel(excelFile, excelType, sheetName,
                     beanType, fieldDesc, beginRow);
@@ -234,11 +218,7 @@ public abstract class ExcelImportUtil {
     public static <T>  List<T> loadObjectFromExcel(InputStream excelFile, ExcelTypeEnum excelType, int sheetIndex,
                    Class<T> beanType, Map<Integer,String > fieldDesc, int beginRow, int endRow)
             throws IllegalAccessException, InstantiationException, IOException {
-
-        Workbook wb = excelType ==ExcelTypeEnum.HSSF ?
-                new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-        Sheet sheet = wb.getSheetAt(sheetIndex);
-
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
         return loadObjectFromExcelSheet(sheet,beanType,fieldDesc,  beginRow,  endRow);
     }
 
@@ -311,7 +291,6 @@ public abstract class ExcelImportUtil {
             throws IllegalAccessException, InstantiationException, IOException {
 
         ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(filePath);
-
         try(InputStream excelFile = new FileInputStream(new File(filePath))) {
             return loadObjectFromExcel(excelFile, excelType, sheetIndex,
                     beanType, fieldDesc, beginRow);
@@ -344,6 +323,20 @@ public abstract class ExcelImportUtil {
         return datas;
     }
 
+    private static Sheet loadExcelFileSheet(InputStream excelFile, ExcelTypeEnum excelType, String sheetName)
+        throws IOException {
+        Workbook wb = excelType ==ExcelTypeEnum.HSSF ?
+            new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
+        return (StringUtils.isBlank(sheetName))?
+            wb.getSheetAt(0) : wb.getSheet(sheetName);
+    }
+
+    private static Sheet loadExcelFileSheet(InputStream excelFile, ExcelTypeEnum excelType, int sheetIndex)
+        throws IOException {
+        Workbook wb = excelType ==ExcelTypeEnum.HSSF ?
+            new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
+        return wb.getSheetAt(sheetIndex);
+    }
     /**
      *
      * @param excelFile excel 文件流
@@ -357,12 +350,7 @@ public abstract class ExcelImportUtil {
     public static List<String[]> loadDataFromExcel(InputStream excelFile, ExcelTypeEnum excelType, String sheetName,
                                                    int[] columnList, int[] rowList)
             throws IOException {
-
-        Workbook wb = excelType ==ExcelTypeEnum.HSSF ?
-                new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-        Sheet sheet = (StringUtils.isBlank(sheetName))?
-                wb.getSheetAt(0) : wb.getSheet(sheetName);
-
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetName);
         return loadDataFromExcelSheet(sheet,columnList,rowList);
     }
 
@@ -371,7 +359,6 @@ public abstract class ExcelImportUtil {
             throws IOException {
 
         ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(filePath);
-
         try(InputStream excelFile = new FileInputStream(new File(filePath))) {
             return loadDataFromExcel(excelFile, excelType, sheetName,
                     columnList, rowList);
@@ -390,11 +377,7 @@ public abstract class ExcelImportUtil {
     public static List<String[]> loadDataFromExcel(InputStream excelFile, ExcelTypeEnum excelType, int sheetIndex,
                                                    int[] columnList, int[] rowList)
             throws IOException {
-
-        Workbook wb = excelType ==ExcelTypeEnum.HSSF ?
-                new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-        Sheet sheet = wb.getSheetAt(sheetIndex);
-
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
         return loadDataFromExcelSheet(sheet,columnList,rowList);
     }
 
@@ -466,11 +449,7 @@ public abstract class ExcelImportUtil {
     public static List<String[]> loadDataFromExcel(InputStream excelFile, ExcelTypeEnum excelType, int sheetIndex,
                                                    int beginCol, int endCol, int beginRow, int endRow)
             throws IOException {
-
-        Workbook wb = excelType ==ExcelTypeEnum.HSSF ?
-                new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-        Sheet sheet = wb.getSheetAt(sheetIndex);
-
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
         return loadDataFromExcelSheet(sheet, beginCol,  endCol, beginRow, endRow);
     }
 
@@ -512,12 +491,7 @@ public abstract class ExcelImportUtil {
     public static List<String[]> loadDataFromExcel(InputStream excelFile, ExcelTypeEnum excelType, String sheetName,
                                                    int beginCol, int endCol, int beginRow, int endRow)
             throws IOException {
-
-        Workbook wb = excelType ==ExcelTypeEnum.HSSF ?
-                new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-        Sheet sheet = (StringUtils.isBlank(sheetName))?
-                wb.getSheetAt(0) : wb.getSheet(sheetName);
-
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetName);
         return loadDataFromExcelSheet(sheet, beginCol,  endCol, beginRow, endRow);
     }
 
@@ -557,11 +531,7 @@ public abstract class ExcelImportUtil {
     public static List<String[]> loadDataFromExcel(InputStream excelFile, ExcelTypeEnum excelType, int sheetIndex,
                                                    int beginCol, int endCol, int beginRow)
             throws IOException {
-
-        Workbook wb = excelType ==ExcelTypeEnum.HSSF ?
-                new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-        Sheet  sheet = wb.getSheetAt(sheetIndex);
-
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
         return loadDataFromExcelSheet(sheet, beginCol,  endCol, beginRow, sheet.getLastRowNum()+1 );
     }
 
@@ -601,12 +571,7 @@ public abstract class ExcelImportUtil {
     public static List<String[]> loadDataFromExcel(InputStream excelFile, ExcelTypeEnum excelType, String sheetName,
                                                    int beginCol, int endCol, int beginRow)
             throws IOException {
-
-        Workbook wb = excelType == ExcelTypeEnum.HSSF ?
-                new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-        Sheet sheet = (StringUtils.isBlank(sheetName))?
-                wb.getSheetAt(0) : wb.getSheet(sheetName);
-
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetName);
         return loadDataFromExcelSheet(sheet, beginCol,  endCol, beginRow, sheet.getLastRowNum()+1);
     }
 
@@ -680,11 +645,7 @@ public abstract class ExcelImportUtil {
     public static List<String[]> loadDataFromExcel(InputStream excelFile, ExcelTypeEnum excelType, int sheetIndex,
                                                    int beginCol,  int beginRow)
             throws IOException {
-
-        Workbook wb = excelType == ExcelTypeEnum.HSSF ?
-                new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-        Sheet sheet = wb.getSheetAt(sheetIndex);
-
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
         return loadDataFromExcelSheet(sheet, beginCol, beginRow);
     }
 
@@ -722,12 +683,7 @@ public abstract class ExcelImportUtil {
     public static List<String[]> loadDataFromExcel(InputStream excelFile, ExcelTypeEnum excelType, String sheetName,
                                                    int beginCol,  int beginRow)
             throws IOException {
-
-        Workbook wb = excelType == ExcelTypeEnum.HSSF ?
-                new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-        Sheet sheet = (StringUtils.isBlank(sheetName))?
-                wb.getSheetAt(0) : wb.getSheet(sheetName);
-
+        Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetName);
         return loadDataFromExcelSheet(sheet, beginCol, beginRow);
     }
 
@@ -749,6 +705,152 @@ public abstract class ExcelImportUtil {
         try(InputStream excelFile = new FileInputStream(new File(filePath))) {
             return loadDataFromExcel(excelFile, excelType, sheetName,
                     beginCol, beginRow);
+        }
+    }
+
+    /**
+     * @param sheet excel sheet对象类型
+     * @param headerRow 属性名行 0 base
+     * @param beginRow 起始行 0 base 包含
+     * @param endRow 结束行 0 base 不包含
+     * @return Map对象列表
+     * throws IllegalAccessException 异常
+     * throws InstantiationException 异常
+     * throws IOException  异常
+     */
+    private static List<Map<String, Object>> loadMapFromExcelSheet(Sheet sheet, int headerRow, int beginRow, int endRow){
+
+        Row headRow = sheet.getRow(headerRow);
+        int lastCol = headRow.getLastCellNum();
+        List<String> header = new ArrayList<>(lastCol);
+        for(int i = 0; i<lastCol; i++){
+            Cell cell = headRow.getCell(i);
+            header.add(cell==null? "null" : cell.toString());
+        }
+        List<Map<String, Object>> datas = new ArrayList<>(endRow - beginRow + 1);
+        for(int row = beginRow; row<endRow; row++){
+            Row dataRow = sheet.getRow(row);
+            if(dataRow != null){
+                Iterator<Cell> cellIter = dataRow.cellIterator();
+                Map<String, Object> rowData = new HashMap<>(lastCol+3);
+                while(cellIter.hasNext()){
+                    Cell cell = cellIter.next();
+                    int colInd = cell.getColumnIndex();
+                    if(colInd<lastCol){
+                        if(cell.getCellTypeEnum() == CellType.NUMERIC) {
+                            rowData.put(header.get(colInd), cell.getDateCellValue());
+                        }else{
+                            rowData.put(header.get(colInd), cell.toString());
+                        }
+                    }
+                }// while
+                if(!rowData.isEmpty()) {
+                    datas.add(rowData);
+                }
+            }
+        }
+        return datas;
+    }
+
+    /**
+     * @param filePath excel 文件名
+     * @param sheetName sheet 名称
+     * @return Map对象列表
+     * @throws IOException  异常
+     */
+    public static List<Map<String, Object>> loadMapFromExcelSheet(String filePath, String sheetName)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(filePath);
+        try(InputStream excelFile = new FileInputStream(new File(filePath))) {
+            Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetName);
+            int firstRow = sheet.getFirstRowNum();
+            return loadMapFromExcelSheet(sheet, firstRow, firstRow+1, sheet.getLastRowNum()+1);
+        }
+    }
+
+    /**
+     * @param filePath excel 文件名
+     * @param sheetIndex sheetIndex 0 base
+     * @return Map对象列表
+     * @throws IOException  异常
+     */
+    public static List<Map<String, Object>> loadMapFromExcelSheet(String filePath, int sheetIndex)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(filePath);
+        try(InputStream excelFile = new FileInputStream(new File(filePath))) {
+            Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
+            int firstRow = sheet.getFirstRowNum();
+            return loadMapFromExcelSheet(sheet, firstRow, firstRow+1, sheet.getLastRowNum()+1);
+        }
+    }
+
+    /**
+     * @param filePath excel 文件名
+     * @param sheetName sheet 名称
+     * @param headerRow 属性名行 0 base
+     * @param beginRow 起始行 0 base 包含
+     * @return Map对象列表
+     * @throws IOException  异常
+     */
+    public static List<Map<String, Object>> loadMapFromExcelSheet(String filePath, String sheetName, int headerRow, int beginRow)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(filePath);
+        try(InputStream excelFile = new FileInputStream(new File(filePath))) {
+            Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetName);
+            return loadMapFromExcelSheet(sheet, headerRow, beginRow, sheet.getLastRowNum()+1);
+        }
+    }
+
+    /**
+     * @param filePath excel 文件名
+     * @param sheetIndex sheetIndex 0 base
+     * @param headerRow 属性名行 0 base
+     * @param beginRow 起始行 0 base 包含
+     * @return Map对象列表
+     * @throws IOException  异常
+     */
+    public static List<Map<String, Object>> loadMapFromExcelSheet(String filePath, int sheetIndex, int headerRow, int beginRow)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(filePath);
+        try(InputStream excelFile = new FileInputStream(new File(filePath))) {
+            Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
+            return loadMapFromExcelSheet(sheet, headerRow, beginRow, sheet.getLastRowNum()+1);
+        }
+    }
+
+    /**
+     * @param filePath excel 文件名
+     * @param sheetName sheet 名称
+     * @param headerRow 属性名行 0 base
+     * @param beginRow 起始行 0 base 包含
+     * @param endRow 结束行 0 base 不包含
+     * @return Map对象列表
+     * @throws IOException  异常
+     */
+    public static List<Map<String, Object>> loadMapFromExcelSheet(String filePath, String sheetName, int headerRow, int beginRow, int endRow)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(filePath);
+        try(InputStream excelFile = new FileInputStream(new File(filePath))) {
+            Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetName);
+            return loadMapFromExcelSheet(sheet, headerRow, beginRow, endRow);
+        }
+    }
+
+    /**
+     * @param filePath excel 文件名
+     * @param sheetIndex sheetIndex 0 base
+     * @param headerRow 属性名行 0 base
+     * @param beginRow 起始行 0 base 包含
+     * @param endRow 结束行 0 base 不包含
+     * @return Map对象列表
+     * @throws IOException  异常
+     */
+    public static List<Map<String, Object>> loadMapFromExcelSheet(String filePath, int sheetIndex, int headerRow, int beginRow, int endRow)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(filePath);
+        try(InputStream excelFile = new FileInputStream(new File(filePath))) {
+            Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
+            return loadMapFromExcelSheet(sheet, headerRow, beginRow, endRow);
         }
     }
 }
