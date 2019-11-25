@@ -738,7 +738,11 @@ public abstract class ExcelImportUtil {
                     int colInd = cell.getColumnIndex();
                     if(colInd<lastCol){
                         if(cell.getCellTypeEnum() == CellType.NUMERIC) {
-                            rowData.put(header.get(colInd), cell.getDateCellValue());
+                            if("m/d/yy".equals(cell.getCellStyle().getDataFormatString()) || "yyyy-mm-dd".equals(cell.getCellStyle().getDataFormatString())){
+                                rowData.put(header.get(colInd), cell.getDateCellValue());
+                            } else {
+                                rowData.put(header.get(colInd), cell.getNumericCellValue());
+                            }
                         }else{
                             rowData.put(header.get(colInd), cell.toString());
                         }
