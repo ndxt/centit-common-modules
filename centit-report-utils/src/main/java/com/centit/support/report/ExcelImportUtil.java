@@ -789,6 +789,23 @@ public abstract class ExcelImportUtil {
     }
 
     /**
+     * 获取excl第一行列
+     * @param filePath
+     * @param sheetIndex
+     * @return
+     * @throws IOException
+     */
+    public static String[] loadColumnsFromExcel(String filePath, int sheetIndex)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(filePath);
+        try(InputStream excelFile = new FileInputStream(new File(filePath))) {
+            Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
+            int firstRow = sheet.getFirstRowNum();
+            return loadDataFromExcelSheet(sheet,0,firstRow).get(0);
+        }
+    }
+
+    /**
      * @param filePath excel 文件名
      * @param sheetName sheet 名称
      * @param headerRow 属性名行 0 base
