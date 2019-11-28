@@ -738,12 +738,17 @@ public abstract class ExcelImportUtil {
                     int colInd = cell.getColumnIndex();
                     if(colInd<lastCol){
                         if(cell.getCellTypeEnum() == CellType.NUMERIC) {
-                            if("m/d/yy".equalsIgnoreCase(cell.getCellStyle().getDataFormatString()) || "yyyy-mm-dd".equalsIgnoreCase(cell.getCellStyle().getDataFormatString())){
+                            String dataFormat = cell.getCellStyle().getDataFormatString();
+                            if(StringUtils.containsIgnoreCase(dataFormat,"yy")
+                                && StringUtils.containsIgnoreCase(dataFormat,"m")
+                                && StringUtils.containsIgnoreCase(dataFormat,"d") ){
                                 rowData.put(header.get(colInd), cell.getDateCellValue());
                             } else {
                                 rowData.put(header.get(colInd), cell.getNumericCellValue());
                             }
-                        }else{
+                        } /*else if(cell.getCellTypeEnum() == CellType.BOOLEAN) {
+                            rowData.put(header.get(colInd), cell.getBooleanCellValue());
+                        } */else{
                             rowData.put(header.get(colInd), cell.toString());
                         }
                     }
