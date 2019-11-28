@@ -738,7 +738,11 @@ public abstract class ExcelImportUtil {
                     int colInd = cell.getColumnIndex();
                     if(colInd<lastCol){
                         if(cell.getCellTypeEnum() == CellType.NUMERIC) {
-                            rowData.put(header.get(colInd), cell.getDateCellValue());
+                            if("m/d/yy".equalsIgnoreCase(cell.getCellStyle().getDataFormatString()) || "yyyy-mm-dd".equalsIgnoreCase(cell.getCellStyle().getDataFormatString())){
+                                rowData.put(header.get(colInd), cell.getDateCellValue());
+                            } else {
+                                rowData.put(header.get(colInd), cell.getNumericCellValue());
+                            }
                         }else{
                             rowData.put(header.get(colInd), cell.toString());
                         }
@@ -781,6 +785,23 @@ public abstract class ExcelImportUtil {
             Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
             int firstRow = sheet.getFirstRowNum();
             return loadMapFromExcelSheet(sheet, firstRow, firstRow+1, sheet.getLastRowNum()+1);
+        }
+    }
+
+    /**
+     * 获取excl第一行列
+     * @param filePath
+     * @param sheetIndex
+     * @return
+     * @throws IOException
+     */
+    public static String[] loadColumnsFromExcel(String filePath, int sheetIndex)
+        throws IOException {
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(filePath);
+        try(InputStream excelFile = new FileInputStream(new File(filePath))) {
+            Sheet sheet = loadExcelFileSheet(excelFile, excelType, sheetIndex);
+            int firstRow = sheet.getFirstRowNum();
+            return loadDataFromExcelSheet(sheet,0,firstRow).get(0);
         }
     }
 
