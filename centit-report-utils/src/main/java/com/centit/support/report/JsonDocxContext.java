@@ -10,6 +10,7 @@ import fr.opensagres.xdocreport.template.IContext;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,15 +18,15 @@ import java.util.Map;
  * 测试通过 "___" 为Report的保留属性
  */
 public class JsonDocxContext implements IContext{
-    private JSONObject docObject;
+    private Map<String, Object> docObject;
 
     public JsonDocxContext(){
         docObject = null;
     }
 
     public JsonDocxContext(Object object){
-        if(object instanceof JSONObject) {
-            this.docObject = (JSONObject) object;
+        if(object instanceof Map) {
+            this.docObject = (Map<String, Object>) object;
         }else{
             this.docObject = (JSONObject) JSON.toJSON(object);
         }
@@ -41,10 +42,9 @@ public class JsonDocxContext implements IContext{
     @Override
     public Object put(String key, Object value) {
         if(docObject==null) {
-            docObject = new JSONObject();
+            docObject = new HashMap<>();
         }
         return docObject.put(key, value);
-        //throw new IllegalAccessError("Unsupported!");
     }
 
     /**
@@ -110,12 +110,10 @@ public class JsonDocxContext implements IContext{
      */
     @Override
     public void putMap(Map<String, Object> contextMap) {
-        if(contextMap instanceof JSONObject) {
-            this.docObject = (JSONObject) contextMap;
-        }else{
-            this.docObject = (JSONObject) JSON.toJSON(contextMap);
+        if(this.docObject==null) {
+            this.docObject = new HashMap<>();
         }
-        //throw new IllegalAccessError("Unsupported!");
+        this.docObject.putAll(contextMap);
     }
 
     @Override
@@ -125,6 +123,6 @@ public class JsonDocxContext implements IContext{
 
     @Override
     public String toString(){
-        return docObject==null ? "" : docObject.toJSONString();
+        return docObject==null ? "" : JSON.toJSONString(docObject);
     }
 }
