@@ -2,6 +2,7 @@ package com.centit.support.report;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.centit.support.algorithm.ByteBaseOpt;
 import com.centit.support.algorithm.ReflectionOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import fr.opensagres.xdocreport.document.images.ByteArrayImageProvider;
@@ -58,6 +59,7 @@ public class JsonDocxContext implements IContext{
         Object value = null;
         if(docObject!=null) {
             value = ReflectionOpt.attainExpressionValue(docObject, key);
+            // "img_" 这个是图片类型的强耦合
             if(value == null && key.startsWith("img_")){
                 value = ReflectionOpt.attainExpressionValue(docObject, key.substring(4));
             }
@@ -70,8 +72,7 @@ public class JsonDocxContext implements IContext{
         }
         if(value instanceof byte[]){
             if(key.startsWith("img_")){
-                return
-                    new ByteArrayImageProvider((byte[])value);
+                return new ByteArrayImageProvider((byte[])value);
             } else {
                 return StringBaseOpt.castObjectToString(value);
             }
@@ -87,6 +88,10 @@ public class JsonDocxContext implements IContext{
             }
             return valueList;
         } else if(value.getClass().isArray()) {
+            // "img_" 这个是图片类型的强耦合
+            if(key.startsWith("img_")){
+                return new ByteArrayImageProvider(ByteBaseOpt.castObjectToBytes(value));
+            }
             int len = Array.getLength(value);
             ArrayList<Object> valueList = new ArrayList<>(len);
             for(int i=0;i<len;i++){
