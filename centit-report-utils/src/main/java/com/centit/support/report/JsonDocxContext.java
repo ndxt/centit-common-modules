@@ -5,6 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.centit.support.algorithm.ReflectionOpt;
 import fr.opensagres.xdocreport.template.IContext;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -54,7 +57,27 @@ public class JsonDocxContext implements IContext{
         if(docObject!=null) {
             value = ReflectionOpt.attainExpressionValue(docObject, key);
         }
-        return value == null? ( key.startsWith("___") ? null:new JsonDocxContext()): value;
+        if(value == null){
+            return key.startsWith("___") ? null: new JsonDocxContext();
+        }
+        if(value instanceof Collection){
+            Collection<Object> objects = (Collection<Object>)value;
+            ArrayList<JsonDocxContext> valueList = new ArrayList<>(objects.size());
+            for(Object obj : objects){
+                valueList.add(new JsonDocxContext(obj));
+            }
+            return valueList;
+        } else if(value.getClass().isArray()) {
+            int len = Array.getLength(value);
+            ArrayList<JsonDocxContext> valueList = new ArrayList<>(len);
+            for(int i=0;i<len;i++){
+                Object obj = Array.get(value, i);
+                valueList.add(new JsonDocxContext(obj));
+            }
+            return valueList;
+        } else {
+            return new JsonDocxContext(value);
+        }
     }
 
     /**
