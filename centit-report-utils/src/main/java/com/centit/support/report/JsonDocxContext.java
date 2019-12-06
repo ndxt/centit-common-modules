@@ -3,6 +3,8 @@ package com.centit.support.report;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.support.algorithm.ReflectionOpt;
+import com.centit.support.algorithm.StringBaseOpt;
+import fr.opensagres.xdocreport.document.images.ByteArrayImageProvider;
 import fr.opensagres.xdocreport.template.IContext;
 
 import java.lang.reflect.Array;
@@ -56,6 +58,9 @@ public class JsonDocxContext implements IContext{
         Object value = null;
         if(docObject!=null) {
             value = ReflectionOpt.attainExpressionValue(docObject, key);
+            if(value == null && key.startsWith("img_")){
+                value = ReflectionOpt.attainExpressionValue(docObject, key.substring(4));
+            }
         }
         if(key.startsWith("___")){
             return value;
@@ -63,7 +68,14 @@ public class JsonDocxContext implements IContext{
         if(value == null){
             return new JsonDocxContext();
         }
-        if(value instanceof Collection){
+        if(value instanceof byte[]){
+            if(key.startsWith("img_")){
+                return
+                    new ByteArrayImageProvider((byte[])value);
+            } else {
+                return StringBaseOpt.castObjectToString(value);
+            }
+        } else if(value instanceof Collection){
             Collection<Object> objects = (Collection<Object>)value;
             ArrayList<Object> valueList = new ArrayList<>(objects.size());
             for(Object obj : objects){
