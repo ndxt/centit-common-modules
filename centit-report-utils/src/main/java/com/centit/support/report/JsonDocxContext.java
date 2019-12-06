@@ -1,8 +1,8 @@
 package com.centit.support.report;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.centit.support.algorithm.ByteBaseOpt;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.ReflectionOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import fr.opensagres.xdocreport.document.images.ByteArrayImageProvider;
@@ -26,11 +26,7 @@ public class JsonDocxContext implements IContext{
     }
 
     public JsonDocxContext(Object object){
-        if(object instanceof Map) {
-            this.docObject = (Map<String, Object>) object;
-        }else{
-            this.docObject = (JSONObject) JSON.toJSON(object);
-        }
+        this.docObject = CollectionsOpt.objectToMap(object);
     }
 
     /**
