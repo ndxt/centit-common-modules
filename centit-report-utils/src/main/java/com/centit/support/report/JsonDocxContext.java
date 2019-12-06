@@ -57,26 +57,39 @@ public class JsonDocxContext implements IContext{
         if(docObject!=null) {
             value = ReflectionOpt.attainExpressionValue(docObject, key);
         }
+        if(key.startsWith("___")){
+            return value;
+        }
         if(value == null){
-            return key.startsWith("___") ? null: new JsonDocxContext();
+            return new JsonDocxContext();
         }
         if(value instanceof Collection){
             Collection<Object> objects = (Collection<Object>)value;
-            ArrayList<JsonDocxContext> valueList = new ArrayList<>(objects.size());
+            ArrayList<Object> valueList = new ArrayList<>(objects.size());
             for(Object obj : objects){
-                valueList.add(new JsonDocxContext(obj));
+                if(obj instanceof Map) {
+                    valueList.add(new JsonDocxContext(obj));
+                } else {
+                    valueList.add(obj);
+                }
             }
             return valueList;
         } else if(value.getClass().isArray()) {
             int len = Array.getLength(value);
-            ArrayList<JsonDocxContext> valueList = new ArrayList<>(len);
+            ArrayList<Object> valueList = new ArrayList<>(len);
             for(int i=0;i<len;i++){
                 Object obj = Array.get(value, i);
-                valueList.add(new JsonDocxContext(obj));
+                if(obj instanceof Map) {
+                    valueList.add(new JsonDocxContext(obj));
+                } else {
+                    valueList.add(obj);
+                }
             }
             return valueList;
-        } else {
+        } else if(value instanceof Map) {
             return new JsonDocxContext(value);
+        }else {
+            return value;
         }
     }
 
