@@ -1,6 +1,5 @@
 package com.centit.support.report;
 
-import com.alibaba.fastjson.JSON;
 import com.centit.support.algorithm.ByteBaseOpt;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.ReflectionOpt;
@@ -73,7 +72,7 @@ public class JsonDocxContext implements IContext{
                 return StringBaseOpt.castObjectToString(value);
             }
         } else if(value instanceof Collection){
-            Collection<Object> objects = (Collection<Object>)value;
+            Collection<Object> objects = (Collection<Object>) value;
             ArrayList<Object> valueList = new ArrayList<>(objects.size());
             for(Object obj : objects){
                 if(obj instanceof Map) {
@@ -124,6 +123,6 @@ public class JsonDocxContext implements IContext{
 
     @Override
     public String toString(){
-        return docObject==null ? "" : JSON.toJSONString(docObject);
+        return StringBaseOpt.castObjectToString(docObject, "");
     }
 }
