@@ -1,7 +1,7 @@
 package com.centit.support.report;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.centit.support.algorithm.ByteBaseOpt;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.ReflectionOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import fr.opensagres.xdocreport.document.images.ByteArrayImageProvider;
@@ -26,11 +26,7 @@ public class JsonDocxContext implements IContext{
     }
 
     public JsonDocxContext(Object object){
-        if(object instanceof Map) {
-            this.docObject = (Map<String, Object>) object;
-        }else{
-            this.docObject = (JSONObject) JSON.toJSON(object);
-        }
+        this.docObject = CollectionsOpt.objectToMap(object);
     }
 
     /**
@@ -59,6 +55,7 @@ public class JsonDocxContext implements IContext{
         Object value = null;
         if(docObject!=null) {
             value = ReflectionOpt.attainExpressionValue(docObject, key);
+            // "img_" 这个是图片类型的强耦合
             if(value == null && key.startsWith("img_")){
                 value = ReflectionOpt.attainExpressionValue(docObject, key.substring(4));
             }
@@ -74,13 +71,12 @@ public class JsonDocxContext implements IContext{
         }
         if(value instanceof byte[]){
             if(key.startsWith("img_")){
-                return
-                    new ByteArrayImageProvider((byte[])value);
+                return new ByteArrayImageProvider((byte[])value);
             } else {
                 return StringBaseOpt.castObjectToString(value);
             }
         } else if(value instanceof Collection){
-            Collection<Object> objects = (Collection<Object>)value;
+            Collection<Object> objects = (Collection<Object>) value;
             ArrayList<Object> valueList = new ArrayList<>(objects.size());
             for(Object obj : objects){
                 if(obj instanceof Map) {
@@ -91,6 +87,10 @@ public class JsonDocxContext implements IContext{
             }
             return valueList;
         } else if(value.getClass().isArray()) {
+            // "img_" 这个是图片类型的强耦合
+            if(key.startsWith("img_")){
+                return new ByteArrayImageProvider(ByteBaseOpt.castObjectToBytes(value));
+            }
             int len = Array.getLength(value);
             ArrayList<Object> valueList = new ArrayList<>(len);
             for(int i=0;i<len;i++){
@@ -127,6 +127,6 @@ public class JsonDocxContext implements IContext{
 
     @Override
     public String toString(){
-        return docObject==null ? "" : JSON.toJSONString(docObject);
+        return StringBaseOpt.castObjectToString(docObject, "");
     }
 }
