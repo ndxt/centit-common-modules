@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.centit.support.algorithm.ReflectionOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import fr.opensagres.xdocreport.document.images.ByteArrayImageProvider;
+import fr.opensagres.xdocreport.document.images.IImageProvider;
 import fr.opensagres.xdocreport.template.IContext;
 
 import java.lang.reflect.Array;
@@ -67,6 +68,9 @@ public class JsonDocxContext implements IContext{
         }
         if(value == null){
             return new JsonDocxContext();
+        }
+        if(value instanceof IImageProvider){
+            return value;
         }
         if(value instanceof byte[]){
             if(key.startsWith("img_")){
