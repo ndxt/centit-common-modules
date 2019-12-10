@@ -60,12 +60,12 @@ public class JsonDocxContext implements IContext{
                 value = ReflectionOpt.attainExpressionValue(docObject, key.substring(4));
             }
         }
-        if(key.startsWith("___")){
+        if(value == null || key.startsWith("___")){
             return value;
         }
-        if(value == null){
+        /*if(value == null){
             return new JsonDocxContext();
-        }
+        }*/
         if(value instanceof IImageProvider){
             return value;
         }
