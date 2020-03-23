@@ -719,8 +719,10 @@ public abstract class ExcelExportUtil {
         try (InputStream excelFile = new FileInputStream(new File(excelFilePath))) {
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
             Sheet sheet = wb.getSheet(sheetName);
-            if(sheet == null){
+            if (sheet == null) {
                 sheet = wb.createSheet(sheetName);
+            }
+            if(sheet.getLastRowNum()==0){
                 generateExcelSheet(sheet,objLists,header,property);
             }else{
                 int  beginRow = sheet.getLastRowNum()+1;
@@ -745,8 +747,10 @@ public abstract class ExcelExportUtil {
         try (InputStream excelFile = new FileInputStream(new File(excelFilePath))) {
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
             Sheet sheet = wb.getSheetAt(sheetIndex);
-            if(sheet == null){
+            if (sheet == null) {
                 sheet = wb.createSheet();
+            }
+            if(sheet.getLastRowNum()==0){
                 generateExcelSheet(sheet,objLists,header,property);
             }else{
                 int  beginRow = sheet.getLastRowNum()+1;
@@ -771,8 +775,10 @@ public abstract class ExcelExportUtil {
         try (InputStream excelFile = new FileInputStream(new File(excelFilePath))) {
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
             Sheet sheet = wb.getSheet(sheetName);
-            if(sheet == null){
+            if (sheet == null) {
                 sheet = wb.createSheet(sheetName);
+            }
+            if(sheet.getLastRowNum()==0){
                 generateExcelSheet(sheet,objLists,header);
             }else{
                 int  beginRow = sheet.getLastRowNum()+1;
@@ -795,8 +801,10 @@ public abstract class ExcelExportUtil {
         try (InputStream excelFile = new FileInputStream(new File(excelFilePath))) {
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
             Sheet sheet = wb.getSheetAt(sheetIndex);
-            if(sheet == null){
+            if (sheet == null) {
                 sheet = wb.createSheet();
+            }
+            if(sheet.getLastRowNum()==0){
                 generateExcelSheet(sheet,objLists,header);
             }else{
                 int  beginRow = sheet.getLastRowNum()+1;
