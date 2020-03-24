@@ -54,6 +54,7 @@ public abstract class ExcelExportUtil {
 
     /**
      * 生成Excel字节流
+     *
      * @param outputStream 输出文件流
      * @param objLists     对象集合
      * @param header       Excel页头
@@ -188,27 +189,28 @@ public abstract class ExcelExportUtil {
         wb.write(outputStream);
     }
 //--------------------------------------------------------------------
+
     /**
      * 生成Excel字节流
      *
+     * @param sheetName pageName 页面名称
+     * @param objLists  对象集合
+     * @param header    Excel页头
+     * @param property  需要显示的属性
      * @return InputStream 输出文件流
-     * @param sheetName    pageName 页面名称
-     * @param objLists     对象集合
-     * @param header       Excel页头
-     * @param property     需要显示的属性
      * @throws IOException 文件操作异常
      */
     public static InputStream generateExcelStream(String sheetName,
-                                     List<Object> objLists, String[] header, String[] property) throws IOException {
-        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+                                                  List<Object> objLists, String[] header, String[] property) throws IOException {
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
             generateExcel(bout, sheetName, objLists, header, property);
             return new ByteArrayInputStream(bout.toByteArray());
         }
     }
 
     public static InputStream generateExcelStream(List<Object> objLists, String[] header, String[] property) throws IOException {
-        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
-            generateExcel(bout,  objLists, header, property);
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            generateExcel(bout, objLists, header, property);
             return new ByteArrayInputStream(bout.toByteArray());
         }
     }
@@ -216,22 +218,22 @@ public abstract class ExcelExportUtil {
     /**
      * 生成Excel字节流
      *
+     * @param sheetName pageName 页面名称
+     * @param objLists  对象集合
+     * @param header    Excel页头
      * @return InputStream 输出文件流
-     * @param sheetName    pageName 页面名称
-     * @param objLists     对象集合
-     * @param header       Excel页头
      * @throws IOException 文件操作异常
      */
     public static InputStream generateExcelStream(String sheetName,
-                                     List<Object[]> objLists, String[] header) throws IOException {
-        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+                                                  List<Object[]> objLists, String[] header) throws IOException {
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
             generateExcel(bout, sheetName, objLists, header);
             return new ByteArrayInputStream(bout.toByteArray());
         }
     }
 
     public static InputStream generateExcelStream(List<Object[]> objLists, String[] header) throws IOException {
-        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
             generateExcel(bout, objLists, header);
             return new ByteArrayInputStream(bout.toByteArray());
         }
@@ -239,22 +241,23 @@ public abstract class ExcelExportUtil {
 
     /**
      * 生成Excel字节流
+     *
+     * @param sheetName pageName 页面名称
+     * @param objLists  对象集合
+     * @param objType   对象类型
      * @return InputStream  输出文件流
-     * @param sheetName    pageName 页面名称
-     * @param objLists     对象集合
-     * @param objType      对象类型
      * @throws IOException 文件操作异常
      **/
     public static InputStream generateExcelStream(String sheetName,
-                                     List<Object> objLists, Class<?> objType) throws IOException {
-        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+                                                  List<Object> objLists, Class<?> objType) throws IOException {
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
             generateExcel(bout, sheetName, objLists, objType);
             return new ByteArrayInputStream(bout.toByteArray());
         }
     }
 
     public static InputStream generateExcelStream(List<Object> objLists, Class<?> objType) throws IOException {
-        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
             generateExcel(bout, objLists, objType);
             return new ByteArrayInputStream(bout.toByteArray());
         }
@@ -263,23 +266,23 @@ public abstract class ExcelExportUtil {
     /**
      * 生成Excel 2003字节流
      *
+     * @param sheetName pageName 页面名称
+     * @param objLists  对象集合
+     * @param header    Excel页头
+     * @param property  需要显示的属性
      * @return InputStream  输出文件流
-     * @param sheetName    pageName 页面名称
-     * @param objLists     对象集合
-     * @param header       Excel页头
-     * @param property     需要显示的属性
      * @throws IOException 文件操作异常
      **/
     public static InputStream generateExcel2003Stream(String sheetName, List<Object> objLists, String[] header, String[] property) throws IOException {
-        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
             generateExcel2003(bout, sheetName, objLists, header, property);
             return new ByteArrayInputStream(bout.toByteArray());
         }
     }
 
     public static InputStream generateExcel2003Stream(List<Object> objLists,
-                                         String[] header, String[] property) throws IOException {
-        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+                                                      String[] header, String[] property) throws IOException {
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
             generateExcel2003(bout, objLists, header, property);
             return new ByteArrayInputStream(bout.toByteArray());
         }
@@ -288,22 +291,22 @@ public abstract class ExcelExportUtil {
     /**
      * 生成Excel 2003字节流
      *
+     * @param sheetName pageName 页面名称
+     * @param objLists  对象集合
+     * @param header    Excel页头
      * @return InputStream  输出文件流
-     * @param sheetName    pageName 页面名称
-     * @param objLists     对象集合
-     * @param header       Excel页头
      * @throws IOException 文件操作异常
      **/
     public static InputStream generateExcel2003Stream(String sheetName,
-                                         List<Object[]> objLists, String[] header) throws IOException {
-        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+                                                      List<Object[]> objLists, String[] header) throws IOException {
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
             generateExcel2003(bout, sheetName, objLists, header);
             return new ByteArrayInputStream(bout.toByteArray());
         }
     }
 
     public static InputStream generateExcel2003Stream(List<Object[]> objLists, String[] header) throws IOException {
-        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
             generateExcel2003(bout, objLists, header);
             return new ByteArrayInputStream(bout.toByteArray());
         }
@@ -311,27 +314,29 @@ public abstract class ExcelExportUtil {
 
     /**
      * 生成Excel 2003 字节流
+     *
+     * @param sheetName pageName 页面名称
+     * @param objLists  对象集合
+     * @param objType   对象类型
      * @return InputStream  输出文件流
-     * @param sheetName    pageName 页面名称
-     * @param objLists     对象集合
-     * @param objType      对象类型
      * @throws IOException 文件操作异常
      **/
     public static InputStream generateExcel2003Stream(String sheetName,
-                                         List<Object> objLists, Class<?> objType) throws IOException {
-        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+                                                      List<Object> objLists, Class<?> objType) throws IOException {
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
             generateExcel2003(bout, sheetName, objLists, objType);
             return new ByteArrayInputStream(bout.toByteArray());
         }
     }
 
     public static InputStream generateExcel2003Stream(List<Object> objLists, Class<?> objType) throws IOException {
-        try(ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
             generateExcel2003(bout, objLists, objType);
             return new ByteArrayInputStream(bout.toByteArray());
         }
     }
-//---------------------------------------------------------------------
+
+    //---------------------------------------------------------------------
     public static void generateExcelSheet(Sheet sheet, List<Object> objLists, Class<?> objType) {
         JavaBeanMetaData metaData = JavaBeanMetaData.createBeanMetaDataFromType(objType);
 
@@ -420,7 +425,7 @@ public abstract class ExcelExportUtil {
         for (int i = 0; i < objLists.size(); i++) {
             Row textRow = sheet.createRow(i + beginRow);
             for (int j = 0; j < property.length; j++) {
-                if(StringUtils.isNotBlank(property[j])) {
+                if (StringUtils.isNotBlank(property[j])) {
                     CellStyle cellStyle = getDefaultCellStyle(sheet.getWorkbook());
                     Cell cell = textRow.createCell(j);
 //                  setCellStyle(cell, cellStyle);
@@ -711,109 +716,106 @@ public abstract class ExcelExportUtil {
         }
     }
 
-    public static void appendDataToExcelSheet(String excelFilePath, String sheetName, List<Object> objLists, String[] header, String[] property ) throws IOException {
+    public static void appendDataToExcelSheet(String excelFilePath, String sheetName, List<Object> objLists, String[] header, String[] property) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, NoSuchFieldException {
 
         ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(excelFilePath);
-        Workbook wb=null;
-
-        try (InputStream excelFile = new FileInputStream(new File(excelFilePath))) {
+        Workbook wb;
+        Sheet sheet;
+        File file = new File(excelFilePath);
+        if (file.exists()) {
+            InputStream excelFile = new FileInputStream(new File(excelFilePath));
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-            Sheet sheet = wb.getSheet(sheetName);
-            if (sheet == null) {
-                sheet = wb.createSheet(sheetName);
-            }
-            if(sheet.getLastRowNum()==0){
-                generateExcelSheet(sheet,objLists,header,property);
-            }else{
-                int  beginRow = sheet.getLastRowNum()+1;
-                generateExcelText(sheet, objLists, property, beginRow);
-            }
-
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
-            logger.error(e.getLocalizedMessage());
+            sheet = wb.getSheet(sheetName);
+        } else {
+            wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook() : new XSSFWorkbook();
+            sheet = wb.createSheet();
+        }
+        if (sheet.getLastRowNum() == 0) {
+            generateExcelSheet(sheet, objLists, header, property);
+        } else {
+            int beginRow = sheet.getLastRowNum() + 1;
+            generateExcelText(sheet, objLists, property, beginRow);
         }
         try (OutputStream newExcelFile = new FileOutputStream(new File(excelFilePath))) {
-            if(wb!=null) {
+            if (wb != null) {
                 wb.write(newExcelFile);
             }
         }
     }
 
-    public static void appendDataToExcelSheet(String excelFilePath, int sheetIndex, List<Object> objLists, String[] header, String[] property ) throws IOException {
-
+    public static void appendDataToExcelSheet(String excelFilePath, int sheetIndex, List<Object> objLists, String[] header, String[] property) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, NoSuchFieldException {
         ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(excelFilePath);
-        Workbook wb=null;
-
-        try (InputStream excelFile = new FileInputStream(new File(excelFilePath))) {
+        Workbook wb;
+        Sheet sheet;
+        File file = new File(excelFilePath);
+        if (file.exists()) {
+            InputStream excelFile = new FileInputStream(new File(excelFilePath));
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-            Sheet sheet = wb.getSheetAt(sheetIndex);
-            if (sheet == null) {
-                sheet = wb.createSheet();
-            }
-            if(sheet.getLastRowNum()==0){
-                generateExcelSheet(sheet,objLists,header,property);
-            }else{
-                int  beginRow = sheet.getLastRowNum()+1;
-                generateExcelText(sheet, objLists, property, beginRow);
-            }
-
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
-            logger.error(e.getLocalizedMessage());
+            sheet = wb.getSheetAt(sheetIndex);
+        } else {
+            wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook() : new XSSFWorkbook();
+            sheet = wb.createSheet();
+        }
+        if (sheet.getLastRowNum() == 0) {
+            generateExcelSheet(sheet, objLists, header, property);
+        } else {
+            int beginRow = sheet.getLastRowNum() + 1;
+            generateExcelText(sheet, objLists, property, beginRow);
         }
         try (OutputStream newExcelFile = new FileOutputStream(new File(excelFilePath))) {
-            if(wb!=null) {
+            if (wb != null) {
                 wb.write(newExcelFile);
             }
         }
     }
 
-    public static void appendDataToExcelSheet(String excelFilePath, String sheetName, List<Object[]> objLists, String[] header ) throws IOException {
-
+    public static void appendDataToExcelSheet(String excelFilePath, String sheetName, List<Object[]> objLists, String[] header) throws IOException {
         ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(excelFilePath);
-        Workbook wb=null;
-
-        try (InputStream excelFile = new FileInputStream(new File(excelFilePath))) {
+        Workbook wb;
+        Sheet sheet;
+        File file = new File(excelFilePath);
+        if (file.exists()) {
+            InputStream excelFile = new FileInputStream(new File(excelFilePath));
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-            Sheet sheet = wb.getSheet(sheetName);
-            if (sheet == null) {
-                sheet = wb.createSheet(sheetName);
-            }
-            if(sheet.getLastRowNum()==0){
-                generateExcelSheet(sheet,objLists,header);
-            }else{
-                int  beginRow = sheet.getLastRowNum()+1;
-                generateExcelText(sheet, objLists,beginRow);
-            }
-
+            sheet = wb.getSheet(sheetName);
+        } else {
+            wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook() : new XSSFWorkbook();
+            sheet = wb.createSheet();
+        }
+        if (sheet.getLastRowNum() == 0) {
+            generateExcelSheet(sheet, objLists, header);
+        } else {
+            int beginRow = sheet.getLastRowNum() + 1;
+            generateExcelText(sheet, objLists, beginRow);
         }
         try (OutputStream newExcelFile = new FileOutputStream(new File(excelFilePath))) {
-            if(wb!=null) {
+            if (wb != null) {
                 wb.write(newExcelFile);
             }
         }
     }
 
-    public static void appendDataToExcelSheet(String excelFilePath, int sheetIndex,List<Object[]> objLists, String[] header ) throws IOException {
-
+    public static void appendDataToExcelSheet(String excelFilePath, int sheetIndex, List<Object[]> objLists, String[] header) throws IOException {
         ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(excelFilePath);
-        Workbook wb=null;
-
-        try (InputStream excelFile = new FileInputStream(new File(excelFilePath))) {
+        Workbook wb;
+        Sheet sheet;
+        File file = new File(excelFilePath);
+        if (file.exists()) {
+            InputStream excelFile = new FileInputStream(new File(excelFilePath));
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
-            Sheet sheet = wb.getSheetAt(sheetIndex);
-            if (sheet == null) {
-                sheet = wb.createSheet();
-            }
-            if(sheet.getLastRowNum()==0){
-                generateExcelSheet(sheet,objLists,header);
-            }else{
-                int  beginRow = sheet.getLastRowNum()+1;
-                generateExcelText(sheet, objLists,beginRow);
-            }
-
+            sheet = wb.getSheetAt(sheetIndex);
+        } else {
+            wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook() : new XSSFWorkbook();
+            sheet = wb.createSheet();
+        }
+        if (sheet.getLastRowNum() == 0) {
+            generateExcelSheet(sheet, objLists, header);
+        } else {
+            int beginRow = sheet.getLastRowNum() + 1;
+            generateExcelText(sheet, objLists, beginRow);
         }
         try (OutputStream newExcelFile = new FileOutputStream(new File(excelFilePath))) {
-            if(wb!=null) {
+            if (wb != null) {
                 wb.write(newExcelFile);
             }
         }
