@@ -26,13 +26,11 @@ public class OptFlowNoPoolDaoImpl extends BaseDaoImpl<OptFlowNoPool, OptFlowNoPo
     public static final Logger logger = LoggerFactory.getLogger(OptFlowNoPoolDaoImpl.class);
 
     public Map<String, String> getFilterField() {
-        if (filterField == null) {
-            filterField = new HashMap<>();
-            filterField.put("ownerCode", "ownerCode = :ownerCode");
-            filterField.put("(date)codeDate", "codeDate = :codeDate");
-            filterField.put("codeCode", "codeCode = :codeCode");
-            filterField.put("curNo", "ownerCode = :curNo");
-        }
+        Map<String, String> filterField = new HashMap<>();
+        filterField.put("ownerCode", "ownerCode = :ownerCode");
+        filterField.put("(date)codeDate", "codeDate = :codeDate");
+        filterField.put("codeCode", "codeCode = :codeCode");
+        filterField.put("curNo", "ownerCode = :curNo");
         return filterField;
     }
 
