@@ -27,10 +27,10 @@ public class OptFlowNoPoolDaoImpl extends BaseDaoImpl<OptFlowNoPool, OptFlowNoPo
 
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<>();
-        filterField.put("ownerCode", "ownerCode = :ownerCode");
-        filterField.put("(date)codeDate", "codeDate = :codeDate");
-        filterField.put("codeCode", "codeCode = :codeCode");
-        filterField.put("curNo", "ownerCode = :curNo");
+        filterField.put("ownerCode", "OWNER_CODE = :ownerCode");
+        filterField.put("(date)codeDate", "CODE_DATE = :codeDate");
+        filterField.put("codeCode", "CODE_CODE = :codeCode");
+        filterField.put("curNo", "OWNER_CODE = :curNo");
         return filterField;
     }
 
@@ -50,8 +50,8 @@ public class OptFlowNoPoolDaoImpl extends BaseDaoImpl<OptFlowNoPool, OptFlowNoPo
                               Date codeBaseDate) {
 
         Long lsh = NumberBaseOpt.castObjectToLong(DatabaseOptUtils.getScalarObjectQuery(this,
-                "select min(CURNO) as MinNo from F_OPTFLOWNOPOOL" +
-                " where OWNERCODE = ? and CODECODE = ? and CODEDATE = ?",
+                "select min(CUR_NO) as MinNo from F_OPTFLOWNOPOOL" +
+                " where OWNER_CODE = ? and CODE_CODE = ? and CODE_DATE = ?",
                 new Object[]{ownerCode,ownerCode,codeBaseDate }));
         return lsh == null ? 0L: lsh;
     }

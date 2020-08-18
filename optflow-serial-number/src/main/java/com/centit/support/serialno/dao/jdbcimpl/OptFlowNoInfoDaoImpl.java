@@ -19,9 +19,9 @@ public class OptFlowNoInfoDaoImpl extends BaseDaoImpl<OptFlowNoInfo, OptFlowNoIn
 
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<>();
-        filterField.put("ownerCode", "ownerCode = :ownerCode");
+        filterField.put("ownerCode", "OWNER_CODE = :ownerCode");
         filterField.put("codeDate", CodeBook.EQUAL_HQL_ID);
-        filterField.put("codeCode", "codeCode = :codeCode");
+        filterField.put("codeCode", "CODE_CODE = :codeCode");
         filterField.put("curNo", CodeBook.LIKE_HQL_ID);
         return filterField;
     }
