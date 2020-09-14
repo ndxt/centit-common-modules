@@ -1,60 +1,85 @@
 package com.centit.support.office;
 
 import com.centit.support.file.FileSystemOpt;
-import com.jacob.activeX.ActiveXComponent;
-import com.jacob.com.ComThread;
-import com.jacob.com.Dispatch;
-import com.jacob.com.Variant;
+import com.centit.support.report.ExcelTypeEnum;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.hssf.converter.ExcelToHtmlConverter;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.w3c.dom.Document;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * Created by codefan on 2017/10/9.
  */
-@SuppressWarnings("unused")
-public abstract class OfficeToHtml {
+
+public  class OfficeToHtml {
     private OfficeToHtml() {
         throw new IllegalAccessError("Utility class");
     }
-    private static Log logger = LogFactory.getLog(OfficeToHtml.class);
 
-    /**
-     * word文档转化成html字符串
-     *
-     * @param inWordFile word文件路径
-     * @param outHtmlFile 输出的Html文件路径
-     * @return 是否成功
-     * @throws Exception 文件读取异常
-     */
-    public static boolean word2Pdf(String inWordFile, String outHtmlFile) throws Exception {
-        String inputFile = inWordFile.replace('/','\\');
-        String htmlFile   = outHtmlFile.replace('/','\\');
-        ComThread.InitSTA();
-        //long start = System.currentTimeMillis();
-        try {
-            ActiveXComponent app = new ActiveXComponent("Word.Application");
-            // 设置word不可见
-            app.setProperty("Visible", new Variant(false));
-            // 打开word文件
-            Dispatch docs = app.getProperty("Documents").toDispatch();
-            Dispatch doc = Dispatch.invoke(docs,"Open",Dispatch.Method,new Object[] {
-                    inputFile, new Variant(false),new Variant(true) }, new int[1]).toDispatch();
-            FileSystemOpt.deleteFile(htmlFile);
-            // 另存为.html
-            Dispatch.invoke(doc, "SaveAs", Dispatch.Method, new Object[] { htmlFile, new Variant(8) // 7为txt格式，
-                    // 8保存为html格式
-                    // 17为pdf格式
-            }, new int[1]);
-            Dispatch.call(doc, "Close", new Variant(false));
-            app.invoke("Quit", new Variant[] {});
-        } catch (Exception e) {
-            //e.printStackTrace();
-            logger.error(e.getMessage(),e);//e.printStackTrace();
-            //System.out.println("========Error:文档转换失败：" + e.getMessage());
-        } finally {
-            ComThread.Release();
+    private static Log logger = LogFactory.getLog(OfficeToHtml.class);
+    public static boolean ppt2Html(String inPptFile, String outPdfFile,String suffix) {
+        String inputFile = inPptFile;
+        String pdfFile = outPdfFile;
+        if(File.separator.equals("\\")){
+            inputFile=inPptFile.replace('/', '\\');
+            pdfFile = outPdfFile.replace('/', '\\');
         }
-        //如果没有这句话,winword.exe进程将不会关闭
+        String sFileName = FileSystemOpt.extractFullFileName(pdfFile);
+        POIPptToHtmlUtils.pptToHtml(inputFile, pdfFile.replace(sFileName, ""), sFileName,suffix);
+        return false;
+    }
+    public static boolean excel2Html(String inExcelFile, String outPdfFile) throws TransformerException, IOException, ParserConfigurationException {
+        String inFilePath = inExcelFile;
+        String outFilePath = outPdfFile;
+        if(File.separator.equals("\\")){
+            inFilePath=inExcelFile.replace('/', '\\');
+            outFilePath = outPdfFile.replace('/', '\\');
+        }
+        HSSFWorkbook excelBook = new HSSFWorkbook();
+        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(inFilePath);
+        if (excelType == ExcelTypeEnum.HSSF) {
+            excelBook = new HSSFWorkbook(new FileInputStream(inFilePath));
+        } else if (excelType == ExcelTypeEnum.XSSF) {
+            XlsxTransformXls xls = new XlsxTransformXls();
+            XSSFWorkbook workbookOld = new XSSFWorkbook(inFilePath);
+            xls.transformXSSF(workbookOld, excelBook);
+        } else {
+            return false;
+        }
+
+        ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
+        excelToHtmlConverter.setOutputColumnHeaders(false);
+        //去掉Excel行号
+        excelToHtmlConverter.setOutputRowNumbers(false);
+
+        excelToHtmlConverter.processWorkbook(excelBook);
+        Document htmlDocument = excelToHtmlConverter.getDocument();
+
+
+        DOMSource domSource = new DOMSource(htmlDocument);
+        StreamResult streamResult = new StreamResult(new File(outFilePath));
+
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer serializer = tf.newTransformer();
+        // TODO set encoding from a command argument
+        serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        serializer.setOutputProperty(OutputKeys.INDENT, "no");
+        serializer.setOutputProperty(OutputKeys.METHOD, "html");
+        serializer.transform(domSource, streamResult);
 
         return true;
     }

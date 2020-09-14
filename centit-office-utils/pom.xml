@@ -17,12 +17,25 @@
             <groupId>com.centit.support</groupId>
             <artifactId>centit-utils</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.centit.support</groupId>
+            <artifactId>centit-report-utils</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>4.0.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.49</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.49</version>
+        </dependency>
         <!-- java操作office转pdf-->
         <!-- 将这个dll 放到java的 bin目录下，并且必须在windows下运行 -->
         <!--<dependency>

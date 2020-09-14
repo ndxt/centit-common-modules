@@ -1,6 +1,6 @@
 package com.centit.test;
 
-import com.centit.support.office.OfficeToPdf;
+import com.centit.support.office.WordToPdf;
 
 public class TestToPdf {
 
@@ -13,7 +13,7 @@ public class TestToPdf {
         //OfficeToPdf.office2Pdf("D:/temp/复星集团.doc", "D:/temp/复星集团.pdf");
         //OfficeToPdf.office2Pdf("D:/temp/复星集团.docx", "D:/temp/复星集团x.pdf");
 
-        OfficeToPdf.office2Pdf("D:/temp/经营数据.xls", "D:/temp/经营数据.pdf");
+        WordToPdf.word2Pdf("D:/CA签名步骤.doc", "D:/CA签名步骤.pdf","doc");
         //OfficeToPdf.office2Pdf("D:/temp/财务报表.xlsx", "D:/temp/财务报表.pdf");
         //OfficeToPdf.office2Pdf("D:/temp/财务报表.xlsm", "D:/temp/财务报表m.pdf");
 

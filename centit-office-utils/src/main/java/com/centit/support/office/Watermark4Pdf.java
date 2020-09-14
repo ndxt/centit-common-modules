@@ -28,14 +28,15 @@ public abstract class Watermark4Pdf {
      * @param waterMarkStr    水印字符串
      * @return 是否成功
      */
-    public static boolean addWatermark(String inputFile,  String waterMarkStr) {
+    public static boolean addWatermark(String inputFile,  String waterMarkStr,String suffix) {
         //将源office文件转换为pdf
         //String suffix = inputFile.substring(inputFile.lastIndexOf("."));
         String tmpPdfFile = inputFile.substring(0,inputFile.lastIndexOf("."))+
                  DatetimeOpt.convertDateToString(DatetimeOpt.currentUtilDate(), "yyyyMMddHHmmssSSS")+".pdf";
         String wartermarkFile = inputFile.substring(0,inputFile.lastIndexOf("."))+ ".pdf";
-        if(! OfficeToPdf.office2Pdf(inputFile,tmpPdfFile))
+        if(! WordToPdf.word2Pdf(inputFile,tmpPdfFile,suffix)) {
             return false;
+        }
 
         return  addWatermark4Pdf(tmpPdfFile,
                 wartermarkFile,
@@ -111,10 +112,12 @@ public abstract class Watermark4Pdf {
             base = null;
             pageRect = null;
             try {
-                if(pdfReader!=null)
+                if(pdfReader!=null) {
                     pdfReader.close();
-                if(pdfStamper!=null)
+                }
+                if(pdfStamper!=null) {
                     pdfStamper.close();
+                }
             } catch (DocumentException | IOException e) {
                 logger.error(e.getMessage(),e);//e.printStackTrace();
             }
