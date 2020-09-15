@@ -25,7 +25,7 @@ import java.io.FileOutputStream;
 /**
  * @author zhf
  */
-public  class WordToPdf {
+public abstract class WordToPdf {
     private WordToPdf() {
         throw new IllegalAccessError("Utility class");
     }

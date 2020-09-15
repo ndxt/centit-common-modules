@@ -14,6 +14,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.centit.support</groupId>
             <artifactId>centit-utils</artifactId>
         </dependency>

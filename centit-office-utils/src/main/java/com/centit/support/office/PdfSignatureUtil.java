@@ -7,6 +7,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfSignatureAppearance;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.security.*;
+import lombok.Data;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
@@ -14,10 +15,29 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
-public class ItextUtil {
+public class PdfSignatureUtil {
 
-    public static final char[] PASSWORD = "123456".toCharArray();// keystory密码
+    @Data
+    public static class SignatureInfo {
+        private String reason; //签名的原因，显示在pdf签名属性中
+        private String location;//签名的地点，显示在pdf签名属性中
+        private String digestAlgorithm;//摘要算法名称，例如SHA-1
+        private String imagePath;//图章路径
+        private String fieldName;//表单域名称
+        private Certificate[] chain;//证书链
+        private PrivateKey pk;//签名私钥
+        private int certificationLevel = 0; //批准签章
+        private PdfSignatureAppearance.RenderingMode renderingMode;//表现形式：仅描述，仅图片，图片和描述，签章者和描述
+        //图章属性
+        private float rectllx;//图章左下角x
+        private float rectlly;//图章左下角y
+        private float recturx;//图章右上角x
+        private float rectury;//图章右上角y
+    }
 
+    public static SignatureInfo createSingInfo(){
+        return new SignatureInfo();
+    }
     /**
      * 单多次签章通用
      *
@@ -100,40 +120,4 @@ public class ItextUtil {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            ItextUtil app = new ItextUtil();
-            String base="D:\\centit\\code\\centit-common-modules\\centit-office-utils\\src\\main\\resources\\template\\";
-            // 将证书文件放入指定路径，并读取keystore ，获得私钥和证书链
-            String pkPath = "client1.p12";
-            KeyStore ks = KeyStore.getInstance("PKCS12");
-            ks.load(new FileInputStream(base+pkPath), PASSWORD);
-            String alias = ks.aliases().nextElement();
-            PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);
-            // 得到证书链
-            Certificate[] chain = ks.getCertificateChain(alias);
-            //需要进行签章的pdf
-            String path = "fff.pdf";
-            // 封装签章信息
-            SignatureInfo signInfo = new SignatureInfo();
-            signInfo.setReason("理由");
-            signInfo.setLocation("位置");
-            signInfo.setPk(pk);
-            signInfo.setChain(chain);
-            signInfo.setCertificationLevel(PdfSignatureAppearance.NOT_CERTIFIED);
-            signInfo.setDigestAlgorithm(DigestAlgorithms.SHA1);
-            signInfo.setFieldName("demo");
-            // 签章图片
-            signInfo.setImagePath(base+"yinzhang.jpg");
-            signInfo.setRenderingMode(PdfSignatureAppearance.RenderingMode.GRAPHIC);
-            signInfo.setRectllx(100);  // 值越大，代表向x轴坐标平移 缩小 （反之，值越小，印章会放大）
-            signInfo.setRectlly(200);  // 值越大，代表向y轴坐标向上平移（大小不变）
-            signInfo.setRecturx(800);  // 值越大   代表向x轴坐标向右平移  （大小不变）
-            signInfo.setRectury(400);  // 值越大，代表向y轴坐标向上平移（大小不变）
-            //签章后的pdf路径
-            app.sign(base+path, base+"output.pdf", signInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
