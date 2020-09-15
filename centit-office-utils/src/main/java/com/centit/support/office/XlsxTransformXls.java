@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 public class XlsxTransformXls {
     private int lastColumn = 0;
-    private HashMap<Integer, HSSFCellStyle> styleMap = new HashMap();
+    private HashMap<Integer, HSSFCellStyle> styleMap = new HashMap<>();
 
     public void transformXSSF(XSSFWorkbook workbookOld, HSSFWorkbook workbookNew) {
         HSSFSheet sheetNew;
