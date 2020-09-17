@@ -119,30 +119,14 @@ public class PdfSignatureUtil {
         }
     }
 
-
-
     public static SignatureInfo createSingInfo(){
         return new SignatureInfo();
     }
-    /**
-     * 单多次签章通用
-     *
-     * @param src
-     * @param target
-     * @param signatureInfo
-     * @throws GeneralSecurityException
-     * @throws IOException
-     * @throws DocumentException
-     */
-    @SuppressWarnings("resource")
-    public static void sign(String src, String target, SignatureInfo signatureInfo) {
-        InputStream inputStream = null;
-        FileOutputStream outputStream = null;
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-            inputStream = new FileInputStream(src);
+
+    public static void sign(InputStream srcStream, OutputStream targetStream, SignatureInfo signatureInfo) {
+        try{
             ByteArrayOutputStream tempArrayOutputStream = new ByteArrayOutputStream();
-            PdfReader reader = new PdfReader(inputStream);
+            PdfReader reader = new PdfReader(srcStream);
             // 创建签章工具PdfStamper ，最后一个boolean参数是否允许被追加签名
             // false的话，pdf文件只允许被签名一次，多次签名，最后一次有效
             // true的话，pdf可以被追加签名，验签工具可以识别出每次签名之后文档是否被修改
@@ -174,32 +158,19 @@ public class PdfSignatureUtil {
             MakeSignature.signDetached(appearance, digest, signature,
                     signatureInfo.getChain(), null, null, null, 0,
                     MakeSignature.CryptoStandard.CADES);
-
-            inputStream = new ByteArrayInputStream(
-                    tempArrayOutputStream.toByteArray());
-            // 定义输入流为生成的输出流内容，以完成多次签章的过程
-            result = tempArrayOutputStream;
-
-            outputStream = new FileOutputStream(new File(target));
-            outputStream.write(result.toByteArray());
-            outputStream.flush();
-        } catch (Exception e) {
+            targetStream.write(tempArrayOutputStream.toByteArray());
+            targetStream.flush();
+        } catch (DocumentException | IOException | GeneralSecurityException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (null != outputStream) {
-                    outputStream.close();
-                }
-                if (null != inputStream) {
-                    inputStream.close();
-                }
-                if (null != result) {
-                    result.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
+    public static void sign(String src, String target, SignatureInfo signatureInfo) {
+        try(InputStream srcStream = new FileInputStream(new File(src));
+            OutputStream targetStream = new FileOutputStream(new File(target))) {
+            sign(srcStream, targetStream, signatureInfo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
