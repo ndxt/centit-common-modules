@@ -34,7 +34,7 @@ public abstract class Watermark4Pdf {
         String tmpPdfFile = inputFile.substring(0,inputFile.lastIndexOf("."))+
                  DatetimeOpt.convertDateToString(DatetimeOpt.currentUtilDate(), "yyyyMMddHHmmssSSS")+".pdf";
         String wartermarkFile = inputFile.substring(0,inputFile.lastIndexOf("."))+ ".pdf";
-        if(! WordToPdf.word2Pdf(inputFile,tmpPdfFile,suffix)) {
+        if(! OfficeToPdf.word2Pdf(inputFile,tmpPdfFile,suffix)) {
             return false;
         }
 

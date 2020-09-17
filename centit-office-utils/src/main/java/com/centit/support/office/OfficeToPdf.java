@@ -25,12 +25,12 @@ import java.io.FileOutputStream;
 /**
  * @author zhf
  */
-public abstract class WordToPdf {
-    private WordToPdf() {
+public abstract class OfficeToPdf {
+    private OfficeToPdf() {
         throw new IllegalAccessError("Utility class");
     }
 
-    private static Log logger = LogFactory.getLog(WordToPdf.class);
+    private static Log logger = LogFactory.getLog(OfficeToPdf.class);
     public final static String DOC = "doc";
     public final static String DOCX = "docx";
 

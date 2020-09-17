@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 /**
  * Created by codefan on 2017/10/9.
  */
@@ -40,12 +41,12 @@ public abstract class OfficeToHtml {
         throw new IllegalAccessError("Utility class");
     }
 
-    public static String pptToHtmlUseImage(String sourceFilePath, String targetFolder, String targetFileName,String suffix) {
+    private static String pptToHtmlUseImage(String sourceFilePath, String targetFolder, String targetFileName, String suffix) {
         FileSystemOpt.createDirect(targetFolder);
         File pptFile = new File(sourceFilePath);
         if (pptFile.exists()) {
             try {
-                String targetFilePath = targetFolder + "/"+ targetFileName;
+                String targetFilePath = targetFolder + "/" + targetFileName;
                 if ("ppt".equals(suffix)) {
                     String htmlStr = toImage2003(sourceFilePath, targetFolder);
                     FileIOOpt.writeStringToFile(htmlStr, targetFilePath);
@@ -167,40 +168,24 @@ public abstract class OfficeToHtml {
         return htmlStr;
     }
 
-    /**
-     *
-     * @param srcImgPath
-     * @param distImgPath
-     * @param width
-     * @param height
-     * @throws IOException
-     */
-    private static void resizeImage(String srcImgPath, String distImgPath, int width, int height) throws IOException {
-        File srcFile = new File(srcImgPath);
-        Image srcImg = ImageIO.read(srcFile);
-        BufferedImage buffImg = null;
-        buffImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        buffImg.getGraphics().drawImage(srcImg.getScaledInstance(width, height, Image.SCALE_SMOOTH), 0, 0, null);
-        ImageIO.write(buffImg, "JPEG", new File(distImgPath));
-    }
 
-    public static boolean ppt2Html(String inPptFile, String outPdfFile,String suffix) {
+    public static boolean ppt2Html(String inPptFile, String outPdfFile, String suffix) {
         String inputFile = inPptFile;
         String pdfFile = outPdfFile;
-        if(File.separator.equals("\\")){
-            inputFile=inPptFile.replace('/', '\\');
+        if (File.separator.equals("\\")) {
+            inputFile = inPptFile.replace('/', '\\');
             pdfFile = outPdfFile.replace('/', '\\');
         }
         String sFileName = FileSystemOpt.extractFullFileName(pdfFile);
-        OfficeToHtml.pptToHtmlUseImage(inputFile, pdfFile.replace(sFileName, ""), sFileName,suffix);
+        pptToHtmlUseImage(inputFile, pdfFile.replace(sFileName, ""), sFileName, suffix);
         return false;
     }
 
     public static boolean excel2Html(String inExcelFile, String outPdfFile) throws TransformerException, IOException, ParserConfigurationException {
         String inFilePath = inExcelFile;
         String outFilePath = outPdfFile;
-        if(File.separator.equals("\\")){
-            inFilePath=inExcelFile.replace('/', '\\');
+        if (File.separator.equals("\\")) {
+            inFilePath = inExcelFile.replace('/', '\\');
             outFilePath = outPdfFile.replace('/', '\\');
         }
         HSSFWorkbook excelBook = new HSSFWorkbook();
