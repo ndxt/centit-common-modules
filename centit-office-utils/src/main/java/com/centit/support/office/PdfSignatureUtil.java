@@ -1,5 +1,6 @@
 package com.centit.support.office;
 
+import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
@@ -9,9 +10,9 @@ import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.security.*;
 import lombok.Data;
 
+import java.awt.*;
 import java.io.*;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
@@ -19,21 +20,106 @@ public class PdfSignatureUtil {
 
     @Data
     public static class SignatureInfo {
-        private String reason; //签名的原因，显示在pdf签名属性中
-        private String location;//签名的地点，显示在pdf签名属性中
+
+        private String reasonDesc; //签名的原因，显示在pdf签名属性中
+        private String locationDesc;//签名的地点，显示在pdf签名属性中
         private String digestAlgorithm;//摘要算法名称，例如SHA-1
-        private String imagePath;//图章路径
+        private Image signImage;//图章路径
         private String fieldName;//表单域名称
         private Certificate[] chain;//证书链
         private PrivateKey pk;//签名私钥
-        private int certificationLevel = 0; //批准签章
-        private PdfSignatureAppearance.RenderingMode renderingMode;//表现形式：仅描述，仅图片，图片和描述，签章者和描述
+        private int certificationLevel; //批准签章
+        //表现形式：仅描述，仅图片，图片和描述，签章者和描述
+        private PdfSignatureAppearance.RenderingMode renderingMode;
         //图章属性
-        private float rectllx;//图章左下角x
-        private float rectlly;//图章左下角y
-        private float recturx;//图章右上角x
-        private float rectury;//图章右上角y
+        private Rectangle signRect;//图章左下角x
+        private int signPage; //批准签章
+
+        public SignatureInfo(){
+            certificationLevel = 0;
+            digestAlgorithm = DigestAlgorithms.SHA1;
+            renderingMode = PdfSignatureAppearance.RenderingMode.GRAPHIC;
+        }
+
+        public SignatureInfo reason(String reasonString){
+            this.reasonDesc = reasonString;
+            return this;
+        }
+
+        public SignatureInfo location(String locationDesc){
+            this.locationDesc = locationDesc;
+            return this;
+        }
+
+        public SignatureInfo algorithm(String digestAlgorithm){
+            this.digestAlgorithm = digestAlgorithm;
+            return this;
+        }
+
+        public SignatureInfo field(String fieldName){
+            this.fieldName = fieldName;
+            return this;
+        }
+
+        public SignatureInfo certificate(Certificate[] chain){
+            this.chain = chain;
+            return this;
+        }
+
+        public SignatureInfo privateKey(PrivateKey pk){
+            this.pk = pk;
+            return this;
+        }
+
+        public SignatureInfo certificateLevel(int certificationLevel){
+            this.certificationLevel = certificationLevel;
+            return this;
+        }
+
+        public SignatureInfo renderingMode(PdfSignatureAppearance.RenderingMode renderingMode){
+            this.renderingMode = renderingMode;
+            return this;
+        }
+
+        public SignatureInfo image(Image image){
+            this.signImage = image;
+            return this;
+        }
+
+        public SignatureInfo image(String imagePath){
+            try {
+                this.signImage = Image.getInstance(imagePath);
+            } catch (BadElementException | IOException e) {
+                e.printStackTrace();
+            }
+            return this;
+        }
+
+        public SignatureInfo image(final java.awt.Image image){
+            try {
+                this.signImage = Image.getInstance(image, new Color(255,255,255));
+            } catch (BadElementException | IOException e) {
+                e.printStackTrace();
+            }
+            return this;
+        }
+
+        public SignatureInfo page(int signPage){
+            this.signPage = signPage;
+            return this;
+        }
+        public SignatureInfo rect(Rectangle rectangle){
+            this.signRect = rectangle;
+            return this;
+        }
+
+        public SignatureInfo rect(final float llx, final float lly, final float urx, final float ury) {
+            this.signRect = new Rectangle(llx, lly, urx, ury);
+            return this;
+        }
     }
+
+
 
     public static SignatureInfo createSingInfo(){
         return new SignatureInfo();
@@ -49,7 +135,7 @@ public class PdfSignatureUtil {
      * @throws DocumentException
      */
     @SuppressWarnings("resource")
-    public void sign(String src, String target, SignatureInfo signatureInfo) {
+    public static void sign(String src, String target, SignatureInfo signatureInfo) {
         InputStream inputStream = null;
         FileOutputStream outputStream = null;
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -65,19 +151,15 @@ public class PdfSignatureUtil {
             // 获取数字签章属性对象
             PdfSignatureAppearance appearance = stamper
                     .getSignatureAppearance();
-            appearance.setReason(signatureInfo.getReason());
-            appearance.setLocation(signatureInfo.getLocation());
+            appearance.setReason(signatureInfo.getReasonDesc());
+            appearance.setLocation(signatureInfo.getLocationDesc());
             // 设置签名的位置，页码，签名域名称，多次追加签名的时候，签名预名称不能一样 图片大小受表单域大小影响（过小导致压缩）
             // 签名的位置，是图章相对于pdf页面的位置坐标，原点为pdf页面左下角
             // 四个参数的分别是，图章左下角x，图章左下角y，图章右上角x，图章右上角y
-            appearance.setVisibleSignature(
-                    new Rectangle(signatureInfo.getRectllx(), signatureInfo
-                            .getRectlly(), signatureInfo.getRecturx(),
-                            signatureInfo.getRectury()), 1, signatureInfo
+            appearance.setVisibleSignature(signatureInfo.getSignRect(), signatureInfo.getSignPage(), signatureInfo
                             .getFieldName());
             // 读取图章图片
-            Image image = Image.getInstance(signatureInfo.getImagePath());
-            appearance.setSignatureGraphic(image);
+            appearance.setSignatureGraphic(signatureInfo.getSignImage());
             appearance.setCertificationLevel(signatureInfo
                     .getCertificationLevel());
             // 设置图章的显示方式，如下选择的是只显示图章（还有其他的模式，可以图章和签名描述一同显示）
