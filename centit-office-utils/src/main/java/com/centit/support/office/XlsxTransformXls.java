@@ -23,7 +23,9 @@ public class XlsxTransformXls {
         for (int i = 0; i < workbookOld.getNumberOfSheets(); i++) {
             sheetOld = workbookOld.getSheetAt(i);
             sheetNew = workbookNew.getSheet(sheetOld.getSheetName());
-            sheetNew = workbookNew.createSheet(sheetOld.getSheetName());
+            if(sheetNew == null) {
+                sheetNew = workbookNew.createSheet(sheetOld.getSheetName());
+            }
             this.transform(workbookOld, workbookNew, sheetOld, sheetNew);
         }
     }
