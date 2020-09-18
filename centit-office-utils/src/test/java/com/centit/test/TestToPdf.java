@@ -7,8 +7,10 @@ public class TestToPdf {
      * @param args
      */
     public static void main(String[] args) {
-        OfficeToPdf.excel2Pdf("/D/Projects/RunData/demo_home/temp/case3.xlsx",
-            "/D/Projects/RunData/demo_home/temp/case3.pdf");
+        OfficeToPdf.word2Pdf("/D/Projects/RunData/demo_home/temp/case7.doc",
+            "/D/Projects/RunData/demo_home/temp/case7.pdf");
+        // OfficeToPdf.excel2Pdf("/D/Projects/RunData/demo_home/temp/case3.xlsx",
+        //    "/D/Projects/RunData/demo_home/temp/case3.pdf");
 
         //OfficeToPdf.office2Pdf("D:/temp/复星集团.doc", "D:/temp/复星集团.pdf");
         //OfficeToPdf.office2Pdf("D:/temp/复星集团.docx", "D:/temp/复星集团x.pdf");

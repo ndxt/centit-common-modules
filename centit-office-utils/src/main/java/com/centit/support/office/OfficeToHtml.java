@@ -5,10 +5,13 @@ import com.centit.support.office.commons.CommonUtils;
 import com.centit.support.office.commons.PowerPointUtils;
 import org.apache.poi.hssf.converter.ExcelToHtmlConverter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hwpf.HWPFDocumentCore;
+import org.apache.poi.hwpf.converter.AbstractWordUtils;
+import org.apache.poi.hwpf.converter.WordToHtmlConverter;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -38,35 +41,41 @@ public abstract class OfficeToHtml {
         }
         return false;
     }
-
-    public static boolean excel2Html(InputStream inExcelStream, OutputStream outPdfStream, String suffix) throws TransformerException, IOException, ParserConfigurationException {
-
-        HSSFWorkbook excelBook = new HSSFWorkbook();
-        if("xls".equalsIgnoreCase(suffix)){
-            excelBook = new HSSFWorkbook(inExcelStream);
-        } else if("xlsx".equalsIgnoreCase(suffix)){
-            XlsxTransformXls xls = new XlsxTransformXls();
-            XSSFWorkbook workbookOld = new XSSFWorkbook(inExcelStream);
-            xls.transformXSSF(workbookOld, excelBook);
-        } else {
-            return false;
-        }
-
-        ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
-        excelToHtmlConverter.setOutputColumnHeaders(false);
-        //去掉Excel行号
-        excelToHtmlConverter.setOutputRowNumbers(false);
-        excelToHtmlConverter.processWorkbook(excelBook);
-        Document htmlDocument = excelToHtmlConverter.getDocument();
-        Transformer serializer = CommonUtils.createTransformer();
-        serializer.transform(new DOMSource(htmlDocument),
-            new StreamResult(outPdfStream));
-        return true;
+    public static boolean ppt2Html(String inPptFile, String outPdfFile) {
+        return ppt2Html(inPptFile, outPdfFile, FileType.getFileExtName(inPptFile));
     }
 
-    public static boolean excel2Html(String inExcelFile, String outPdfFile, String suffix) throws TransformerException, IOException, ParserConfigurationException {
+    public static boolean excel2Html(InputStream inExcelStream, OutputStream outPdfStream, String suffix) {
+        try {
+            HSSFWorkbook excelBook = new HSSFWorkbook();
+            if ("xls".equalsIgnoreCase(suffix)) {
+                excelBook = new HSSFWorkbook(inExcelStream);
+            } else if ("xlsx".equalsIgnoreCase(suffix)) {
+                XlsxTransformXls xls = new XlsxTransformXls();
+                XSSFWorkbook workbookOld = new XSSFWorkbook(inExcelStream);
+                xls.transformXSSF(workbookOld, excelBook);
+            } else {
+                return false;
+            }
+
+            ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
+            excelToHtmlConverter.setOutputColumnHeaders(false);
+            //去掉Excel行号
+            excelToHtmlConverter.setOutputRowNumbers(false);
+            excelToHtmlConverter.processWorkbook(excelBook);
+            Transformer serializer = CommonUtils.createTransformer();
+            serializer.transform(new DOMSource(excelToHtmlConverter.getDocument()),
+                new StreamResult(outPdfStream));
+            return true;
+        } catch (TransformerException | IOException |ParserConfigurationException e){
+            logger.error(e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean excel2Html(String inExcelFile, String outHtmlFile, String suffix) {
         String inFilePath = CommonUtils.mapWidowsPathIfNecessary(inExcelFile);
-        String outFilePath = CommonUtils.mapWidowsPathIfNecessary(outPdfFile);
+        String outFilePath = CommonUtils.mapWidowsPathIfNecessary(outHtmlFile);
 
         try(InputStream inWordStream = new FileInputStream(new File(inFilePath));
             OutputStream outPdfStram = new FileOutputStream(new File(outFilePath))) {
@@ -78,7 +87,61 @@ public abstract class OfficeToHtml {
 
     }
 
-    public static boolean excel2Html(String inExcelFile, String outPdfFile) throws TransformerException, IOException, ParserConfigurationException {
+    public static boolean excel2Html(String inExcelFile, String outPdfFile) {
         return excel2Html(inExcelFile, outPdfFile, FileType.getFileExtName(inExcelFile));
+    }
+
+    //仅仅支持doc hwpf
+    public static boolean word2Html(InputStream inWordStream, OutputStream outHtmlStream, String imagePath, String suffix) {
+        try {
+            if("doc".equalsIgnoreCase(suffix)) {
+                HWPFDocumentCore wordDocument = AbstractWordUtils.loadDoc(inWordStream);
+                WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
+                    XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
+                        .newDocument());
+                wordToHtmlConverter.processDocument(wordDocument);
+                Transformer serializer = CommonUtils.createTransformer();
+                serializer.transform(new DOMSource(wordToHtmlConverter.getDocument()),
+                    new StreamResult(outHtmlStream));
+                return true;
+            } else if("docx".equalsIgnoreCase(suffix)) {
+                /*WordprocessingMLPackage wordMLPackage= Docx4J.load(inWordStream);
+
+                HTMLSettings htmlSettings = Docx4J.createHTMLSettings();
+                htmlSettings.setImageDirPath(imagePath+"/images");
+                htmlSettings.setImageTargetUri( "images");
+                htmlSettings.setWmlPackage(wordMLPackage);
+
+                String userCSS = "html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, img,  ol, ul, li, table, caption, tbody, tfoot, thead, tr, th, td " +
+                    "{ margin: 0; padding: 0; border: 0;}" +
+                    "body {line-height: 1;} ";
+                htmlSettings.setUserCSS(userCSS);
+                Docx4jProperties.setProperty("docx4j.Convert.Out.HTML.OutputMethodXML", true);
+                Docx4jProperties.setProperty("docx4j.Log4j.Configurator.disabled", true);
+                Docx4J.toHTML(htmlSettings, outHtmlStream, Docx4J.FLAG_EXPORT_PREFER_XSL);*/
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean word2Html(String inWordFile, String outHtmlFile) {
+        String inFilePath = CommonUtils.mapWidowsPathIfNecessary(inWordFile);
+        String outFilePath = CommonUtils.mapWidowsPathIfNecessary(outHtmlFile);
+
+        try(InputStream inWordStream = new FileInputStream(new File(inFilePath));
+            OutputStream outPdfStram = new FileOutputStream(new File(outFilePath))) {
+            return word2Html(inWordStream, outPdfStram,
+                outFilePath.substring(0,outFilePath.lastIndexOf(File.separator)),
+                FileType.getFileExtName(inWordFile));
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            return false;
+        }
+
     }
 }

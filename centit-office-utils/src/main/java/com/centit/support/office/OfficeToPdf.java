@@ -14,21 +14,13 @@ import com.lowagie.text.Font;
 import com.lowagie.text.pdf.BaseFont;
 import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;
 import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
-import org.apache.poi.hwpf.HWPFDocumentCore;
-import org.apache.poi.hwpf.converter.AbstractWordUtils;
-import org.apache.poi.hwpf.converter.WordToHtmlConverter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 
-import javax.xml.transform.Transformer;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 
 /**
@@ -78,18 +70,12 @@ public abstract class OfficeToPdf {
                     }
                 });
                 PdfConverter.getInstance().convert(docx, outPdfStram, options);
-
             } else if (DOC.equalsIgnoreCase(suffix)) {
-                HWPFDocumentCore wordDocument = AbstractWordUtils.loadDoc(inWordStream);
-                WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
-                    XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
-                        .newDocument());
-                wordToHtmlConverter.processDocument(wordDocument);
-                Document doc = wordToHtmlConverter.getDocument();
-
-                Transformer serializer = CommonUtils.createTransformer();
-                serializer.transform(new DOMSource(doc),
-                    new StreamResult(outPdfStram));
+                //WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(is);
+ /*               Source source = new StreamSource(inWordStream);
+                Word2003XmlConverter conv = new Word2003XmlConverter(source);
+                WordprocessingMLPackage wordMLPackage = conv.getWordprocessingMLPackage();
+                Docx4J.toPDF(wordMLPackage, outPdfStram);*/
             }
             return true;
         } catch (Exception e) {
