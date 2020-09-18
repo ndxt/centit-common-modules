@@ -100,24 +100,28 @@ public class ExcelUtils {
         return widthPixel;
     }
 
-    public static  Phrase getPhrase(Workbook wb, Cell cell) {
-        //if(this.setting || this.excelObject.getAnchorName() == null){
+    public static Phrase getPhrase(Workbook wb, Cell cell, boolean hasAnchor, int sheetIndex) {
+        if(hasAnchor){
             return new Phrase(cell.getStringCellValue(), getFontByExcel(wb, cell.getCellStyle()));
-        /*}
-        Anchor anchor = new Anchor(cell.getStringCellValue() , getFontByExcel(cell.getCellStyle()));
-        anchor.setName(this.excelObject.getAnchorName());
-        this.setting = true;
-        return anchor;*/
+        } else {
+            Anchor anchor = new Anchor(cell.getStringCellValue(), getFontByExcel(wb, cell.getCellStyle()));
+            anchor.setName("excel_sheet_" + sheetIndex);
+            return anchor;
+        }
     }
 
-    public static PdfPTable toParseContent(Workbook wb, Sheet sheet) throws BadElementException, IOException {
+    public static PdfPTable toParseContent(Workbook wb, Sheet sheet, int sheetIndex) throws BadElementException, IOException {
         int rows = sheet.getPhysicalNumberOfRows();
 
-        List<PdfPCell> cells = new ArrayList<PdfPCell>();
+        List<PdfPCell> cells = new ArrayList<>();
         float[] widths = null;
         float mw = 0;
+        boolean hasAnchor = false;
         for (int i = 0; i < rows; i++) {
             Row row = sheet.getRow(i);
+            if(row==null){
+                continue;
+            }
             int columns = row.getLastCellNum();
 
             float[] cws = new float[columns];
@@ -145,7 +149,8 @@ public class ExcelUtils {
                 pdfpCell.setRowspan(rowspan);
                 pdfpCell.setVerticalAlignment(getVAlignByExcel(cell.getCellStyle().getVerticalAlignment()));
                 pdfpCell.setHorizontalAlignment(getHAlignByExcel(cell.getCellStyle().getAlignment()));
-                pdfpCell.setPhrase(getPhrase(wb, cell));
+                pdfpCell.setPhrase(getPhrase(wb, cell, hasAnchor, sheetIndex));
+                hasAnchor = true;
 
                 if (sheet.getDefaultRowHeightInPoints() != row.getHeightInPoints()) {
                     pdfpCell.setFixedHeight(getPixelHeight(row.getHeightInPoints()));
@@ -175,6 +180,27 @@ public class ExcelUtils {
             table.addCell(pdfpCell);
         }
         return table;
+    }
+
+    public static void toCreateContentIndexes(Document document, int sheetSize) throws DocumentException{
+        PdfPTable table = new PdfPTable(1);
+        table.setKeepTogether(true);
+        table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+        //
+        Font font = new Font(PDFPageEvent.BASE_FONT_CHINESE , 12 , Font.NORMAL);
+        font.setColor(new BaseColor(0,0,255));
+        //
+        for (int i = 0; i < sheetSize; i++) {
+            Anchor anchor = new Anchor("excel_sheet_" + i , font);
+            anchor.setReference("#excel_sheet_" + i);
+            //
+            PdfPCell cell = new PdfPCell(anchor);
+            cell.setBorder(0);
+            //
+            table.addCell(cell);
+        }
+        //
+        document.add(table);
     }
 
     public static float getPixelHeight(float poiHeight){

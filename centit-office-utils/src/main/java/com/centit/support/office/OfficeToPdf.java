@@ -124,25 +124,21 @@ public abstract class OfficeToPdf {
             //Open document
             document.open();
             Workbook wb = WorkbookFactory.create(inWExcelStream);
-            Sheet sheet = wb.getSheetAt(wb.getActiveSheetIndex());
+            int nSheetSize = wb.getNumberOfSheets();
+
+
             //Single one
-
-            PdfPTable table = ExcelUtils.toParseContent(wb, sheet);
-            table.setKeepTogether(true);
-    //      table.setWidthPercentage(new float[]{100} , writer.getPageSize());
-            table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-            document.add(table);
-
-            //Multiple ones
-            /*if(this.objects.size() > 1){
-                toCreateContentIndexes(writer , this.getDocument() , this.objects);
-                //
-                for (int i = 0; i < this.objects.size(); i++) {
-                    PdfPTable table = this.toCreatePdfTable(this.objects.get(i) , getDocument() , writer);
-                    getDocument().add(table);
-                }
-            }*/
-            //
+            if(nSheetSize > 1){
+                ExcelUtils.toCreateContentIndexes(document, nSheetSize);
+            }
+            for (int i = 0; i < nSheetSize; i++) {
+                Sheet sheet = wb.getSheetAt(i);
+                PdfPTable table = ExcelUtils.toParseContent(wb, sheet, i);
+                table.setKeepTogether(true);
+                //      table.setWidthPercentage(new float[]{100} , writer.getPageSize());
+                table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+                document.add(table);
+            }
             document.close();
             return true;
         } catch (DocumentException | IOException e) {
