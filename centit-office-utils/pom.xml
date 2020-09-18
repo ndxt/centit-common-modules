@@ -22,10 +22,12 @@
             <groupId>com.centit.support</groupId>
             <artifactId>centit-utils</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>com.centit.support</groupId>
-            <artifactId>centit-report-utils</artifactId>
+            <groupId>fr.opensagres.xdocreport</groupId>
+            <artifactId>fr.opensagres.poi.xwpf.converter.pdf</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>

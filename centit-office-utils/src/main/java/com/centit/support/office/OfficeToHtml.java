@@ -1,8 +1,8 @@
 package com.centit.support.office;
 
+import com.centit.support.file.FileType;
 import com.centit.support.office.commons.CommonUtils;
 import com.centit.support.office.commons.PowerPointUtils;
-import com.centit.support.report.ExcelTypeEnum;
 import org.apache.poi.hssf.converter.ExcelToHtmlConverter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -16,9 +16,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by codefan on 2017/10/9.
@@ -40,17 +38,15 @@ public abstract class OfficeToHtml {
         }
         return false;
     }
-    public static boolean excel2Html(String inExcelFile, String outPdfFile) throws TransformerException, IOException, ParserConfigurationException {
-        String inFilePath = CommonUtils.mapWidowsPathIfNecessary(inExcelFile);
-        String outFilePath = CommonUtils.mapWidowsPathIfNecessary(outPdfFile);
+
+    public static boolean excel2Html(InputStream inExcelStream, OutputStream outPdfStream, String suffix) throws TransformerException, IOException, ParserConfigurationException {
 
         HSSFWorkbook excelBook = new HSSFWorkbook();
-        ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(inFilePath);
-        if (excelType == ExcelTypeEnum.HSSF) {
-            excelBook = new HSSFWorkbook(new FileInputStream(inFilePath));
-        } else if (excelType == ExcelTypeEnum.XSSF) {
+        if("xls".equalsIgnoreCase(suffix)){
+            excelBook = new HSSFWorkbook(inExcelStream);
+        } else if("xlsx".equalsIgnoreCase(suffix)){
             XlsxTransformXls xls = new XlsxTransformXls();
-            XSSFWorkbook workbookOld = new XSSFWorkbook(inFilePath);
+            XSSFWorkbook workbookOld = new XSSFWorkbook(inExcelStream);
             xls.transformXSSF(workbookOld, excelBook);
         } else {
             return false;
@@ -64,7 +60,25 @@ public abstract class OfficeToHtml {
         Document htmlDocument = excelToHtmlConverter.getDocument();
         Transformer serializer = CommonUtils.createTransformer();
         serializer.transform(new DOMSource(htmlDocument),
-            new StreamResult(new File(outFilePath)));
+            new StreamResult(outPdfStream));
         return true;
+    }
+
+    public static boolean excel2Html(String inExcelFile, String outPdfFile, String suffix) throws TransformerException, IOException, ParserConfigurationException {
+        String inFilePath = CommonUtils.mapWidowsPathIfNecessary(inExcelFile);
+        String outFilePath = CommonUtils.mapWidowsPathIfNecessary(outPdfFile);
+
+        try(InputStream inWordStream = new FileInputStream(new File(inFilePath));
+            OutputStream outPdfStram = new FileOutputStream(new File(outFilePath))) {
+            return excel2Html(inWordStream, outPdfStram, suffix);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            return false;
+        }
+
+    }
+
+    public static boolean excel2Html(String inExcelFile, String outPdfFile) throws TransformerException, IOException, ParserConfigurationException {
+        return excel2Html(inExcelFile, outPdfFile, FileType.getFileExtName(inExcelFile));
     }
 }
