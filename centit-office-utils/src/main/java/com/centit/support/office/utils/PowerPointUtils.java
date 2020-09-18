@@ -59,11 +59,11 @@ public class PowerPointUtils {
         File pptFile = new File(sourceFilePath);
         if (pptFile.exists()) {
             try {
-                if ("ppt".equals(suffix)) {
+                if ("ppt".equalsIgnoreCase(suffix)) {
                     List<ByteArrayOutputStream> htmlStr = toImage2003(sourceFilePath);
                     createPDFFromImages(htmlStr, targetFileName);
                     return "ok";
-                } else if ("pptx".equals(suffix)) {
+                } else if ("pptx".equalsIgnoreCase(suffix)) {
                     List<ByteArrayOutputStream> htmlStr = toImage2007(sourceFilePath);
                     createPDFFromImages(htmlStr, targetFileName);
                     return "ok";
