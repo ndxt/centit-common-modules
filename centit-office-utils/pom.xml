@@ -31,31 +31,20 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
-            <version>4.0.1</version>
+            <version>${apache.poi.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>1.49</version>
         </dependency>
+
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
             <version>1.49</version>
         </dependency>
-        <!-- java操作office转pdf-->
-        <!-- 将这个dll 放到java的 bin目录下，并且必须在windows下运行 -->
-        <!--<dependency>
-            <groupId>com.hynnet</groupId>
-            <artifactId>jacob</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hynnet</groupId>
-            <artifactId>jacob</artifactId>
-            <classifier>x64</classifier>
-            <type>dll</type>
-        </dependency>-->
 
         <!--com.lowagie itext 4.2.1 相当有 itextpdf的5.5.6，同时
          它将覆盖 com.lowagie 2.1.7 -->
@@ -63,11 +52,13 @@
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
         </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
