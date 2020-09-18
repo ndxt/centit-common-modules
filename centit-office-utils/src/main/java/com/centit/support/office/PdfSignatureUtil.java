@@ -12,6 +12,10 @@ import java.security.GeneralSecurityException;
 
 public abstract class PdfSignatureUtil {
 
+    public static SignatureInfo createSingInfo(){
+        return new SignatureInfo();
+    }
+
     public static void sign(InputStream srcStream, OutputStream targetStream, SignatureInfo signatureInfo) {
         try{
             ByteArrayOutputStream tempArrayOutputStream = new ByteArrayOutputStream();
