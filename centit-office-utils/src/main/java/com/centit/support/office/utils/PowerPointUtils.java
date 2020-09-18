@@ -1,5 +1,6 @@
 package com.centit.support.office.utils;
 
+import com.centit.support.file.FileIOOpt;
 import com.centit.support.office.OfficeToPdf;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -55,6 +56,15 @@ public class PowerPointUtils {
         doc.close();
     }
 
+    private static void createHTMLFromImages(List<ByteArrayOutputStream> imageFilenames, String targetFilePath) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        for (ByteArrayOutputStream imageFileName : imageFilenames) {
+            String base64 = CommonUtils.byteArrayToBase64(imageFileName.toByteArray());
+            sb.append("<br><img src=\"data:image/png;base64,").append(base64).append("\">");
+        }
+        FileIOOpt.writeStringToFile(sb.toString(), targetFilePath);
+    }
+
     public static String pptToPdfUseImage(String sourceFilePath, String targetFileName, String suffix) {
         File pptFile = new File(sourceFilePath);
         if (pptFile.exists()) {
@@ -74,6 +84,33 @@ public class PowerPointUtils {
 
             } catch (Exception e) {
                 logger.error("ppt文档转换为pdf,发生异常,源文件={},", sourceFilePath, e);
+                return null;
+            }
+        } else {
+            logger.error("ppt文档转换为pdf,源文件={}不存在", sourceFilePath);
+            return null;
+        }
+    }
+
+    public static String pptToHtmlUseImage(String sourceFilePath, String targetFileName, String suffix) {
+        File pptFile = new File(sourceFilePath);
+        if (pptFile.exists()) {
+            try {
+                if ("ppt".equalsIgnoreCase(suffix)) {
+                    List<ByteArrayOutputStream> htmlStr = toImage2003(sourceFilePath);
+                    createHTMLFromImages(htmlStr, targetFileName);
+                    return "ok";
+                } else if ("pptx".equalsIgnoreCase(suffix)) {
+                    List<ByteArrayOutputStream> htmlStr = toImage2007(sourceFilePath);
+                    createHTMLFromImages(htmlStr, targetFileName);
+                    return "ok";
+                } else {
+                    logger.error("ppt转换为html,源文件={}不是ppt文件", sourceFilePath);
+                    return null;
+                }
+
+            } catch (Exception e) {
+                logger.error("ppt文档转换为html,发生异常,源文件={},", sourceFilePath, e);
                 return null;
             }
         } else {
