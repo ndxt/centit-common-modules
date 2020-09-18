@@ -1,7 +1,7 @@
 package com.centit.support.office;
 
-import com.centit.support.office.utils.CommonUtils;
-import com.centit.support.office.utils.PowerPointUtils;
+import com.centit.support.office.commons.CommonUtils;
+import com.centit.support.office.commons.PowerPointUtils;
 import com.lowagie.text.Font;
 import com.lowagie.text.pdf.BaseFont;
 import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;

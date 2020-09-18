@@ -13,7 +13,7 @@ public class TestPdfSign {
     public static void main(String[] args) {
         try {
 
-            String base="/home/codefan/projects/framework/centit-common-modules/centit-office-utils/src/main/resources/template/";
+            String base="/home/codefan/projects/framework/centit-common-modules/centit-office-commons/src/main/resources/template/";
             // 将证书文件放入指定路径，并读取keystore ，获得私钥和证书链
             String pkPath = "client1.p12";
             KeyStore ks = KeyStore.getInstance("PKCS12");
