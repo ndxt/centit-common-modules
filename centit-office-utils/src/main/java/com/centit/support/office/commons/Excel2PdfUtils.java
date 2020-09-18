@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExcelUtils {
+public class Excel2PdfUtils {
 
     public static int getRGB(Color color) {
         int result = 0x00FFFFFF;

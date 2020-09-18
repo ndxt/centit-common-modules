@@ -2,7 +2,7 @@ package com.centit.support.office;
 
 import com.centit.support.file.FileType;
 import com.centit.support.office.commons.CommonUtils;
-import com.centit.support.office.commons.ExcelUtils;
+import com.centit.support.office.commons.Excel2PdfUtils;
 import com.centit.support.office.commons.PDFPageEvent;
 import com.centit.support.office.commons.PowerPointUtils;
 import com.itextpdf.text.DocumentException;
@@ -129,11 +129,11 @@ public abstract class OfficeToPdf {
 
             //Single one
             if(nSheetSize > 1){
-                ExcelUtils.toCreateContentIndexes(document, nSheetSize);
+                Excel2PdfUtils.toCreateContentIndexes(document, nSheetSize);
             }
             for (int i = 0; i < nSheetSize; i++) {
                 Sheet sheet = wb.getSheetAt(i);
-                PdfPTable table = ExcelUtils.toParseContent(wb, sheet, i);
+                PdfPTable table = Excel2PdfUtils.toParseContent(wb, sheet, i);
                 table.setKeepTogether(true);
                 //      table.setWidthPercentage(new float[]{100} , writer.getPageSize());
                 table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
