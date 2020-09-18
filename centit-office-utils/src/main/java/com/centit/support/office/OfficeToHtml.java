@@ -1,5 +1,6 @@
 package com.centit.support.office;
 
+import com.centit.support.office.utils.CommonUtils;
 import com.centit.support.report.ExcelTypeEnum;
 import org.apache.poi.hssf.converter.ExcelToHtmlConverter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -10,10 +11,8 @@ import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
@@ -31,14 +30,10 @@ public abstract class OfficeToHtml {
         throw new IllegalAccessError("Utility class");
     }
 
-
     public static boolean excel2Html(String inExcelFile, String outPdfFile) throws TransformerException, IOException, ParserConfigurationException {
-        String inFilePath = inExcelFile;
-        String outFilePath = outPdfFile;
-        if (File.separator.equals("\\")) {
-            inFilePath = inExcelFile.replace('/', '\\');
-            outFilePath = outPdfFile.replace('/', '\\');
-        }
+        String inFilePath = CommonUtils.mapWidowsPathIfNecessary(inExcelFile);
+        String outFilePath = CommonUtils.mapWidowsPathIfNecessary(outPdfFile);
+
         HSSFWorkbook excelBook = new HSSFWorkbook();
         ExcelTypeEnum excelType = ExcelTypeEnum.checkFileExcelType(inFilePath);
         if (excelType == ExcelTypeEnum.HSSF) {
@@ -59,18 +54,9 @@ public abstract class OfficeToHtml {
         excelToHtmlConverter.processWorkbook(excelBook);
         Document htmlDocument = excelToHtmlConverter.getDocument();
 
-
-        DOMSource domSource = new DOMSource(htmlDocument);
-        StreamResult streamResult = new StreamResult(new File(outFilePath));
-
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer serializer = tf.newTransformer();
-        // TODO set encoding from a command argument
-        serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        serializer.setOutputProperty(OutputKeys.INDENT, "no");
-        serializer.setOutputProperty(OutputKeys.METHOD, "html");
-        serializer.transform(domSource, streamResult);
-
+        Transformer serializer = CommonUtils.createTransformer();
+        serializer.transform(new DOMSource(htmlDocument),
+            new StreamResult(new File(outFilePath)));
         return true;
     }
 }
