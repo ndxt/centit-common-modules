@@ -1,7 +1,7 @@
 package com.centit.support.office;
 
-import com.centit.support.office.utils.CommonUtils;
-import com.centit.support.office.utils.PowerPointUtils;
+import com.centit.support.office.commons.CommonUtils;
+import com.centit.support.office.commons.PowerPointUtils;
 import com.centit.support.report.ExcelTypeEnum;
 import org.apache.poi.hssf.converter.ExcelToHtmlConverter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
