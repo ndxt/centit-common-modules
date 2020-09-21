@@ -1,5 +1,6 @@
 package com.centit.support.office;
 
+import com.centit.support.file.FileSystemOpt;
 import com.centit.support.file.FileType;
 import com.centit.support.office.commons.CommonUtils;
 import com.centit.support.office.commons.PowerPointUtils;
@@ -10,6 +11,10 @@ import org.apache.poi.hwpf.converter.AbstractWordUtils;
 import org.apache.poi.hwpf.converter.WordToHtmlConverter;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.docx4j.Docx4J;
+import org.docx4j.Docx4jProperties;
+import org.docx4j.convert.out.HTMLSettings;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,11 +110,11 @@ public abstract class OfficeToHtml {
                     new StreamResult(outHtmlStream));
                 return true;
             } else if("docx".equalsIgnoreCase(suffix)) {
-                /*WordprocessingMLPackage wordMLPackage= Docx4J.load(inWordStream);
+                WordprocessingMLPackage wordMLPackage= Docx4J.load(inWordStream);
 
                 HTMLSettings htmlSettings = Docx4J.createHTMLSettings();
-                htmlSettings.setImageDirPath(imagePath+"/images");
-                htmlSettings.setImageTargetUri( "images");
+                htmlSettings.setImageDirPath(imagePath);
+                htmlSettings.setImageTargetUri(FileSystemOpt.extractFileName(imagePath));
                 htmlSettings.setWmlPackage(wordMLPackage);
 
                 String userCSS = "html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, img,  ol, ul, li, table, caption, tbody, tfoot, thead, tr, th, td " +
@@ -118,7 +123,7 @@ public abstract class OfficeToHtml {
                 htmlSettings.setUserCSS(userCSS);
                 Docx4jProperties.setProperty("docx4j.Convert.Out.HTML.OutputMethodXML", true);
                 Docx4jProperties.setProperty("docx4j.Log4j.Configurator.disabled", true);
-                Docx4J.toHTML(htmlSettings, outHtmlStream, Docx4J.FLAG_EXPORT_PREFER_XSL);*/
+                Docx4J.toHTML(htmlSettings, outHtmlStream, Docx4J.FLAG_EXPORT_PREFER_XSL);
                 return true;
             } else {
                 return false;
@@ -136,7 +141,7 @@ public abstract class OfficeToHtml {
         try(InputStream inWordStream = new FileInputStream(new File(inFilePath));
             OutputStream outPdfStram = new FileOutputStream(new File(outFilePath))) {
             return word2Html(inWordStream, outPdfStram,
-                outFilePath.substring(0,outFilePath.lastIndexOf(File.separator)),
+                outFilePath.substring(0,outFilePath.lastIndexOf('.')),
                 FileType.getFileExtName(inWordFile));
         } catch (IOException e) {
             logger.error(e.getMessage());

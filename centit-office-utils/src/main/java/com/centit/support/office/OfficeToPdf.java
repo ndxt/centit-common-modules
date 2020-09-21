@@ -71,8 +71,8 @@ public abstract class OfficeToPdf {
                 });
                 PdfConverter.getInstance().convert(docx, outPdfStram, options);
             } else if (DOC.equalsIgnoreCase(suffix)) {
-                //WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(is);
- /*               Source source = new StreamSource(inWordStream);
+                //WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(inWordStream);
+                /*Source source = new StreamSource(inWordStream);
                 Word2003XmlConverter conv = new Word2003XmlConverter(source);
                 WordprocessingMLPackage wordMLPackage = conv.getWordprocessingMLPackage();
                 Docx4J.toPDF(wordMLPackage, outPdfStram);*/
