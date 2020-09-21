@@ -2,7 +2,6 @@ package com.centit.support.office.commons;
 
 import com.centit.support.file.FileIOOpt;
 import com.centit.support.office.OfficeToPdf;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -22,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class PowerPointUtils {
@@ -60,7 +60,7 @@ public class PowerPointUtils {
     private static void createHTMLFromImages(List<ByteArrayOutputStream> imageFilenames, String targetFilePath) throws IOException {
         StringBuffer sb = new StringBuffer();
         for (ByteArrayOutputStream imageFileName : imageFilenames) {
-            String base64 = new String(Base64.encodeBase64(imageFileName.toByteArray()));
+            String base64 = Base64.getEncoder().encodeToString(imageFileName.toByteArray());
             sb.append("<br><img src=\"data:image/png;base64,").append(base64).append("\">");
         }
         FileIOOpt.writeStringToFile(sb.toString(), targetFilePath);
