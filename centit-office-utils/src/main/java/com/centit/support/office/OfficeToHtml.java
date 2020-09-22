@@ -6,9 +6,13 @@ import com.centit.support.office.commons.CommonUtils;
 import com.centit.support.office.commons.PowerPointUtils;
 import org.apache.poi.hssf.converter.ExcelToHtmlConverter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.converter.AbstractWordUtils;
+import org.apache.poi.hwpf.converter.PicturesManager;
 import org.apache.poi.hwpf.converter.WordToHtmlConverter;
+import org.apache.poi.hwpf.usermodel.Picture;
+import org.apache.poi.hwpf.usermodel.PictureType;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.docx4j.Docx4J;
@@ -25,6 +29,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.util.List;
 
 /**
  * Created by codefan on 2017/10/9.
@@ -100,11 +105,24 @@ public abstract class OfficeToHtml {
     public static boolean word2Html(InputStream inWordStream, OutputStream outHtmlStream, String imagePath, String suffix) {
         try {
             if("doc".equalsIgnoreCase(suffix)) {
-                HWPFDocumentCore wordDocument = AbstractWordUtils.loadDoc(inWordStream);
+                HWPFDocument wordDocument = new HWPFDocument(inWordStream);
                 WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
                     XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
                         .newDocument());
+                wordToHtmlConverter.setPicturesManager(new PicturesManager() {
+                    @Override
+                    public String savePicture(byte[] paramArrayOfByte,
+                                              PictureType paramPictureType, String paramString,
+                                              float paramFloat1, float paramFloat2) {
+                        //设定图片路径
+                        return imagePath+File.separator+paramString;
+                    }
+                });
                 wordToHtmlConverter.processDocument(wordDocument);
+                List<Picture> pics = wordDocument.getPicturesTable().getAllPictures();;
+                for(Picture pic:pics){
+                    pic.writeImageContent(new FileOutputStream(imagePath+File.separator+pic.suggestFullFileName()));
+                }
                 Transformer serializer = CommonUtils.createTransformer();
                 serializer.transform(new DOMSource(wordToHtmlConverter.getDocument()),
                     new StreamResult(outHtmlStream));
