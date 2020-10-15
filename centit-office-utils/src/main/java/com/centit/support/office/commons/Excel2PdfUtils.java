@@ -102,9 +102,9 @@ public class Excel2PdfUtils {
 
     public static Phrase getPhrase(Workbook wb, Cell cell, boolean hasAnchor, int sheetIndex) {
         if(hasAnchor){
-            return new Phrase(cell.getStringCellValue(), getFontByExcel(wb, cell.getCellStyle()));
+            return new Phrase(cell.toString(), getFontByExcel(wb, cell.getCellStyle()));
         } else {
-            Anchor anchor = new Anchor(cell.getStringCellValue(), getFontByExcel(wb, cell.getCellStyle()));
+            Anchor anchor = new Anchor(cell.toString(), getFontByExcel(wb, cell.getCellStyle()));
             anchor.setName("excel_sheet_" + sheetIndex);
             return anchor;
         }
@@ -150,7 +150,7 @@ public class Excel2PdfUtils {
                     float cw = getPOIColumnWidth(sheet, cell);
                     cws[cell.getColumnIndex()] = cw;
 
-                    cell.setCellType(CellType.STRING);
+                    //cell.setCellType(CellType.STRING);
                     CellRangeAddress range = getColspanRowspanByExcel(sheet, row.getRowNum(), cell.getColumnIndex());
 
                     int rowspan = 1;
