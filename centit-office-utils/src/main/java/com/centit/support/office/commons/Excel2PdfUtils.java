@@ -114,60 +114,84 @@ public class Excel2PdfUtils {
         int rows = sheet.getPhysicalNumberOfRows();
 
         List<PdfPCell> cells = new ArrayList<>();
+        List<Integer> colRanges= new ArrayList<>(100);
         float[] widths = null;
         float mw = 0;
         boolean hasAnchor = false;
-        for (int i = 0; i < rows; i++) {
+        for (int i = 0; i <= rows; i++) {
             Row row = sheet.getRow(i);
             if(row==null){
                 continue;
             }
             int columns = row.getLastCellNum();
-
+            if(columns <= 0){
+                for(int k=0; k<colRanges.size(); k++){
+                    PdfPCell pdfpCell = new PdfPCell();
+                    pdfpCell.setBorder(Rectangle.NO_BORDER);
+                    pdfpCell.setFixedHeight(20);
+                    cells.add(pdfpCell);
+                }
+                continue;
+            }
+            for(int j=colRanges.size();j<columns; j++){
+                colRanges.add(i);
+            }
             float[] cws = new float[columns];
             for (int j = 0; j < columns; j++) {
+                int lastRow = colRanges.get(j);
+                if(i<lastRow) {
+                    continue;
+                }
                 Cell cell = row.getCell(j);
-                if (cell == null) cell = row.createCell(j);
+                if (cell == null) {
+                    PdfPCell pdfpCell = new PdfPCell();
+                    cells.add(pdfpCell);
+                } else {
+                    float cw = getPOIColumnWidth(sheet, cell);
+                    cws[cell.getColumnIndex()] = cw;
 
-                float cw = getPOIColumnWidth(sheet, cell);
-                cws[cell.getColumnIndex()] = cw;
+                    cell.setCellType(CellType.STRING);
+                    CellRangeAddress range = getColspanRowspanByExcel(sheet, row.getRowNum(), cell.getColumnIndex());
 
-                cell.setCellType(CellType.STRING);
-                CellRangeAddress range = getColspanRowspanByExcel(sheet, row.getRowNum(), cell.getColumnIndex());
+                    int rowspan = 1;
+                    int colspan = 1;
+                    if (range != null) {
+                        rowspan = range.getLastRow() - range.getFirstRow() + 1;
+                        colspan = range.getLastColumn() - range.getFirstColumn() + 1;
+                        if(rowspan>1){
+                            for(int k=0; k<colspan; k++){
+                                colRanges.set(j+k, i+rowspan);
+                            }
+                        }
+                        if(colspan>1){
+                            j += colspan - 1;
+                        }
+                    }
 
-                int rowspan = 1;
-                int colspan = 1;
-                if (range != null) {
-                    rowspan = range.getLastRow() - range.getFirstRow() + 1;
-                    colspan = range.getLastColumn() - range.getFirstColumn() + 1;
+                    PdfPCell pdfpCell = new PdfPCell();
+                    pdfpCell.setBackgroundColor(new BaseColor(getRGB(
+                        cell.getCellStyle().getFillForegroundColorColor())));
+                    pdfpCell.setColspan(colspan);
+                    pdfpCell.setRowspan(rowspan);
+                    pdfpCell.setVerticalAlignment(getVAlignByExcel(cell.getCellStyle().getVerticalAlignment()));
+                    pdfpCell.setHorizontalAlignment(getHAlignByExcel(cell.getCellStyle().getAlignment()));
+                    pdfpCell.setPhrase(getPhrase(wb, cell, hasAnchor, sheetIndex));
+                    hasAnchor = true;
+
+                    if (sheet.getDefaultRowHeightInPoints() != row.getHeightInPoints()) {
+                        pdfpCell.setFixedHeight(getPixelHeight(row.getHeightInPoints()));
+                    }
+                    addBorderByExcel(wb, pdfpCell, cell.getCellStyle());
+                    addImageByPOICell(sheet, pdfpCell, cell);
+                    cells.add(pdfpCell);
                 }
-
-                PdfPCell pdfpCell = new PdfPCell();
-                pdfpCell.setBackgroundColor(new BaseColor(getRGB(
-                    cell.getCellStyle().getFillForegroundColorColor())));
-                pdfpCell.setColspan(colspan);
-                pdfpCell.setRowspan(rowspan);
-                pdfpCell.setVerticalAlignment(getVAlignByExcel(cell.getCellStyle().getVerticalAlignment()));
-                pdfpCell.setHorizontalAlignment(getHAlignByExcel(cell.getCellStyle().getAlignment()));
-                pdfpCell.setPhrase(getPhrase(wb, cell, hasAnchor, sheetIndex));
-                hasAnchor = true;
-
-                if (sheet.getDefaultRowHeightInPoints() != row.getHeightInPoints()) {
-                    pdfpCell.setFixedHeight(getPixelHeight(row.getHeightInPoints()));
-                }
-
-                addBorderByExcel(wb, pdfpCell, cell.getCellStyle());
-                addImageByPOICell(sheet, pdfpCell, cell);
-
-                cells.add(pdfpCell);
-                j += colspan - 1;
             }
 
             float rw = 0;
             for (int j = 0; j < cws.length; j++) {
                 rw += cws[j];
             }
-            if (rw > mw ||  mw == 0) {
+            if (rw > mw || mw == 0) {
                 widths = cws;
                 mw = rw;
             }
