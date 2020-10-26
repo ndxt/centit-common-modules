@@ -46,8 +46,7 @@
     <modules>
         <module>centit-office-utils</module>
         <module>centit-report-utils</module>
-        <module>optflow-serial-number</module>
-        <module>enterprise-calendar</module>
+        <module>centit-es-client</module>
         <module>centit-quartz-extend</module>
     </modules>
     <build>
