@@ -115,7 +115,7 @@ public class Excel2PdfUtils {
 
         List<PdfPCell> cells = new ArrayList<>();
         List<Integer> colRanges= new ArrayList<>(100);
-        float[] widths = null;
+        float[] widths = {30F,400F};
         float mw = 0;
         boolean hasAnchor = false;
         for (int i = 0; i <= rows; i++) {
