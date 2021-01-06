@@ -72,7 +72,6 @@ public abstract class QuartzJobUtils {
             JobDetail jobDetail = JobBuilder.newJob(jobClass)
                 .withIdentity(jobName, jobGroup)
                 .usingJobData(new JobDataMap(param)).build();
-
             CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpress);
             trigger = TriggerBuilder.newTrigger().withIdentity(jobName, jobGroup)
                 .withSchedule(scheduleBuilder).build();

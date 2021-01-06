@@ -48,6 +48,7 @@ public abstract class ExcelExportUtil {
                                      List<Object> objLists, String[] header, String[] property) throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet(sheetName);
+
         generateExcelSheet(sheet, objLists, header, property);
         wb.write(outputStream);
     }
@@ -421,12 +422,12 @@ public abstract class ExcelExportUtil {
 
     @SuppressWarnings("unchecked")
     private static void generateExcelText(Sheet sheet, List<Object> objLists, String[] property, int beginRow) throws NoSuchFieldException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-//        CellStyle cellStyle = getDefaultCellStyle(sheet.getWorkbook());
+        CellStyle cellStyle = getDefaultCellStyle(sheet.getWorkbook());
         for (int i = 0; i < objLists.size(); i++) {
             Row textRow = sheet.createRow(i + beginRow);
             for (int j = 0; j < property.length; j++) {
                 if (StringUtils.isNotBlank(property[j])) {
-                    CellStyle cellStyle = getDefaultCellStyle(sheet.getWorkbook());
+//                    CellStyle cellStyle = getDefaultCellStyle(sheet.getWorkbook());
                     Cell cell = textRow.createCell(j);
 //                  setCellStyle(cell, cellStyle);
 //                  cell.setCellValue( StringBaseOpt.objectToString(
