@@ -727,9 +727,12 @@ public abstract class ExcelExportUtil {
             InputStream excelFile = new FileInputStream(new File(excelFilePath));
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
             sheet = wb.getSheet(sheetName);
+            if(sheet==null){
+                sheet=wb.createSheet(sheetName);
+            }
         } else {
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook() : new XSSFWorkbook();
-            sheet = wb.createSheet();
+            sheet = wb.createSheet(sheetName);
         }
         if (sheet.getLastRowNum() == 0) {
             generateExcelSheet(sheet, objLists, header, property);
@@ -753,6 +756,9 @@ public abstract class ExcelExportUtil {
             InputStream excelFile = new FileInputStream(new File(excelFilePath));
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
             sheet = wb.getSheetAt(sheetIndex);
+            if(sheet==null){
+                sheet=wb.createSheet(String.valueOf(sheetIndex));
+            }
         } else {
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook() : new XSSFWorkbook();
             sheet = wb.createSheet();
@@ -779,9 +785,12 @@ public abstract class ExcelExportUtil {
             InputStream excelFile = new FileInputStream(new File(excelFilePath));
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook(excelFile) : new XSSFWorkbook(excelFile);
             sheet = wb.getSheet(sheetName);
+            if(sheet==null){
+                sheet=wb.createSheet(sheetName);
+            }
         } else {
             wb = excelType == ExcelTypeEnum.HSSF ? new HSSFWorkbook() : new XSSFWorkbook();
-            sheet = wb.createSheet();
+            sheet = wb.createSheet(sheetName);
         }
         if (sheet.getLastRowNum() == 0) {
             generateExcelSheet(sheet, objLists, header);
