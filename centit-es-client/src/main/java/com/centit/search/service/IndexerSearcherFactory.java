@@ -30,7 +30,7 @@ public abstract class IndexerSearcherFactory {
         = new ConcurrentHashMap<>();
 
 
-    private static GenericObjectPool<RestHighLevelClient> obtainclientPool(ESServerConfig config){
+    public static GenericObjectPool<RestHighLevelClient> obtainclientPool(ESServerConfig config){
         GenericObjectPool<RestHighLevelClient> clientPool =
             clientPoolMap.get(config);
         if(clientPool==null) {
